@@ -1,3 +1,6 @@
+#Safari Smart
+##Members: Christa, Jacob, Logan, Megan, Sofija
+
 Team Name: Safari Smart
 Mascot: Elephant
 
