@@ -1,0 +1,205 @@
+Safari Smart
+Team: Megan, Sofija, Christa, Jacob, Logan
+Mascot: Elephant
+Logo: *make with elephant* 
+
+
+Team Info Document:: https://docs.google.com/document/d/1EXlkJIeXIrELdxWna2hBdaaCrQN9_tjdsSvQbh5BuHs/edit?usp=sharing 
+
+Requirements Document:
+https://docs.google.com/document/d/1Ex5MORvk9A4yU0H4U9DfnUOkals8h7v1LiTkOAtiPBg/edit?usp=sharing 
+
+Textbook: https://dl.icdst.org/pdfs/files4/d1d996ec50b2094f18b2d2c5138cbee5.pdf
+
+Github: https://github.com/loganpinel06/CSC230.git 
+
+Outside of class meeting time options: 
+Friday 4pm
+Other zoom times. E.g. thursday 5pm or weekends
+Project Info:
+
+LMS website for supplemental tutorials and practice for the BECE and WASSCE
+Gamified experience
+Something similar to duolingo or quizlet
+Streaks
+Web app that works on both Android and iOS devices - instead of a physical app.
+AI for reviewing essays
+Openai API
+Gemini
+Deep seek
+Other seamless AI integrations?
+Payment system placeholder (but we do not need to set it up)
+Offline functionality for students in rural/remote communities with limited connectivity
+Multiple formats for material to be accessed/uploaded
+
+
+Notes on Customer Presentation:
+Q: format of the educational materials
+Learning content: combination of video and written information
+Video of him, infographic, avatar video
+Practice exercises: (on 2 scales)
+Exercise 1 -> Exercise 2 if you score well on #1 
+If you think you need additional learning exercises, it would be a paid subscription 
+User fee, entry-level (low $) -> get content, learn from it, do practice exercises -> can pay for additional exercises
+What about if we did it so students can pay and study individually or they can enter a unique code to be assigned to a teacher so the teacher can see their progress and assign them additional materials
+Q: teacher/student/parent roles. Ex. do we want the teacher to be connected to students so the students can submit essays for the teacher to review?
+Can teachers create content?
+Yes, he wants them to be able to create content themselves
+If it’s feasible and doesn’t interfere 
+There will be additional content creators for other subjects 
+Student submits essay to the system, which is graded by the trained AI (he has already put the exam prompts, examiner reports in chatgpt)
+1-9 (9 means fail)
+Student submits, chatgpt grades (based on a rubric), human reviews the chatgpt feedback (paid examiners to review the essays)
+Content of the educational material:
+English language: how to write essays
+English literature: how to read, interpret english literature books
+Wants to expand to math, chemistry, biology eventually
+Video lessons on a website
+Wants: Operational, culturally appropriate LMS website
+Culturally appropriate: ex. Using coconut icons instead of ice cream 
+Wants a site similar to canvas
+No assistance from a teacher, and students can get the practice/study material they need
+Teachers can use the website to register a class, give students exercises, grade assignments, give feedback
+2 age ranges: 
+Junior school students take the BECE
+Elementary school -> middle school (13/14)
+Exam takes place in june 
+Seniors in high school take the WASSCE
+High school -> college (17/18)
+
+Initial ideas:
+Homepage with different roles (student, teachers, parents)
+Administrator page so he can edit questions, add new content
+Teachers can make a class (unique code)
+Can add deadlines/due dates, assign things
+AI integration at the end
+Make the whole thing gamified 
+
+
+
+Backend Design
+
+
+
+
+Frontend Design
+UI:
+
+
+
+
+
+UX:
+Chase map to track exercise progress 
+Accessibility features (e.g font size, dark mode etc.)
+Restricted access points (paid vs free, parent (view mode),  teacher (assign & grade)  student (access material and save changes as they edit)
+
+
+
+
+
+
+NOTES FROM DR. HOLLIST
+Sierra Leone (University of Sierra Leone)
+English how to write essays
+How to read and interpret english literature
+Dream is to have it expand to more subjects (math, bio, chem)
+English speaking west african countries
+Tiktok style lessons?
+Operational, Culturally Appropriate LMS application
+Site like Canvas
+Students can access tutorials along with practice
+Teachers can access (similar to how teachers use it here at UTampa), register classes, upload classes, and  upload information
+There are competitor sites/apps
+Two age ranges 
+Junior School Students who take BECE to move from elementary to middle school
+13 - 14 yo
+WASSCE exam is to move from high school into college (2yr, 4yr, Vocational)
+17 - 18 yo
+Learning content is videos, written pieces, and infographics
+Practice content is exam style
+Complete 1 and score well, move to next
+Paid Subscription would include additional materials that are then turned into a gamefied experience
+GAME IS ONLY FOR PAID SUBSCRIPTION
+Allow other people to create and upload content to the site
+UPLOAD FEATURE
+Content is intended to be for the two exams
+Dr. Hollist has a trained AI model that will help grade the student's input AI
+Also wants teachers to be able to grade submitted work
+Functionality to write notes on the rubric
+RUBRIC FUNCTIONALITY
+Big goal is to retain student attention
+
+
+
+
+
+
+Technologies to Research:
+Next or Express for backend? 
+Next is react but lets you write the backend as you’re doing frontend
+React for frontend? 
+
+Final: use Next with React 
+
+Database: Supabase (easier to troubleshoot) 
+Built in authentication 
+Or building our own? 
+
+Tailwind CSS
+
+Deploy using Vercel
+
+
+
+Pipeline of Learning
+
+HTML
+Basic Tags (heading, paragraphs, images, href)
+Divs
+LEARN TAGS
+30 minutes
+
+CSS (Cascading Style Sheets)
+This is the way you style a website
+You can style specific tags that appear in HTML
+1 hour for the basics
+You will never master
+It will never work right
+Ask ChatGPT for help
+
+JavaScript Basics
+Watch a crash course
+Syntax & Basics
+2 hours
+
+ReactJS
+Components, Hooks, Props?
+How it works
+Watch a crash course
+
+NextJS
+Watch a crash course
+This is just a framework that enhances React
+If you understand React you can use NextJS its just a new structure
+
+TailwindCSS
+This is super basic if you understand CSS you should understand this fast
+Basically rather than writing separate CSS files you can just write it in line
+Watch a crash course should be 15 minutes max
+
+Supabase
+This is our backend essentially
+It gives us basic functionality to implement user authentication (login / signout, etc)
+It gives us basic functionality for a database
+I would attempt to understand how a database works kind of
+The syntax is easy and you can just depend on Supabase Documentation mostly
+
+
+
+
+UML: Universal Modeling Language
+Set of diagrams that are useful for capturing and communicating software designs
+Two categories of diagrams:
+Structural diagrams capture logical structure of the system
+Behavioral diagrams capture behaviors/uses of the system
