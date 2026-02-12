@@ -1,5 +1,6 @@
-//this is likely the tailwind initializer
-//DO NOT CONFIGURE
+//PostCSS configuration file for Tailwind with Next.js
+//Bundled with Next.js
+//DO NOT TOUCH
 
 const config = {
   plugins: {

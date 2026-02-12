@@ -1,5 +1,5 @@
-//will need to research what this is
-//was bundled with next.js by default
+//not entirely sure what this is, it was bundled with next.js
+//we will look into later
 
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
