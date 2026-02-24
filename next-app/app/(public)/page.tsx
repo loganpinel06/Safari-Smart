@@ -10,6 +10,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className = "min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
+      <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
       {/* Top navigation bar */}
       <header className="max-w-5xl mx-auto px-6 pt-6">
         <nav className="flex items-center justify-between">
@@ -58,22 +59,60 @@ export default function Home() {
             BECE and WASSCE exams through structured lessons, practice questions, and
             progress tracking.
           </p>
-          <div className = "flex gap-4 justify-center pt-4">
-            <a 
-            href = "/signup"
-            className="px-6 py-2 rounded-lg bg-[#F06COO] text-white font-semibold hover:bg-[#d85f00] transition">
-              Get Started
-            </a>
-            <a 
-            href = "/signin"
-            className="px-6 py-2 rounded-lg border border-[#592803] hover:bg-[#592803] hover: text-white transition">
-              Already have an account?
-            </a>
-          </div>
         </section>
 
         <section
-          id="audience"
+          id="features"
+          className="bg-[#FFF1B8] rounded-xl p-10 space-y-6"
+        >
+          <h2 className="text-3xl font-bold text-center">Features</h2>
+
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="bg-white/70 rounded-xl p-6">
+              <h3 className="font-bold text-lg">Structured Lessons</h3>
+              <p className="mt-2 text-sm">
+                Short, focused lesson content designed for BECE and WASSCE exam preparation.
+              </p>
+            </div>
+
+            <div className="bg-white/70 rounded-xl p-6">
+              <h3 className="font-bold text-lg">Practice Quizzes</h3>
+              <p className="mt-2 text-sm">
+                Topic-based quizzes and question banks to reinforce learning and build confidence.
+              </p>
+            </div>
+
+            <div className="bg-white/70 rounded-xl p-6">
+              <h3 className="font-bold text-lg">Progress Tracking</h3>
+              <p className="mt-2 text-sm">
+                Track improvement over time with clear progress indicators and completed lessons.
+              </p>
+            </div>
+
+            <div className="bg-white/70 rounded-xl p-6">
+              <h3 className="font-bold text-lg">Teacher Feedback</h3>
+              <p className="mt-2 text-sm">
+                Teachers can review submissions and give feedback to help students improve.
+              </p>
+            </div>
+
+            <div className="bg-white/70 rounded-xl p-6">
+              <h3 className="font-bold text-lg">AI-Assisted Writing Support</h3>
+              <p className="mt-2 text-sm">
+                Artificial Intelligence writing feedback and suggestions to support essay improvement.
+              </p>
+            </div>
+
+            <div className="bg-white/70 rounded-xl p-6">
+              <h3 className="font-bold text-lg">Role-Based Access</h3>
+              <p className="mt-2 text-sm">
+                Separate student, teacher, and parent views with features tailored to each role.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="audience"
           className="space-y-10 pt-16">
 
           <h2 className="text-3xl font-bold text-center">
@@ -131,8 +170,32 @@ export default function Home() {
           </div>
         </section>
 
+        <section
+          id="get-started"
+          className="bg-[#592803] text-[#FFF1E5] rounded-xl p-10 text-center space-y-4">
+          <h2 className="text-3xl font-bold">Ready to get started?</h2>
+          <p className="max-w-2xl mx-auto">
+            Create an account to begin studying for BECE and WASSCE with structured lessons and practice.
+          </p>
 
-    
+          <div className="flex justify-center gap-4 pt-2">
+            <a
+              href="/signup"
+              className="px-6 py-2 rounded-lg bg-[#6AC700] text-white font-semibold hover:bg-[#5bb000] transition"
+            >
+              Sign Up
+            </a>
+            <a
+              href="/signin"
+              className="px-6 py-2 rounded-lg border border-[#FFF1E5] hover:bg-[#FFF1E5] hover:text-[#592803] transition"
+            >
+              Sign In
+            </a>
+          </div>
+        </section>
+
+    </div>
+  
 
 
     </main>
