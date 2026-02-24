@@ -18,11 +18,15 @@ export default function Home() {
             <Image
               src="/sslogo.png"
               alt="Safari Smart logo"
-              width={48}
-              height={48}
+              width={64}
+              height={64}
               priority
+              className="rounded-lg"
             />
-            <span className="font-bold text-xl">Safari Smart</span>
+          <span className="font-extrabold text-2xl tracking-tight">
+            Safari Smart
+          </span>
+
           </div>
           <div className="flex items-center gap-4 text-sm">
             <a href="#features" className="hover:underline">
@@ -51,14 +55,29 @@ export default function Home() {
         {/* Main Content */}
       
         <section className="flex flex-col items-center text-center space-y-6 pt-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold max-w-3xl">
+          <h1 className="text-5xl sm:text-6xl font-extrabold max-w-4xl leading-tight">
             Prep smarter for BECE & WASSCE.
           </h1>
-          <p className="text-lg max-w-2xl">
+          <p className="text-lg sm:text-xl max-w-3xl text-[#4B3A46]">
             Safari Smart is a learning web application designed to help students prepare for
-            BECE and WASSCE exams through structured lessons, practice questions, and
-            progress tracking.
+            BECE and WASSCE exams through structured lessons, practice questions, progress tracking, and guided feedback.
           </p>
+
+        <div className="grid sm:grid-cols-3 gap-4 pt-4 max-w-4xl">
+        <div className="bg-white/60 rounded-xl p-4">
+          <p className="font-bold">Lesson Paths</p>
+          <p className="text-sm text-[#4B3A46]">Guided content by subject and topic.</p>
+        </div>
+        <div className="bg-white/60 rounded-xl p-4">
+          <p className="font-bold">Exam Practice</p>
+          <p className="text-sm text-[#4B3A46]">Quizzes that reinforce what you learned.</p>
+        </div>
+        <div className="bg-white/60 rounded-xl p-4">
+          <p className="font-bold">Track Progress</p>
+          <p className="text-sm text-[#4B3A46]">See improvement and stay consistent.</p>
+        </div>
+      </div>
+
         </section>
 
         <section
@@ -168,6 +187,15 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </section>
+
+        <section className="bg-white/60 rounded-xl p-10 space-y-4 text-center">
+          <h2 className="text-3xl font-bold">Why Safari Smart?</h2>
+          <p className="max-w-3xl mx-auto text-[#4B3A46]">
+            Many students have access to practice materials but not a clear structure for how to use them.
+            Safari Smart organizes lessons, quizzes, and feedback into a simple system that supports
+            consistent exam prep.
+          </p>
         </section>
 
         <section
