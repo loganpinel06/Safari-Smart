@@ -23,14 +23,26 @@ export default function Home() {
             />
             <span className="font-bold text-xl">Safari Smart</span>
           </div>
-        <div className="flex gap-4 text-sm">
-              <a href="#features" className="hover:underline">
-                Features
-              </a>
-              <a href="#audience" className="hover:underline">
-                Who it’s for
-              </a>
-            </div>
+          <div className="flex items-center gap-4 text-sm">
+            <a href="#features" className="hover:underline">
+              Features
+            </a>
+            <a href="#audience" className="hover:underline">
+              Who it’s for
+            </a>
+
+            <a
+              href="/signin"
+              className="px-4 py-1 rounded-full border border-[#592803] hover:bg-[#592803] hover:text-white transition">
+              Sign in
+            </a>
+
+            <a
+              href="/signup"
+              className="px-4 py-1 rounded-full bg-[#6AC700] text-white hover:bg-[#5bb000] transition">
+              Sign up
+            </a>
+          </div>
           </nav>
         </header>
 
