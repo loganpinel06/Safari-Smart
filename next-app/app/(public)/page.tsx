@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className = "min-h-screen bg-[#FFF1E5] text-[#592803]">
+    <main className = "min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       {/* Top navigation bar */}
       <header className="max-w-5xl mx-auto px-6 pt-6">
         <nav className="flex items-center justify-between">
@@ -48,9 +48,9 @@ export default function Home() {
 
 
         {/* Main Content */}
-        <div className="max-w-5xl mx-auto px-6 py-12 space-y-10">
-          <section className="space-y-4">
-          <h1 className="text-4xl sm:text-5xl font-extrabold">
+      
+        <section className="flex flex-col items-center text-center space-y-6 pt-12">
+          <h1 className="text-4xl sm:text-5xl font-extrabold max-w-3xl">
             Prep smarter for BECE & WASSCE.
           </h1>
           <p className="text-lg max-w-2xl">
@@ -58,36 +58,80 @@ export default function Home() {
             BECE and WASSCE exams through structured lessons, practice questions, and
             progress tracking.
           </p>
-          </section>
-        </div>
+          <div className = "flex gap-4 justify-center pt-4">
+            <a 
+            href = "/signup"
+            className="px-6 py-2 rounded-lg bg-[#F06COO] text-white font-semibold hover:bg-[#d85f00] transition">
+              Get Started
+            </a>
+            <a 
+            href = "/signin"
+            className="px-6 py-2 rounded-lg border border-[#592803] hover:bg-[#592803] hover: text-white transition">
+              Already have an account?
+            </a>
+          </div>
+        </section>
+
+        <section
+          id="audience"
+          className="space-y-10 pt-16">
+
+          <h2 className="text-3xl font-bold text-center">
+            Who Safari Smart Supports
+          </h2>
+
+          <div className="grid sm:grid-cols-3 gap-8">
+            <div className="bg-white/70 rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src="/students2.jpg"
+                alt="Students in classroom"
+                width={500}
+                height={300}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-5 text-center">
+                <h3 className="font-bold text-lg">Students</h3>
+                <p className="text-sm mt-2">
+                  Structured lessons and practice quizzes designed specifically for BECE and WASSCE success.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white/70 rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src="/students1.jpg"
+                alt="Students studying"
+                width={500}
+                height={300}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-5 text-center">
+                <h3 className="font-bold text-lg">Teachers</h3>
+                <p className="text-sm mt-2">
+                  Upload content, review submissions, and provide meaningful feedback.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white/70 rounded-xl overflow-hidden shadow-sm">
+              <Image
+                src="/students3.jpg"
+                alt="Classroom environment"
+                width={500}
+                height={300}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-5 text-center">
+                <h3 className="font-bold text-lg">Parents</h3>
+                <p className="text-sm mt-2">
+                  Monitor student progress and encourage consistent exam preparation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
 
-      {/** 
-      <section>
-        <h2>What Safari Smart does</h2>
-        <ul className="list-disc pl-6">
-          <li>Provides short lessons (text and/or video content)</li>
-          <li>Gives quizzes and practice questions to reinforce learning</li>
-          <li>Tracks progress so students can see improvement over time</li>
-          <li>Supports teacher feedback and (later) AI-assisted grading for writing</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>Who it’s for</h2>
-        <ul>
-          <li>
-            <strong>Students:</strong> learn content, take quizzes, and track progress
-          </li>
-          <li>
-            <strong>Professors:</strong> upload content, review assignments, and give feedback
-          </li>
-          <li>
-            <strong>Parents:</strong> view student progress and support studying
-          </li>
-        </ul>
-      </section>
-      */}
     
 
 
