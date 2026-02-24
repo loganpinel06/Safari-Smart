@@ -25,6 +25,21 @@ export default function Home() {
         </ul>
       </section>
 
+      <section>
+        <h2>Who it’s for</h2>
+        <ul>
+          <li>
+            <strong>Students:</strong> learn content, take quizzes, and track progress
+          </li>
+          <li>
+            <strong>Professors:</strong> upload content, review assignments, and give feedback
+          </li>
+          <li>
+            <strong>Parents:</strong> view student progress and support studying
+          </li>
+        </ul>
+      </section>
+
 
     </main>
   );
