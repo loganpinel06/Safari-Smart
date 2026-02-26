@@ -9,9 +9,10 @@ import Image from "next/image";
 
 export default function Home() {
   return (
+    
     <main className = "min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
-      {/* Top navigation bar */}
+      {/* Nav bar */}
       <header className="max-w-5xl mx-auto px-6 pt-6 pb-4 border-b border-[#4B3A46]/10">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -83,6 +84,7 @@ export default function Home() {
       {/* Divider */}
       <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
+        {/* Features */}
         <section
           id="features"
           className="scroll-mt-24 bg-[#FFF1B8] rounded-xl p-10 space-y-6"
@@ -137,6 +139,7 @@ export default function Home() {
         {/* Divider */}
         <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
+        {/* Audience (who SS supports) */}
         <section id="audience"
           className="scroll-mt-24 space-y-10 pt-16">
 
@@ -198,6 +201,7 @@ export default function Home() {
         {/* Divider */}
         <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
+        {/* Why use safari smart */}
         <section className="bg-white/60 rounded-xl p-10 space-y-4 text-center">
           <h2 className="text-3xl font-bold">Why Safari Smart?</h2>
           <p className="max-w-3xl mx-auto text-[#4B3A46]">
@@ -210,6 +214,7 @@ export default function Home() {
         {/* Divider */}
         <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
+        {/* Get started (sign up/sign in) */}
         <section
           id="get-started"
           className="scroll-mt-24 bg-[#592803] text-[#FFF1E5] rounded-xl p-10 text-center space-y-4">
@@ -235,8 +240,6 @@ export default function Home() {
         </section>
 
     </div>
-  
-
 
     </main>
   );
