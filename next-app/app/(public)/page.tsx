@@ -82,7 +82,7 @@ export default function Home() {
 
         <section
           id="features"
-          className="bg-[#FFF1B8] rounded-xl p-10 space-y-6"
+          className="scroll-mt-24 bg-[#FFF1B8] rounded-xl p-10 space-y-6"
         >
           <h2 className="text-3xl font-bold text-center">Features</h2>
 
@@ -132,7 +132,7 @@ export default function Home() {
         </section>
 
         <section id="audience"
-          className="space-y-10 pt-16">
+          className="scroll-mt-24 space-y-10 pt-16">
 
           <h2 className="text-3xl font-bold text-center">
             Who Safari Smart Supports
@@ -200,7 +200,7 @@ export default function Home() {
 
         <section
           id="get-started"
-          className="bg-[#592803] text-[#FFF1E5] rounded-xl p-10 text-center space-y-4">
+          className="scroll-mt-24 bg-[#592803] text-[#FFF1E5] rounded-xl p-10 text-center space-y-4">
           <h2 className="text-3xl font-bold">Ready to get started?</h2>
           <p className="max-w-2xl mx-auto">
             Create an account to begin studying for BECE and WASSCE with structured lessons and practice.
