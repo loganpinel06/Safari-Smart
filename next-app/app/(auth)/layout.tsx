@@ -12,7 +12,7 @@ export default async function AuthLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/signin?message=Please sign in to view this page");
+  if (!user) redirect("/signin?message=Please+sign+in+to+view+this+page");
 
   // logic for fetching user data and passing into context for children
 
