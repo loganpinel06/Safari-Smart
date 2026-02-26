@@ -52,8 +52,6 @@ export default function Home() {
         </header>
 
 
-      {/* Divider */}
-        <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
         {/* Main Content */}
       
@@ -79,9 +77,11 @@ export default function Home() {
           <p className="font-bold">Track Progress</p>
           <p className="text-sm text-[#4B3A46]">See improvement and stay consistent.</p>
         </div>
-      </div>
+        </div>
+      </section>
 
-        </section>
+      {/* Divider */}
+      <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
         <section
           id="features"
@@ -133,6 +133,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
         <section id="audience"
           className="scroll-mt-24 space-y-10 pt-16">
@@ -192,6 +195,9 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Divider */}
+        <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
+
         <section className="bg-white/60 rounded-xl p-10 space-y-4 text-center">
           <h2 className="text-3xl font-bold">Why Safari Smart?</h2>
           <p className="max-w-3xl mx-auto text-[#4B3A46]">
@@ -200,6 +206,9 @@ export default function Home() {
             consistent exam prep.
           </p>
         </section>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
         <section
           id="get-started"
