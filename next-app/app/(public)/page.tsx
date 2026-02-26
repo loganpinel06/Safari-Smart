@@ -12,7 +12,7 @@ export default function Home() {
     <main className = "min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
       {/* Top navigation bar */}
-      <header className="max-w-5xl mx-auto px-6 pt-6">
+      <header className="max-w-5xl mx-auto px-6 pt-6 pb-4 border-b border-[#4B3A46]/10">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
@@ -51,6 +51,9 @@ export default function Home() {
           </nav>
         </header>
 
+
+      {/* Divider */}
+        <div className="w-full h-px bg-[#4B3A46]/20 my-10"></div>
 
         {/* Main Content */}
       
@@ -139,7 +142,7 @@ export default function Home() {
           </h2>
 
           <div className="grid sm:grid-cols-3 gap-8">
-            <div className="bg-white/70 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white/70 rounded-xl overflow-hidden transition transform hover:-translate-y-1 hover:shadow-md">
               <Image
                 src="/students2.jpg"
                 alt="Students in classroom"
@@ -155,7 +158,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-white/70 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white/70 rounded-xl overflow-hidden transition transform hover:-translate-y-1 hover:shadow-md">
               <Image
                 src="/students1.jpg"
                 alt="Students studying"
@@ -171,7 +174,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-white/70 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white/70 rounded-xl overflow-hidden transition transform hover:-translate-y-1 hover:shadow-md">
               <Image
                 src="/students3.jpg"
                 alt="Classroom environment"
