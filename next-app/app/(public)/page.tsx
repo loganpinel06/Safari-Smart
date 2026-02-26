@@ -23,7 +23,7 @@ export default function Home() {
               priority
               className="rounded-full"
             />
-          <span className="font-extrabold text-3xl tracking-tight">
+          <span className="font-extrabold text-4xl tracking-tight">
             Safari Smart
           </span>
 
