@@ -6,7 +6,6 @@ import Image from "next/image";
  */
 
 
-
 export default function Home() {
   return (
     
@@ -19,23 +18,23 @@ export default function Home() {
             <Image
               src="/sslogo.png"
               alt="Safari Smart logo"
-              width={64}
-              height={64}
+              width={80}
+              height={80}
               priority
-              className="rounded-lg"
+              className="rounded-full"
             />
-          <span className="font-extrabold text-2xl tracking-tight">
+          <span className="font-extrabold text-3xl tracking-tight">
             Safari Smart
           </span>
 
           </div>
-          <div className="flex items-center gap-4 text-sm">
-            <a href="#features" className="hover:underline">
-              Features
-            </a>
-            <a href="#audience" className="hover:underline">
-              Who it’s for
-            </a>
+            <div className="flex items-center gap-4 text-md">
+              <a href="#features" className="hover:underline">
+                Features
+              </a>
+              <a href="#audience" className="hover:underline">
+                Who it’s for
+              </a>
 
             <a
               href="/signin"
