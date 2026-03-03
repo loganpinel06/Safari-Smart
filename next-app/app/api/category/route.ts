@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth } from "@/utils/requireAuth";
 
-const BECE_PARENT_ID = "bece";
-const WASSCE_PARENT_ID = "wassce";
+const BECE_PARENT_ID = "1";
+const WASSCE_PARENT_ID = "2";
 
 export async function POST(request: Request) {
   //try, catch block
