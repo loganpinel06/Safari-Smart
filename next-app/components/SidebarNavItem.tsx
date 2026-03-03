@@ -1,31 +1,27 @@
-import Link from "next/link";
-
 type SidebarNavItemProps = {
   label: string;
   active?: boolean;
-  href?: string;
+  onClick?: () => void;
 };
 
 export default function SidebarNavItem({
   label,
   active = false,
-  href,
+  onClick,
 }: SidebarNavItemProps) {
-  const className = [
-    "block w-full py-2 text-sm font-semibold rounded text-center",
-    active ? "bg-[#6AC700] text-white" : "bg-black text-white hover:opacity-90",
-  ].join(" ");
+  const base =
+    "w-full py-3 text-sm font-semibold rounded-lg transition";
 
-  if (href) {
-    return (
-      <Link href={href} className={className}>
-        {label}
-      </Link>
-    );
-  }
+  const activeCls = "bg-[#6AC700] text-white";
+  const inactiveCls =
+    "bg-black text-white hover:opacity-90";
 
   return (
-    <button type="button" className={className}>
+    <button
+      type="button"
+      className={`${base} ${active ? activeCls : inactiveCls}`}
+      onClick={onClick}
+    >
       {label}
     </button>
   );
