@@ -3,6 +3,7 @@
 #files off the github repository
 
 #Our Configurations
+.DS_Store
 
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
