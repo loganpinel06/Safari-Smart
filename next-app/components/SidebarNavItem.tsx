@@ -10,7 +10,7 @@ export default function SidebarNavItem({
   onClick,
 }: SidebarNavItemProps) {
   const base =
-    "w-full py-3 text-sm font-semibold rounded-lg transition";
+    "w-full py-8 text-lg font-semibold rounded-lg transition";
 
   const activeCls = "bg-[#6AC700] text-white";
   const inactiveCls =
