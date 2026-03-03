@@ -14,7 +14,7 @@ export default function DashboardPage() {
 
       {/* Sidebar */}
       <div className="w-1/4 min-w-[280px] bg-[#d9d9d9] p-6">
-        <Sidebar userName="John Doe" activeItem="Dashboard" />
+        <Sidebar userName="John Doe" examTrack="BECE" activeItem="Dashboard" />
       </div>
 
       {/* Main Content */}
