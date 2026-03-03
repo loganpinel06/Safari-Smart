@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth } from "@/utils/requireAuth";
 
-const BECE_PARENT_ID = "1";
-const WASSCE_PARENT_ID = "2";
+const BECE_PARENT_ID = 1;
+const WASSCE_PARENT_ID = 2;
 
 export async function POST(request: Request) {
   //try, catch block
@@ -74,18 +74,26 @@ export async function GET(request: Request) {
     let parentCategoryID;
     if (isStudent) {
       if (parent_id != null) {
-        parentCategoryID = parent_id;
+        parentCategoryID = Number(parent_id);
       } else {
         parentCategoryID = test;
       }
     } else {
-      parentCategoryID = parent_id ?? null;
+      parentCategoryID = Number(parent_id) ?? null;
     }
 
-    const { data, error } = await supabase
-      .from("category")
-      .select("*")
-      .eq("parent_id", parentCategoryID);
+    let data, error;
+    if (parentCategoryID == null || isNaN(parentCategoryID)) {
+      ({ data, error } = await supabase
+        .from("category")
+        .select("*")
+        .is("parent_id", null));
+    } else {
+      ({ data, error } = await supabase
+        .from("category")
+        .select("*")
+        .eq("parent_id", parentCategoryID));
+    }
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
