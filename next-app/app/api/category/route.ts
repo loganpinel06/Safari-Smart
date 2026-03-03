@@ -1,4 +1,4 @@
-//backend route for adding 'categories' to the database 'category' table
+//backend route for adding 'categories' to the database 'category' table.
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth } from "@/utils/requireAuth";
