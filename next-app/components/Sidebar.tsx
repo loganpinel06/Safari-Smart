@@ -14,8 +14,8 @@ export default function Sidebar({ userName, activeItem }: SidebarProps) {
         <Image
           src="/sslogo.png"
           alt="Safari Smart"
-          width={56}
-          height={56}
+          width={90}
+          height={90}
           className="rounded-full"
           priority
         />
