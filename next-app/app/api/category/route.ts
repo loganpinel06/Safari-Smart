@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth } from "@/utils/requireAuth";
 
+const BECE_PARENT_ID = "bece";
+const WASSCE_PARENT_ID = "wassce";
+
 export async function POST(request: Request) {
   //try, catch block
   try {
@@ -40,6 +43,62 @@ export async function POST(request: Request) {
     //handle any unexpected errors
     return NextResponse.json(
       { error: "Problem creating category" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const supabase = await createClient();
+    const { user, response } = await requireAuth(supabase, request);
+    if (response) return response;
+
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    if (userError || !userData) {
+      return NextResponse.json(
+        { error: "User profile not found" },
+        { status: 404 },
+      );
+    }
+
+    const test =
+      userData.exam_type === "BECE" ? BECE_PARENT_ID : WASSCE_PARENT_ID;
+    const { parent_id } = await request.json();
+    const isStudent = userData.role === "Student";
+    let parentCategoryID;
+    if (isStudent) {
+      if (parent_id != null) {
+        parentCategoryID = parent_id;
+      } else {
+        parentCategoryID = test;
+      }
+    } else {
+      parentCategoryID = parent_id ?? null;
+    }
+
+    const { data, error } = await supabase
+      .from("category")
+      .select("*")
+      .eq("parent_id", parentCategoryID);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    //return a success response if the category was created successfully
+    return NextResponse.json({
+      categories: data,
+      message: "Categories retrieved successfully",
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Problem retrieving categories" },
       { status: 500 },
     );
   }
