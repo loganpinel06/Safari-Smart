@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   title: "Safari Smart",
   description: "A learning web app for BECE and WASSCE exam preparation.",
   icons: {
-    icon: "/favicon.png",
-  },
+  icon: "/favicon.png?v=2",
+    },
 };
 
 export default function RootLayout({
