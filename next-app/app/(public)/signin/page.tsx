@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
@@ -8,6 +9,10 @@ export default function Page() {
     e.preventDefault();
     setLoading(true);
   }
+
+  //get the message query parameter from the URL if it exists
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
 
   return (
     /* Default Background */
