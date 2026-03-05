@@ -1,18 +1,15 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 
-export default function SignIn() {
+export default function ForgotPassword() {
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-  }
 
-  //get the message query parameter from the URL if it exists
-  const searchParams = useSearchParams();
-  const message = searchParams.get("message");
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    window.location.href = "/verifycode";
+  };
 
   return (
     /* Default Background */
@@ -50,14 +47,14 @@ export default function SignIn() {
           </nav>
         </header>
 
-        {/* Sign In Form */}
+        {/* Forgot Password Form */}
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">
             <h1 className="text-3xl font-bold text-center">
-              Welcome Back!
+              Forgot Password?
             </h1>
             <p className="text-center text-med text-[#592803]/60">
-              Enter your credentials to access your account.
+              Enter your email address and we'll send you a code to reset your password.
             </p>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
@@ -67,6 +64,8 @@ export default function SignIn() {
                 <input
                   name="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="johndoe@gmail.com"
                   required
                   autoComplete="email"
@@ -74,51 +73,15 @@ export default function SignIn() {
                 />
               </div>
 
-              <div className="flex flex-col">
-                <label className="font-semibold mb-1">Password</label>
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  autoComplete="current-password"
-                  className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
-                />
-              </div>
-
-              <div className="text-right">
-                <a href="/forgotpassword" className="text-sm text-[#C7601A] hover:underline">
-              Forgot Password?
-                </a>
-              </div>
-
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full py-3 rounded-lg bg-[#6AC700] text-white font-semibold hover:bg-[#5bb000] transition disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {loading ? "Signing in…" : "Sign In"}
+                {loading ? "Sending code..." : "Send Code"}
               </button>
 
             </form>
-
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-[#4B3A46]/15" />
-              <span className="text-xs text-[#592803]/40 tracking-wide">or continue with</span>
-              <div className="flex-1 h-px bg-[#4B3A46]/15" />
-            </div>
-
-            <button className="w-full py-2 rounded-lg border border-[#4B3A46]/20 text-[#592803]/70 hover:border-[#592803]/50 hover:text-[#592803] transition text-sm">
-              Google
-            </button>
-
-            <p className="text-center text-sm text-[#592803]/50">
-              Don't have an account?{" "}
-              <a href="/signup" className="text-[#C7601A] hover:underline">
-                Sign Up
-              </a>
-            </p>
-
           </div>
         </section>
 
