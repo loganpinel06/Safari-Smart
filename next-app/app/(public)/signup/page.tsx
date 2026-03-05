@@ -2,12 +2,10 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 
 export default function Page() {
-  //get the router for navigation after successful sign up
-  const router = useRouter();
   //state variables for the form fields
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState("");
@@ -25,8 +23,21 @@ export default function Page() {
     e.preventDefault();
     setLoading(true);
 
+    if (!fullName || !role || !email || !password || !confirmPassword) {
+      alert("Please fill in all required fields");
+      setLoading(false);
+      return;
+    }
+
+    if (role === "Student" && !test) {
+      alert("Please select your exam type");
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       alert("Passwords do not match");
+      setLoading(false);
       return;
     }
 
@@ -39,6 +50,7 @@ export default function Page() {
     //return any errors
     if (error) {
       alert(error.message);
+      setLoading(false);
       return;
     }
 
@@ -64,7 +76,7 @@ export default function Page() {
     }
 
     //if successful, send to dashboard
-    router.replace("/dashboard");
+    redirect("/dashboard");
     setLoading(false);
   };
   return (
@@ -130,24 +142,23 @@ export default function Page() {
                 >
                   <option value="">Select your role</option>
                   <option value="Student">Student</option>
-                  <option value="Parent">Parent</option>
                   <option value="Teacher">Teacher</option>
                 </select>
               </div>
 
-              {role === "student" && (
-              <div className="flex flex-col">
-                <label className="font-semibold mb-1">
-                  Test You Are Taking
-                </label>
-                <input
-                  type="text"
-                  placeholder="BECE or WASSCE"
-                  value={test}
-                  onChange={(e) => setTest(e.target.value)}
-                  className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
-                />
-              </div>
+              {role === "Student" && (
+                <div className="flex flex-col">
+                  <label className="font-semibold mb-1">Exam Type</label>
+                  <select
+                    value={test}
+                    onChange={(e) => setTest(e.target.value)}
+                    className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
+                  >
+                    <option value="">Select your exam type</option>
+                    <option value="BECE">BECE</option>
+                    <option value="WASSCE">WASSCE</option>
+                  </select>
+                </div>
               )}
 
               <div className="flex flex-col">

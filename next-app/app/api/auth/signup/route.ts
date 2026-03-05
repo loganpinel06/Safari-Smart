@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { requireAuth } from "@/utils/requireAuth";
 
 type SignupBody = {
   name: string;
@@ -10,10 +11,10 @@ type SignupBody = {
 export async function POST(request: Request) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.getUser();
+  const { user, response } = await requireAuth(supabase, request);
 
-  if (error || !data.user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  if (response) {
+    return response;
   }
 
   const body = (await request.json()) as SignupBody;
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   const { error: insertError } = await supabase.from("users").insert({
-    id: data.user.id,
+    id: user.id,
     name,
     exam_type: account_type === "Student" ? exam_type : null,
     account_type,
