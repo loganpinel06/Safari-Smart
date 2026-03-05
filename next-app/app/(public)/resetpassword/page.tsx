@@ -3,7 +3,8 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function ResetPassword() {
-  const [code, setPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -51,45 +52,34 @@ export default function ResetPassword() {
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">
             <h1 className="text-3xl font-bold text-center">
-                Reset Your Password
+            Reset Your Password
             </h1>
             <p className="text-center text-med text-[#592803]/60">
               Enter your new password.
             </p>
             
             <form className="space-y-5" onSubmit={handleSubmit}>
-
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">New Password</label>
                 <input
                   name="password"
                   type="password"
-                  value={code}
-                  inputMode="numeric"
-                  maxLength={6}
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••"
+                  placeholder="••••••••••••"
                   required
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
 
-              <p className="text-center text-med text-[#592803]/60">
-              Re-enter your new password.
-            </p>
-
-            <form className="space-y-5" onSubmit={handleSubmit}></form>
-
               <div className="flex flex-col">
-                <label className="font-semibold mb-1">New Password</label>
+                <label className="font-semibold mb-1">Re-enter New Password</label>
                 <input
                   name="password"
                   type="password"
-                  value={code}
-                  inputMode="numeric"
-                  maxLength={6}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••••••"
                   required
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />

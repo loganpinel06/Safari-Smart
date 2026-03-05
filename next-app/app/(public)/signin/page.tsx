@@ -79,7 +79,7 @@ export default function SignIn() {
                 <input
                   name="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="••••••••••••"
                   required
                   autoComplete="current-password"
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
