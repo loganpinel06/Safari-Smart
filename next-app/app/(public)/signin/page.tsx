@@ -2,23 +2,58 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
+import { redirect } from "next/navigation";
 
 export default function SignIn() {
+  //state variables for the form fields
   const [loading, setLoading] = useState(false);
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
   }
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   //get the message query parameter from the URL if it exists
   const searchParams = useSearchParams();
   const message = searchParams.get("message");
 
+  //sign in with supabase logic
+  //get the client
+  const supabaseClient = supabase();
+
+  //handleSignIn function
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!email || !password) {
+      alert("Please fill in all required fields");
+      setLoading(false);
+      return;
+    }
+
+    //sign in the user with supabase
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    //return any errors
+    if (error) {
+      alert(error.message);
+      setLoading(false);
+      return;
+    }
+
+    redirect("/dashboard");
+  };
+
   return (
     /* Default Background */
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
-
         {/* Navigation Bar */}
         <header className="max-w-5xl mx-auto px-6 pt-6 pb-4 border-b border-[#4B3A46]/10">
           <nav className="flex items-center justify-between">
@@ -53,15 +88,12 @@ export default function SignIn() {
         {/* Sign In Form */}
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">
-            <h1 className="text-3xl font-bold text-center">
-              Welcome Back!
-            </h1>
+            <h1 className="text-3xl font-bold text-center">Welcome Back!</h1>
             <p className="text-center text-med text-[#592803]/60">
               Enter your credentials to access your account.
             </p>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
-
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Email</label>
                 <input
@@ -70,6 +102,8 @@ export default function SignIn() {
                   placeholder="johndoe@gmail.com"
                   required
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
@@ -82,29 +116,41 @@ export default function SignIn() {
                   placeholder="••••••••••••"
                   required
                   autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
 
               <div className="text-right">
-                <a href="/forgotpassword" className="text-sm text-[#C7601A] hover:underline">
-              Forgot Password?
+                <a
+                  href="/forgotpassword"
+                  className="text-sm text-[#C7601A] hover:underline"
+                >
+                  Forgot Password?
                 </a>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-lg bg-[#6AC700] text-white font-semibold hover:bg-[#5bb000] transition disabled:opacity-70 disabled:cursor-not-allowed"
+                onClick={handleSignIn}
+                className={`w-full py-3 rounded-lg text-white font-semibold transition
+  ${
+    loading
+      ? "bg-[#4f9800] cursor-not-allowed"
+      : "bg-[#6AC700] hover:bg-[#5bb000] cursor-pointer"
+  }`}
               >
                 {loading ? "Signing in…" : "Sign In"}
               </button>
-
             </form>
 
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-[#4B3A46]/15" />
-              <span className="text-xs text-[#592803]/40 tracking-wide">or continue with</span>
+              <span className="text-xs text-[#592803]/40 tracking-wide">
+                or continue with
+              </span>
               <div className="flex-1 h-px bg-[#4B3A46]/15" />
             </div>
 
@@ -118,10 +164,8 @@ export default function SignIn() {
                 Sign Up
               </a>
             </p>
-
           </div>
         </section>
-
       </div>
     </main>
   );
