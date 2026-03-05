@@ -1,6 +1,10 @@
+"use client";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Page() {
+  const [role, setRole] = useState("");
+  
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
@@ -58,14 +62,18 @@ export default function Page() {
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Role</label>
                 <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 >
                   <option value="">Select your role</option>
                   <option value="student">Student</option>
+                  <option value="parent">Parent</option>
                   <option value="teacher">Teacher</option>
                 </select>
               </div>
 
+              {role === "student" && (
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Test You Are Taking</label>
                 <input
@@ -74,6 +82,7 @@ export default function Page() {
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
+              )}
 
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Email</label>
