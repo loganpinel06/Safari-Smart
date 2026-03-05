@@ -9,7 +9,7 @@ export default function VerifyCode() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (code === "123456") {
-    window.location.href = "/reset-password"; // your next page
+    window.location.href = "/resetpassword"; // your next page
   } else {
     alert("Invalid code. Try 123456");
   }
