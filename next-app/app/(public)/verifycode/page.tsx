@@ -2,12 +2,19 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function SignIn() {
+export default function VerifyCode() {
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    if (code === "123456") {
+    window.location.href = "/reset-password"; // your next page
+  } else {
+    alert("Invalid code. Try 123456");
   }
+    //console.log("Verify code:", code); // can replace test code with actual verification logic
+  };
 
   return (
     /* Default Background */
@@ -45,46 +52,31 @@ export default function SignIn() {
           </nav>
         </header>
 
-        {/* Sign In Form */}
+        {/* Verify Code Form */}
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">
             <h1 className="text-3xl font-bold text-center">
-              Welcome Back!
+              Verify Your Code
             </h1>
             <p className="text-center text-med text-[#592803]/60">
-              Enter your credentials to access your account.
+              Enter the 6 digit code from your email.
             </p>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
 
               <div className="flex flex-col">
-                <label className="font-semibold mb-1">Email</label>
+                <label className="font-semibold mb-1">Verification Code</label>
                 <input
-                  name="email"
-                  type="email"
-                  placeholder="johndoe@gmail.com"
+                  name="code"
+                  type="text"
+                  value={code}
+                  inputMode="numeric"
+                  maxLength={6}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="123456"
                   required
-                  autoComplete="email"
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="font-semibold mb-1">Password</label>
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  autoComplete="current-password"
-                  className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
-                />
-              </div>
-
-              <div className="text-right">
-                <a href="/forgotpassword" className="text-sm text-[#C7601A] hover:underline">
-              Forgot Password?
-                </a>
               </div>
 
               <button
@@ -92,28 +84,10 @@ export default function SignIn() {
                 disabled={loading}
                 className="w-full py-3 rounded-lg bg-[#6AC700] text-white font-semibold hover:bg-[#5bb000] transition disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {loading ? "Signing in…" : "Sign In"}
+                {loading ? "Verifying code..." : "Verify Code"}
               </button>
 
             </form>
-
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-[#4B3A46]/15" />
-              <span className="text-xs text-[#592803]/40 tracking-wide">or continue with</span>
-              <div className="flex-1 h-px bg-[#4B3A46]/15" />
-            </div>
-
-            <button className="w-full py-2 rounded-lg border border-[#4B3A46]/20 text-[#592803]/70 hover:border-[#592803]/50 hover:text-[#592803] transition text-sm">
-              Google
-            </button>
-
-            <p className="text-center text-sm text-[#592803]/50">
-              Don't have an account?{" "}
-              <a href="/signup" className="text-[#C7601A] hover:underline">
-                Sign Up
-              </a>
-            </p>
-
           </div>
         </section>
 
