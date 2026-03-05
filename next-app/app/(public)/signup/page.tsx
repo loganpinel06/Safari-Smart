@@ -15,6 +15,7 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   //sign up with supabase logic
   //get the client
@@ -22,6 +23,7 @@ export default function Page() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     if (password !== confirmPassword) {
       alert("Passwords do not match");
@@ -41,7 +43,7 @@ export default function Page() {
     }
 
     //send the user data to backend route to be added to the 'users' table in the database
-    const response = await fetch("/api/signup", {
+    const response = await fetch("/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,15 +59,13 @@ export default function Page() {
     const responseData = await response.json();
     if (!response.ok) {
       alert(responseData.error || "An error occurred during sign up");
+      setLoading(false);
       return;
     }
 
-    //if successful, alert the user to check their email for confirmation
-    alert("Check your email to confirm your account!");
-    //redirect to sign in page with a message
-    router.push(
-      "/signin?message=Check+your+email+to+confirm+your+account+then+sign+in",
-    );
+    //if successful, send to dashboard
+    router.replace("/dashboard");
+    setLoading(false);
   };
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
@@ -182,9 +182,15 @@ export default function Page() {
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-lg bg-[#6AC700] text-white font-semibold hover:bg-[#5bb000] transition"
+                className={`w-full py-3 rounded-lg text-white font-semibold transition
+  ${
+    loading
+      ? "bg-[#4f9800] cursor-not-allowed"
+      : "bg-[#6AC700] hover:bg-[#5bb000] cursor-pointer"
+  }`}
+                disabled={loading}
               >
-                Sign Up
+                {loading ? "Signing Up..." : "Sign Up"}
               </button>
             </form>
           </div>
