@@ -74,7 +74,7 @@ export async function GET(request: Request) {
     let parentCategoryID;
     if (isStudent) {
       if (parent_id != null) {
-        parentCategoryID = Number(parent_id);
+        parentCategoryID = parent_id;
       } else {
         parentCategoryID = test;
       }

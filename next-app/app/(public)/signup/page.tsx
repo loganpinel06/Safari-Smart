@@ -130,10 +130,12 @@ export default function Page() {
                 >
                   <option value="">Select your role</option>
                   <option value="Student">Student</option>
+                  <option value="Parent">Parent</option>
                   <option value="Teacher">Teacher</option>
                 </select>
               </div>
 
+              {role === "student" && (
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">
                   Test You Are Taking
@@ -146,6 +148,7 @@ export default function Page() {
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
+              )}
 
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Email</label>
