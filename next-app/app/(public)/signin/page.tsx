@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import { redirect } from "next/navigation";
 
 export default function SignIn() {
   //state variables for the form fields
@@ -45,6 +46,8 @@ export default function SignIn() {
       setLoading(false);
       return;
     }
+
+    redirect("/dashboard");
   };
 
   return (
@@ -132,7 +135,12 @@ export default function SignIn() {
                 type="submit"
                 disabled={loading}
                 onClick={handleSignIn}
-                className="w-full py-3 rounded-lg bg-[#6AC700] text-white font-semibold hover:bg-[#5bb000] transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className={`w-full py-3 rounded-lg text-white font-semibold transition
+  ${
+    loading
+      ? "bg-[#4f9800] cursor-not-allowed"
+      : "bg-[#6AC700] hover:bg-[#5bb000] cursor-pointer"
+  }`}
               >
                 {loading ? "Signing in…" : "Sign In"}
               </button>
