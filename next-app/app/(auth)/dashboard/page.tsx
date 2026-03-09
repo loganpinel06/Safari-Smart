@@ -36,7 +36,7 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-1/4 min-w-[280px] bg-[#d9d9d9] p-6">
+        <div className="w-1/4 min-w-70 bg-[#d9d9d9] p-6">
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
