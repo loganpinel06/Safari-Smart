@@ -85,6 +85,13 @@ export default function SignIn() {
           </nav>
         </header>
 
+        {/* Display message if it exists */}
+        {message && (
+          <div className="bg-[#6AC700]/20 border border-[#6AC700] mb-6 p-6 max-w-md rounded-lg mx-auto">
+            <p className="text-center text-med text-[#592803]">{message}</p>
+          </div>
+        )}
+
         {/* Sign In Form */}
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">

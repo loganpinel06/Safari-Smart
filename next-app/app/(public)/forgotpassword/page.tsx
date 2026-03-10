@@ -6,16 +6,31 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    window.location.href = "/verifycode";
+    //send the email to the backend API route to handle sending the reset password email
+    setLoading(true);
+    const response = await fetch("/api/auth/send-reset-link", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+    setLoading(false);
+    if (response.ok) {
+      alert(data.message);
+    } else {
+      alert(data.error);
+    }
   };
 
   return (
     /* Default Background */
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
-
         {/* Navigation Bar */}
         <header className="max-w-5xl mx-auto px-6 pt-6 pb-4 border-b border-[#4B3A46]/10">
           <nav className="flex items-center justify-between">
@@ -50,15 +65,13 @@ export default function ForgotPassword() {
         {/* Forgot Password Form */}
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">
-            <h1 className="text-3xl font-bold text-center">
-              Forgot Password?
-            </h1>
+            <h1 className="text-3xl font-bold text-center">Forgot Password?</h1>
             <p className="text-center text-med text-[#592803]/60">
-              Enter your email address and we'll send you a code to reset your password.
+              Enter your email address and we'll send you a code to reset your
+              password.
             </p>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
-
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Email</label>
                 <input
@@ -80,11 +93,9 @@ export default function ForgotPassword() {
               >
                 {loading ? "Sending code..." : "Send Code"}
               </button>
-
             </form>
           </div>
         </section>
-
       </div>
     </main>
   );

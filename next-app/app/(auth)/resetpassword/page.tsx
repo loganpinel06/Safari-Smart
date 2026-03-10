@@ -1,34 +1,51 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { supabase } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 // Compare the new passwords and see if they match
-const passwordsMatch = (pass: string, confirmPass: string) => pass === confirmPass;
+const passwordsMatch = (pass: string, confirmPass: string) =>
+  pass === confirmPass;
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //setup router for navigation after form submission
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password === confirmPassword){
-      console.log('Passwords match!');
-      setPasswordsMatch(true);
+    //create supabase client
+    const supabaseClient = supabase();
+
+    //check if passwords match
+    if (password === confirmPassword) {
+      console.log("Passwords match!");
+      //update user through supabase
+      const { error } = await supabaseClient.auth.updateUser({
+        password,
+      });
+      //handle errors/success messages
+      if (error) {
+        alert(error.message);
+      } else {
+        alert("Password updated successfully!");
+      }
     } else {
-      console.log('Passwords do not match!');
-      setPasswordsMatch(false);
-      return;
+      alert("Passwords do not match!");
     }
-    window.location.href = "/signin";
+    //call logout route to clear the temporary session created by the confirm route to protect the reset password page
+    await supabaseClient.auth.signOut();
+    router.push("/signin");
   };
 
   return (
     /* Default Background */
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803] antialiased">
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-20">
-
         {/* Navigation Bar */}
         <header className="max-w-5xl mx-auto px-6 pt-6 pb-4 border-b border-[#4B3A46]/10">
           <nav className="flex items-center justify-between">
@@ -64,12 +81,12 @@ export default function ResetPassword() {
         <section className="flex justify-center">
           <div className="bg-white/70 rounded-xl p-10 w-full max-w-xl shadow-md space-y-6">
             <h1 className="text-3xl font-bold text-center">
-            Reset Your Password
+              Reset Your Password
             </h1>
             <p className="text-center text-med text-[#592803]/60">
               Enter your new password.
             </p>
-            
+
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">New Password</label>
@@ -85,7 +102,9 @@ export default function ResetPassword() {
               </div>
 
               <div className="flex flex-col">
-                <label className="font-semibold mb-1">Re-enter New Password</label>
+                <label className="font-semibold mb-1">
+                  Re-enter New Password
+                </label>
                 <input
                   name="password"
                   type="password"
@@ -96,7 +115,11 @@ export default function ResetPassword() {
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
-              {!passwordsMatch && <p className="text-[#C7601A]">Passwords do not match! Try again.</p>}
+              {!passwordsMatch && (
+                <p className="text-[#C7601A]">
+                  Passwords do not match! Try again.
+                </p>
+              )}
 
               <button
                 type="submit"
@@ -105,11 +128,9 @@ export default function ResetPassword() {
               >
                 {loading ? "Resetting password..." : "Reset Password"}
               </button>
-
             </form>
           </div>
         </section>
-
       </div>
     </main>
   );
