@@ -28,9 +28,9 @@ export default async function DashboardPage() {
   }
 
   const subjects = [
-    { title: "ENGLISH", href: "/dashboard/category/english" },
-    { title: "SCIENCE", href: "/dashboard/category/science" },
-    { title: "MATHEMATICS", href: "/dashboard/category/mathematics" },
+    { title: "English", href: "/dashboard/category/english" },
+    { title: "Science", href: "/dashboard/category/science" },
+    { title: "Mathematics", href: "/dashboard/category/mathematics" },
   ];
 
   return (
