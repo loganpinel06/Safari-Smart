@@ -69,17 +69,19 @@ export async function GET(request: Request) {
 
     const test =
       userData.exam_type === "BECE" ? BECE_PARENT_ID : WASSCE_PARENT_ID;
-    const { parent_id } = await request.json();
-    const isStudent = userData.role === "Student";
+    const { searchParams } = new URL(request.url);
+    let parent_id = searchParams.get("parent_id");
+    const isStudent = userData.account_type === "Student";
     let parentCategoryID;
+
     if (isStudent) {
       if (parent_id != null) {
-        parentCategoryID = parent_id;
+        parentCategoryID = Number(parent_id);
       } else {
         parentCategoryID = test;
       }
     } else {
-      parentCategoryID = Number(parent_id) ?? null;
+      parentCategoryID = parent_id ? Number(parent_id) : null;
     }
 
     let data, error;

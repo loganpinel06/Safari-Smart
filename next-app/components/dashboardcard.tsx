@@ -6,7 +6,11 @@ type DashboardCardProps = {
   href?: string;
 };
 
-export default function DashboardCard({ title, subtitle, href }: DashboardCardProps) {
+export default function DashboardCard({
+  title,
+  subtitle,
+  href,
+}: DashboardCardProps) {
   const card = (
     <div className="bg-black rounded-xl h-28 flex flex-col justify-end p-4 hover:opacity-90 transition">
       <p className="text-white font-bold">{title}</p>
