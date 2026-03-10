@@ -36,6 +36,7 @@ export default function ResetPassword() {
       }
     } else {
       alert("Passwords do not match!");
+      return;
     }
     //call logout route to clear the temporary session created by the confirm route to protect the reset password page
     await supabaseClient.auth.signOut();
