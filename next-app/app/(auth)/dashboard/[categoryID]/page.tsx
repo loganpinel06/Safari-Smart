@@ -4,8 +4,13 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  params,
+}: {
+  params: Promise<{ categoryID: string }>;
+}) {
   const supabase = await createClient();
+  const categoryID = (await params).categoryID;
 
   const {
     data: { user },
@@ -29,7 +34,7 @@ export default async function DashboardPage() {
   }
 
   const categoryRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/category`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/category?parent_id=${categoryID}`,
     {
       headers: {
         Cookie: (await cookies()).toString(),
@@ -42,8 +47,6 @@ export default async function DashboardPage() {
   }
 
   const { categories } = await categoryRes.json();
-
-  console.log(categories);
 
   const subjects = [];
   for (const category of categories) {
