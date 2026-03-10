@@ -7,12 +7,14 @@ type SidebarProps = {
   userName: string;
   activeItem: ActiveItem;
   examTrack?: string;
+  logoutAction: () => Promise<void>;
 };
 
 export default function Sidebar({
   userName,
   activeItem,
-  examTrack = "BECE",
+  examTrack,
+  logoutAction
 }: SidebarProps) {
   return (
     <aside className="bg-[#d9d9d9] min-h-screen flex flex-col">
@@ -52,11 +54,11 @@ export default function Sidebar({
 
 
     {/* LOG OUT */}
-    <div className="px-8 pb-12">
-        <button className="w-full border border-black/30 py-3 text-sm font-semibold rounded-lg hover:bg-black/5 transition">
+    <form action={logoutAction}>
+      <button className="w-full border border-black/30 py-2 text-sm rounded hover:bg-black/5">
         Log Out
-        </button>
-    </div>
+      </button>
+    </form>
 
     </aside>
   );

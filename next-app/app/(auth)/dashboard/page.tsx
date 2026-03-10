@@ -41,6 +41,7 @@ export default async function DashboardPage() {
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
+            logoutAction={logout}
           />
         </div>
 
@@ -53,11 +54,6 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            <form action={logout}>
-              <button className="px-4 py-2 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600">
-                Logout
-              </button>
-            </form>
           </div>
 
           <section className="space-y-6">
