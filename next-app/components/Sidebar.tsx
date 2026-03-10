@@ -17,48 +17,49 @@ export default function Sidebar({
   logoutAction
 }: SidebarProps) {
   return (
-    <aside className="bg-[#d9d9d9] min-h-screen flex flex-col">
+    <aside className="bg-[#d9d9d9] min-h-screen flex flex-col justify-between">
 
-    {/* PROFILE + MANAGE ACCOUNT */}
-    <div className="px-8 pt-10 pb-6 flex flex-col items-center gap-4">
+      {/* top */}
+      <div className="px-8 pt-10 flex flex-col items-center gap-4">
         <Image
-        src="/sslogo.png"
-        alt="Safari Smart"
-        width={140}
-        height={140}
-        className="rounded-full"
-        priority
+          src="/sslogo.png"
+          alt="Safari Smart"
+          width={140}
+          height={140}
+          className="rounded-full"
+          priority
         />
 
         <div className="text-center">
-        <p className="font-extrabold text-2xl tracking-wide">
+          <p className="font-extrabold text-2xl tracking-wide">
             {userName.toUpperCase()}
-        </p>
-        <p className="text-sm text-black/60 mt-1">
+          </p>
+
+          <p className="text-sm text-black/60 mt-1">
             Exam Track: <span className="font-semibold">{examTrack}</span>
-        </p>
+          </p>
         </div>
 
         <button className="w-full bg-black text-white py-3 text-sm font-semibold rounded-lg hover:opacity-90 transition mt-4">
-        Manage Account
+          Manage Account
         </button>
-    </div>
+      </div>
 
-
-    {/* NAV BUTTONS (THIS IS THE KEY CHANGE) */}
-    <div className="flex-1 flex flex-col justify-center px-8 space-y-6">
+      {/* middle nav */}
+      <div className="px-4 space-y-6">
         <SidebarNavItem label="Dashboard" active={activeItem === "Dashboard"} />
         <SidebarNavItem label="GoodStart AI" active={activeItem === "GoodStart AI"} />
         <SidebarNavItem label="Settings" active={activeItem === "Settings"} />
-    </div>
+      </div>
 
-
-    {/* LOG OUT */}
-    <form action={logoutAction}>
-      <button className="w-full border border-black/30 py-2 text-sm rounded hover:bg-black/5">
-        Log Out
-      </button>
-    </form>
+      {/* logout */}
+      <div className="px-8 pb-10">
+        <form action={logoutAction}>
+          <button className="w-full border border-black/30 py-3 text-sm rounded hover:bg-black/5">
+            Log Out
+          </button>
+        </form>
+      </div>
 
     </aside>
   );
