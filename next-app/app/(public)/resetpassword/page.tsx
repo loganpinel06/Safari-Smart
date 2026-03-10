@@ -2,13 +2,25 @@
 import Image from "next/image";
 import { useState } from "react";
 
+// Compare the new passwords and see if they match
+const passwordsMatch = (pass: string, confirmPass: string) => pass === confirmPass;
+
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (password === confirmPassword){
+      console.log('Passwords match!');
+      setPasswordsMatch(true);
+    } else {
+      console.log('Passwords do not match!');
+      setPasswordsMatch(false);
+      return;
+    }
     window.location.href = "/signin";
   };
 
@@ -84,6 +96,7 @@ export default function ResetPassword() {
                   className="px-4 py-2 rounded-lg border border-[#4B3A46]/20 focus:outline-none focus:ring-2 focus:ring-[#6AC700]"
                 />
               </div>
+              {!passwordsMatch && <p className="text-[#C7601A]">Passwords do not match! Try again.</p>}
 
               <button
                 type="submit"
