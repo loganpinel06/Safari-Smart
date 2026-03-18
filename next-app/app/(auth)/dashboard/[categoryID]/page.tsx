@@ -50,6 +50,7 @@ export default async function DashboardCategoryPage({
 
   const { categories } = await categoryRes.json();
 
+  
   const topics = [];
   for (const category of categories) {
     topics.push({
@@ -57,6 +58,7 @@ export default async function DashboardCategoryPage({
       href: "/topic/" + category.id,
     });
   }
+
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
