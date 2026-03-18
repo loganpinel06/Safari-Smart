@@ -41,7 +41,7 @@ export default function Sidebar({
 
         <div className="mt-8">
           <Link
-            href="/manage-account"
+            href="/manageaccount"
             className="block w-full rounded-xl bg-[#FFF1B8] px-4 py-3 text-center text-sm font-semibold text-[#592803] shadow-sm transition hover:bg-[#f7e89b]"
           >
             Manage Account
