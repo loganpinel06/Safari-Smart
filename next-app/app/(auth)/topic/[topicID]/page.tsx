@@ -1,7 +1,7 @@
 import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
-import TopicOptionCard from "@/components/TopicOptionCard";
+import TopicSectionCard from "@/components/TopicSectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -38,21 +38,21 @@ export default async function TopicPage({
     {
       title: "Lesson Plans",
       description:
-        "Read lesson content, watch videos, and work through guided explanations for this topic.",
+        "Read through lesson content, video materials, and guided explanations for this topic.",
       href: `/lesson/${topicID}`,
       accent: "green" as const,
     },
     {
       title: "Quizzes",
       description:
-        "Practice what you learned with topic-based quizzes and immediate feedback.",
+        "Practice what you learned with topic-based quiz questions and immediate feedback.",
       href: `/quiz/${topicID}`,
       accent: "yellow" as const,
     },
     {
       title: "Exam Practice",
       description:
-        "Work through exam-style questions to prepare for assessments.",
+        "Work through exam-style questions to prepare for formal assessments.",
       href: `/exam/${topicID}`,
       accent: "orange" as const,
     },
@@ -61,7 +61,7 @@ export default async function TopicPage({
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-[320px]">
+        <div className="w-[320px] border-r border-[#4B3A46]/10">
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
@@ -80,15 +80,15 @@ export default async function TopicPage({
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
                 <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-                  Topic
+                  Topic ID
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">{topicID}</h2>
                 <p className="text-sm text-[#4B3A46]">
-                  This will later show the real topic name and progress from backend data.
+                  This page will eventually show the real topic name and progress from backend data.
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#4B3A46]/10 bg-[#FFF1B8] p-4 md:w-[180px]">
+              <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10 w-full md:w-[180px]">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
                   Sections
                 </p>
@@ -103,14 +103,14 @@ export default async function TopicPage({
                 <h2 className="text-2xl font-bold text-[#592803]">
                   Continue Learning
                 </h2>
-                <p className="mt-1 text-sm text-[#4B3A46]">
+                <p className="text-sm text-[#4B3A46] mt-1">
                   Open lesson content, quizzes, or exam practice for this topic.
                 </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-3">
                 {topicSections.map((section) => (
-                  <TopicOptionCard
+                  <TopicSectionCard
                     key={section.title}
                     title={section.title}
                     description={section.description}
