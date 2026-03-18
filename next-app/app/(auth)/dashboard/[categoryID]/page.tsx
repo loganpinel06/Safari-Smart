@@ -63,7 +63,7 @@ export default async function DashboardCategoryPage({
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-[320px] bg-[#d9d9d9] border-r border-[#4B3A46]/10 p-6">
+        <div className="w-[320px]">
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
