@@ -27,6 +27,12 @@ export default async function TopicPage({
     .eq("id", user.id)
     .single();
 
+  const { data: currentTopic } = await supabase
+    .from("topic")
+    .select("name")
+    .eq("topic_id", topicID)
+    .single();
+
   async function logout() {
     "use server";
     const supabase = await createClient();
@@ -61,7 +67,7 @@ export default async function TopicPage({
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-[320px] border-r border-[#4B3A46]/10">
+        <div className="w-[320px]">
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
@@ -73,18 +79,20 @@ export default async function TopicPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title="Topic Overview"
+              title={currentTopic?.name ?? "Topic Overview"}
               subtitle="Choose how you want to continue in this topic."
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
                 <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-                  Topic ID
+                  Topic
                 </p>
-                <h2 className="text-2xl font-bold text-[#592803]">{topicID}</h2>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  {currentTopic?.name ?? topicID}
+                </h2>
                 <p className="text-sm text-[#4B3A46]">
-                  This page will eventually show the real topic name and progress from backend data.
+                  Choose lesson content, quizzes, or exam practice for this topic.
                 </p>
               </div>
 
