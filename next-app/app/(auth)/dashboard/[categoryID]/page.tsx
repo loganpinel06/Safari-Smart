@@ -28,6 +28,12 @@ export default async function DashboardCategoryPage({
     .eq("id", user.id)
     .single();
 
+  const { data: currentCategory } = await supabase
+    .from("category")
+    .select("name")
+    .eq("category_id", categoryID)
+    .single();
+
   async function logout() {
     "use server";
     const supabase = await createClient();
@@ -50,7 +56,6 @@ export default async function DashboardCategoryPage({
 
   const { categories } = await categoryRes.json();
 
-  
   const topics = [];
   for (const category of categories) {
     topics.push({
@@ -58,7 +63,6 @@ export default async function DashboardCategoryPage({
       href: "/topic/" + category.id,
     });
   }
-
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
@@ -75,7 +79,7 @@ export default async function DashboardCategoryPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title="Subject Overview"
+              title={currentCategory?.name ?? "Subject Overview"}
               subtitle="Choose a topic to continue learning."
             />
 
@@ -85,7 +89,7 @@ export default async function DashboardCategoryPage({
                   Category
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  Learning Topics
+                  {currentCategory?.name ?? "Learning Topics"}
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
                   Select one of the available topics below.
