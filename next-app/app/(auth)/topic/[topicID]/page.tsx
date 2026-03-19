@@ -29,8 +29,14 @@ export default async function TopicPage({
 
   const { data: currentTopic } = await supabase
     .from("topic")
+    .select("name, category_id")
+    .eq("id", topicID)
+    .single();
+
+  const { data: parentCategory } = await supabase
+    .from("category")
     .select("name")
-    .eq("topic_id", topicID)
+    .eq("id", currentTopic?.category_id)
     .single();
 
   async function logout() {
@@ -79,8 +85,8 @@ export default async function TopicPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title={currentTopic?.name ?? "Topic Overview"}
-              subtitle="Choose how you want to continue in this topic."
+              title={currentTopic?.name ?? "Topic"}
+              subtitle={`${parentCategory?.name ?? "Subject"} • Choose how you want to continue in this topic.`}
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -89,10 +95,13 @@ export default async function TopicPage({
                   Topic
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  {currentTopic?.name ?? topicID}
+                  {currentTopic?.name ?? "Current Topic"}
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
-                  Choose lesson content, quizzes, or exam practice for this topic.
+                  Subject:{" "}
+                  <span className="font-semibold text-[#592803]">
+                    {parentCategory?.name ?? "Unknown"}
+                  </span>
                 </p>
               </div>
 
@@ -112,7 +121,8 @@ export default async function TopicPage({
                   Continue Learning
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Open lesson content, quizzes, or exam practice for this topic.
+                  Open lesson content, quizzes, or exam practice for{" "}
+                  {currentTopic?.name ?? "this topic"}.
                 </p>
               </div>
 
