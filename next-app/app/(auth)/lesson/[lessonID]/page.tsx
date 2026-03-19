@@ -29,6 +29,19 @@ export default async function LessonPage({
     .eq("id", user.id)
     .single();
 
+  // For now, lessonID is really the selected topic/category id
+  const { data: currentLessonCategory } = await supabase
+    .from("category")
+    .select("name, parent_id")
+    .eq("id", lessonID)
+    .single();
+
+  const { data: parentCategory } = await supabase
+    .from("category")
+    .select("name")
+    .eq("id", currentLessonCategory?.parent_id)
+    .single();
+
   async function logout() {
     "use server";
     const supabase = await createClient();
@@ -51,13 +64,14 @@ export default async function LessonPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-5xl space-y-8">
             <PageHeader
-              title="Lesson"
-              subtitle={`Lesson ID: ${lessonID}`}
+              title={currentLessonCategory?.name ?? "Lesson"}
+              subtitle={`${parentCategory?.name ?? "Subject"} • Lesson Content`}
             />
 
             <SectionCard>
               <p className="text-sm text-[#4B3A46]">
-                This lesson page is designed to support different lesson types such as video, reading, and guided notes.
+                This lesson page supports different lesson types such as video,
+                reading, and guided notes.
               </p>
             </SectionCard>
 
@@ -73,7 +87,11 @@ export default async function LessonPage({
               description="This will later be pulled from the lesson_page table."
             >
               <div className="rounded-2xl bg-[#F3EFEA] p-5 text-sm leading-7 text-[#4B3A46]">
-                Placeholder lesson summary text. This block can later render main_text and sub_text from the backend.
+                Placeholder lesson summary text for{" "}
+                <span className="font-semibold text-[#592803]">
+                  {currentLessonCategory?.name ?? "this lesson"}
+                </span>
+                . This block can later render lesson content from the backend.
               </div>
             </LessonContentCard>
 
