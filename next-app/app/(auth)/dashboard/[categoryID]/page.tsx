@@ -31,7 +31,7 @@ export default async function DashboardCategoryPage({
   const { data: currentCategory } = await supabase
     .from("category")
     .select("name")
-    .eq("category_id", categoryID)
+    .eq("id", categoryID)
     .single();
 
   async function logout() {
@@ -79,17 +79,17 @@ export default async function DashboardCategoryPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title={currentCategory?.name ?? "Subject Overview"}
+              title={currentCategory?.name ?? "Category"}
               subtitle="Choose a topic to continue learning."
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
                 <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-                  Category
+                  Subject
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  {currentCategory?.name ?? "Learning Topics"}
+                  {currentCategory?.name ?? "Current Subject"}
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
                   Select one of the available topics below.
@@ -112,7 +112,7 @@ export default async function DashboardCategoryPage({
                   Available Topics
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  These topics will lead into lessons, quizzes, and exam practice.
+                  These topics lead into lesson content, quizzes, and exam practice.
                 </p>
               </div>
 
