@@ -27,16 +27,17 @@ export default async function TopicPage({
     .eq("id", user.id)
     .single();
 
-  const { data: currentTopic } = await supabase
-    .from("topic")
-    .select("name, category_id")
+  // This page is currently receiving a CATEGORY id from the previous page
+  const { data: currentTopicCategory } = await supabase
+    .from("category")
+    .select("name, parent_id")
     .eq("id", topicID)
     .single();
 
   const { data: parentCategory } = await supabase
     .from("category")
     .select("name")
-    .eq("id", currentTopic?.category_id)
+    .eq("id", currentTopicCategory?.parent_id)
     .single();
 
   async function logout() {
@@ -85,7 +86,7 @@ export default async function TopicPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title={currentTopic?.name ?? "Topic"}
+              title={currentTopicCategory?.name ?? "Topic"}
               subtitle={`${parentCategory?.name ?? "Subject"} • Choose how you want to continue in this topic.`}
             />
 
@@ -95,7 +96,7 @@ export default async function TopicPage({
                   Topic
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  {currentTopic?.name ?? "Current Topic"}
+                  {currentTopicCategory?.name ?? "Current Topic"}
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
                   Subject:{" "}
@@ -122,7 +123,7 @@ export default async function TopicPage({
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
                   Open lesson content, quizzes, or exam practice for{" "}
-                  {currentTopic?.name ?? "this topic"}.
+                  {currentTopicCategory?.name ?? "this topic"}.
                 </p>
               </div>
 
