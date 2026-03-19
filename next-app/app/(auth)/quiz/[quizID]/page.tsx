@@ -27,6 +27,19 @@ export default async function QuizPage({
     .eq("id", user.id)
     .single();
 
+  // For now, quizID is really the selected topic/category id
+  const { data: currentQuizCategory } = await supabase
+    .from("category")
+    .select("name, parent_id")
+    .eq("id", quizID)
+    .single();
+
+  const { data: parentCategory } = await supabase
+    .from("category")
+    .select("name")
+    .eq("id", currentQuizCategory?.parent_id)
+    .single();
+
   async function logout() {
     "use server";
     const supabase = await createClient();
@@ -51,8 +64,8 @@ export default async function QuizPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
             <PageHeader
-              title="Quiz"
-              subtitle={`Quiz ID: ${quizID}`}
+              title={`${currentQuizCategory?.name ?? "Topic"} Quiz`}
+              subtitle={`${parentCategory?.name ?? "Subject"} • Question 1 of 5`}
             />
 
             <SectionCard>
@@ -68,7 +81,7 @@ export default async function QuizPage({
               <div className="space-y-6">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-                    Sample Question
+                    {currentQuizCategory?.name ?? "Sample Topic"}
                   </p>
                   <h2 className="mt-3 text-2xl font-bold text-[#592803]">
                     Which answer best matches this placeholder quiz structure?
