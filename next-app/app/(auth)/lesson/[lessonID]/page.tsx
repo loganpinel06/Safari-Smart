@@ -6,6 +6,7 @@ import VideoPlaceholder from "@/components/VideoPlaceholder";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default async function LessonPage({
   params,
@@ -63,6 +64,22 @@ export default async function LessonPage({
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-5xl space-y-8">
+
+            <Breadcrumbs
+                items={[
+                    {
+                    label: parentCategory?.name ?? "Subject",
+                    href: `/dashboard/${currentLessonCategory?.parent_id}`,
+                    },
+                    {
+                    label: currentLessonCategory?.name ?? "Topic",
+                    href: `/topic/${lessonID}`,
+                    },
+                    {
+                    label: "Lesson",
+                    },
+                ]}
+                />
             <PageHeader
               title={currentLessonCategory?.name ?? "Lesson"}
               subtitle={`${parentCategory?.name ?? "Subject"} • Lesson Content`}
