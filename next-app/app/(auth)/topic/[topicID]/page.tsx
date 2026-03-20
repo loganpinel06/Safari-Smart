@@ -1,7 +1,7 @@
 import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
-import TopicSectionCard from "@/components/TopicSectionCard";
+import LearningItemCard from "@/components/LearningItemCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -27,7 +27,7 @@ export default async function TopicPage({
     .eq("id", user.id)
     .single();
 
-  // This page is currently receiving a CATEGORY id from the previous page
+  // Right now topicID is still really coming from the category hierarchy
   const { data: currentTopicCategory } = await supabase
     .from("category")
     .select("name, parent_id")
@@ -47,27 +47,56 @@ export default async function TopicPage({
     redirect("/signin");
   }
 
-  const topicSections = [
+  // Placeholder/mock items for now.
+  // Later these should come from backend lesson / quiz / exam tables.
+  const lessons = [
     {
-      title: "Lesson Plans",
-      description:
-        "Read through lesson content, video materials, and guided explanations for this topic.",
+      title: "Lesson 1: Introduction",
+      description: "Start with the core ideas and overview for this topic.",
       href: `/lesson/${topicID}`,
-      accent: "green" as const,
+      kind: "Lesson" as const,
+      status: "Complete" as const,
     },
     {
-      title: "Quizzes",
-      description:
-        "Practice what you learned with topic-based quiz questions and immediate feedback.",
+      title: "Lesson 2: Guided Practice",
+      description: "Work through examples and explanations step by step.",
+      href: `/lesson/${topicID}`,
+      kind: "Lesson" as const,
+      status: "In Progress" as const,
+    },
+    {
+      title: "Lesson 3: Extended Review",
+      description: "Review the topic with additional notes and support.",
+      href: `/lesson/${topicID}`,
+      kind: "Lesson" as const,
+      status: "Not Started" as const,
+    },
+  ];
+
+  const quizzes = [
+    {
+      title: "Quiz 1",
+      description: "Check your understanding with short practice questions.",
       href: `/quiz/${topicID}`,
-      accent: "yellow" as const,
+      kind: "Quiz" as const,
+      status: "Not Started" as const,
     },
     {
-      title: "Exam Practice",
-      description:
-        "Work through exam-style questions to prepare for formal assessments.",
+      title: "Quiz 2",
+      description: "A second quiz to reinforce the topic.",
+      href: `/quiz/${topicID}`,
+      kind: "Quiz" as const,
+      status: "Not Started" as const,
+    },
+  ];
+
+  const exams = [
+    {
+      title: "Exam Practice 1",
+      description: "Try an exam-style set of questions for this topic.",
       href: `/exam/${topicID}`,
-      accent: "orange" as const,
+      kind: "Exam" as const,
+      status: "Not Started" as const,
     },
   ];
 
@@ -87,7 +116,7 @@ export default async function TopicPage({
           <div className="max-w-6xl space-y-8">
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
-              subtitle={`${parentCategory?.name ?? "Subject"} • Choose how you want to continue in this topic.`}
+              subtitle={`${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`}
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -106,35 +135,99 @@ export default async function TopicPage({
                 </p>
               </div>
 
-              <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10 w-full md:w-[180px]">
-                <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
-                  Sections
+              <div className="grid grid-cols-3 gap-3 md:w-[360px]">
+                <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                    Lessons
+                  </p>
+                  <p className="mt-2 text-2xl font-extrabold text-[#592803]">
+                    {lessons.length}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-white/80 p-4 border border-[#4B3A46]/10">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                    Quizzes
+                  </p>
+                  <p className="mt-2 text-2xl font-extrabold text-[#592803]">
+                    {quizzes.length}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-white/80 p-4 border border-[#4B3A46]/10">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                    Exams
+                  </p>
+                  <p className="mt-2 text-2xl font-extrabold text-[#592803]">
+                    {exams.length}
+                  </p>
+                </div>
+              </div>
+            </SectionCard>
+
+            <SectionCard>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-[#592803]">Lessons</h2>
+                <p className="text-sm text-[#4B3A46] mt-1">
+                  Work through the lessons in order to build understanding.
                 </p>
-                <p className="mt-2 text-2xl font-extrabold text-[#592803]">
-                  {topicSections.length}
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                {lessons.map((lesson) => (
+                  <LearningItemCard
+                    key={lesson.title}
+                    title={lesson.title}
+                    description={lesson.description}
+                    href={lesson.href}
+                    kind={lesson.kind}
+                    status={lesson.status}
+                  />
+                ))}
+              </div>
+            </SectionCard>
+
+            <SectionCard>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-[#592803]">Quizzes</h2>
+                <p className="text-sm text-[#4B3A46] mt-1">
+                  Check your understanding with quiz practice for this topic.
                 </p>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                {quizzes.map((quiz) => (
+                  <LearningItemCard
+                    key={quiz.title}
+                    title={quiz.title}
+                    description={quiz.description}
+                    href={quiz.href}
+                    kind={quiz.kind}
+                    status={quiz.status}
+                  />
+                ))}
               </div>
             </SectionCard>
 
             <SectionCard>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  Continue Learning
+                  Exam Practice
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Open lesson content, quizzes, or exam practice for{" "}
-                  {currentTopicCategory?.name ?? "this topic"}.
+                  Apply what you learned with exam-style practice.
                 </p>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-3">
-                {topicSections.map((section) => (
-                  <TopicSectionCard
-                    key={section.title}
-                    title={section.title}
-                    description={section.description}
-                    href={section.href}
-                    accent={section.accent}
+              <div className="grid gap-5 md:grid-cols-2">
+                {exams.map((exam) => (
+                  <LearningItemCard
+                    key={exam.title}
+                    title={exam.title}
+                    description={exam.description}
+                    href={exam.href}
+                    kind={exam.kind}
+                    status={exam.status}
                   />
                 ))}
               </div>
