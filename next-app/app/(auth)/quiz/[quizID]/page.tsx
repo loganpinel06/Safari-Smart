@@ -4,6 +4,7 @@ import SectionCard from "@/components/SectionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default async function QuizPage({
   params,
@@ -63,6 +64,21 @@ export default async function QuizPage({
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
+            <Breadcrumbs
+                items={[
+                    {
+                    label: parentCategory?.name ?? "Subject",
+                    href: `/dashboard/${currentQuizCategory?.parent_id}`,
+                    },
+                    {
+                    label: currentQuizCategory?.name ?? "Topic",
+                    href: `/topic/${quizID}`,
+                    },
+                    {
+                    label: "Quiz",
+                    },
+                ]}
+                />
             <PageHeader
               title={`${currentQuizCategory?.name ?? "Topic"} Quiz`}
               subtitle={`${parentCategory?.name ?? "Subject"} • Question 1 of 5`}
