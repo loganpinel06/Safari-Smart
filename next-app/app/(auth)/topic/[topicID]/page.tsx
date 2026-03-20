@@ -115,6 +115,18 @@ export default async function TopicPage({
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
+
+            <Breadcrumbs
+                items={[
+                    {
+                    label: parentCategory?.name ?? "Subject",
+                    href: `/dashboard/${currentTopicCategory?.parent_id}`,
+                    },
+                    {
+                    label: currentTopicCategory?.name ?? "Topic",
+                    },
+                ]}
+                />
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
               subtitle={`${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`}
