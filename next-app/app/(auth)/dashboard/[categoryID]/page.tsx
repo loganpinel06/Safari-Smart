@@ -46,13 +46,13 @@ export default async function DashboardPage({
     throw new Error(`API request failed: ${categoryRes.status}`);
   }
 
-  const { categories } = await categoryRes.json();
+  const { categories, isCategory } = await categoryRes.json();
 
   const subjects = [];
   for (const category of categories) {
     subjects.push({
       title: category.name,
-      href: "/dashboard/" + category.id,
+      href: isCategory ? "/dashboard/" + category.id : "/topic/" + category.id,
     });
   }
 
