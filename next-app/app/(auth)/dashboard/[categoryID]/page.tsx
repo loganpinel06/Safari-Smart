@@ -1,5 +1,5 @@
 import Sidebar from "@/components/Sidebar";
-import DashboardCard from "@/components/DashboardCard";
+import DashboardCard from "@/components/dashboardcard";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
@@ -112,7 +112,8 @@ export default async function DashboardCategoryPage({
                   Available Topics
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  These topics lead into lesson content, quizzes, and exam practice.
+                  These topics lead into lesson content, quizzes, and exam
+                  practice.
                 </p>
               </div>
 

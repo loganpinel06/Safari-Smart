@@ -1,5 +1,5 @@
 import Sidebar from "@/components/Sidebar";
-import DashboardCard from "@/components/DashboardCard";
+import DashboardCard from "@/components/dashboardcard";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
@@ -56,7 +56,9 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-[320px]">          <Sidebar
+        <div className="w-[320px]">
+          {" "}
+          <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
@@ -123,11 +125,7 @@ export default async function DashboardPage() {
 
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {subjects.map((s) => (
-                  <DashboardCard
-                    key={s.title}
-                    title={s.title}
-                    href={s.href}
-                  />
+                  <DashboardCard key={s.title} title={s.title} href={s.href} />
                 ))}
               </div>
             </SectionCard>
