@@ -53,7 +53,7 @@ export default async function DashboardCategoryPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title={currentCategory?.name ?? "Category"}
+              title="Category"
               subtitle="Choose a topic to continue learning."
             />
 
@@ -63,7 +63,7 @@ export default async function DashboardCategoryPage({
                   Subject
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  {currentCategory?.name ?? "Current Subject"}
+                  Current Subject
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
                   Select one of the available topics below.
@@ -75,7 +75,7 @@ export default async function DashboardCategoryPage({
                   Topics
                 </p>
                 <p className="mt-2 text-2xl font-extrabold text-[#592803]">
-                  {topics.length}
+                  {subjects.length}
                 </p>
               </div>
             </SectionCard>
@@ -92,7 +92,7 @@ export default async function DashboardCategoryPage({
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {topics.map((topic) => (
+                {subjects.map((topic) => (
                   <DashboardCard
                     key={topic.title}
                     title={topic.title}
