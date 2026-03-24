@@ -5,6 +5,7 @@ import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { getSubjects } from "@/utils/categories/util";
 
 export default async function DashboardCategoryPage({
   params,
@@ -12,56 +13,29 @@ export default async function DashboardCategoryPage({
   params: Promise<{ categoryID: string }>;
 }) {
   const supabase = await createClient();
-  const categoryID = (await params).categoryID;
+  let categoryID = (await params).categoryID;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/signin");
-  }
-
   const { data: profile } = await supabase
     .from("users")
     .select("*")
-    .eq("id", user.id)
+    .eq("id", user!.id)
     .single();
 
-  const { data: currentCategory } = await supabase
-    .from("category")
-    .select("name")
-    .eq("id", categoryID)
-    .single();
+  const subjects = await getSubjects(
+    categoryID ? parseInt(categoryID) : null,
+    profile,
+    supabase,
+  );
 
   async function logout() {
     "use server";
     const supabase = await createClient();
     await supabase.auth.signOut();
     redirect("/signin");
-  }
-
-  const categoryRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/category?parent_id=${categoryID}`,
-    {
-      headers: {
-        Cookie: (await cookies()).toString(),
-      },
-    },
-  );
-
-  if (!categoryRes.ok) {
-    throw new Error(`API request failed: ${categoryRes.status}`);
-  }
-
-  const { categories } = await categoryRes.json();
-
-  const topics = [];
-  for (const category of categories) {
-    topics.push({
-      title: category.name,
-      href: "/topic/" + category.id,
-    });
   }
 
   return (
