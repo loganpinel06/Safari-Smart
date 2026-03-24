@@ -1,10 +1,12 @@
 import Sidebar from "@/components/Sidebar";
-import DashboardCard from "@/components/dashboardcard";
+import DashboardCard from "@/components/DashboardCard";
+import PageHeader from "@/components/PageHeader";
+import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-export default async function DashboardPage({
+export default async function DashboardCategoryPage({
   params,
 }: {
   params: Promise<{ categoryID: string }>;
@@ -24,6 +26,12 @@ export default async function DashboardPage({
     .from("users")
     .select("*")
     .eq("id", user.id)
+    .single();
+
+  const { data: currentCategory } = await supabase
+    .from("category")
+    .select("name")
+    .eq("id", categoryID)
     .single();
 
   async function logout() {
@@ -48,18 +56,18 @@ export default async function DashboardPage({
 
   const { categories } = await categoryRes.json();
 
-  const subjects = [];
+  const topics = [];
   for (const category of categories) {
-    subjects.push({
+    topics.push({
       title: category.name,
-      href: "/dashboard/" + category.id,
+      href: "/topic/" + category.id,
     });
   }
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-1/4 min-w-70 bg-[#d9d9d9] p-6">
+        <div className="w-[320px]">
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
@@ -68,25 +76,57 @@ export default async function DashboardPage({
           />
         </div>
 
-        <div className="flex-1 px-12 py-10 space-y-10">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Dashboard</h1>
-              <p className="text-sm text-[#4B3A46] mt-2">
-                Account Type: {profile?.account_type ?? "Student"}
-              </p>
-            </div>
+        <div className="flex-1 px-10 py-10">
+          <div className="max-w-6xl space-y-8">
+            <PageHeader
+              title={currentCategory?.name ?? "Category"}
+              subtitle="Choose a topic to continue learning."
+            />
+
+            <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
+                  Subject
+                </p>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  {currentCategory?.name ?? "Current Subject"}
+                </h2>
+                <p className="text-sm text-[#4B3A46]">
+                  Select one of the available topics below.
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10 w-full md:w-[180px]">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                  Topics
+                </p>
+                <p className="mt-2 text-2xl font-extrabold text-[#592803]">
+                  {topics.length}
+                </p>
+              </div>
+            </SectionCard>
+
+            <SectionCard>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  Available Topics
+                </h2>
+                <p className="text-sm text-[#4B3A46] mt-1">
+                  These topics lead into lesson content, quizzes, and exam practice.
+                </p>
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {topics.map((topic) => (
+                  <DashboardCard
+                    key={topic.title}
+                    title={topic.title}
+                    href={topic.href}
+                  />
+                ))}
+              </div>
+            </SectionCard>
           </div>
-
-          <section className="space-y-6">
-            <h2 className="text-xl font-bold">Your Subjects</h2>
-
-            <div className="grid sm:grid-cols-3 gap-6">
-              {subjects.map((s) => (
-                <DashboardCard key={s.title} title={s.title} href={s.href} />
-              ))}
-            </div>
-          </section>
         </div>
       </div>
     </main>

@@ -1,28 +1,28 @@
+import Link from "next/link";
+
 type SidebarNavItemProps = {
   label: string;
+  href: string;
   active?: boolean;
-  onClick?: () => void;
 };
 
 export default function SidebarNavItem({
   label,
+  href,
   active = false,
-  onClick,
 }: SidebarNavItemProps) {
   const base =
-    "w-full py-8 text-lg font-semibold rounded-lg transition";
+    "block w-full rounded-xl px-4 py-4 text-base font-semibold transition";
 
-  const activeCls = "bg-[#6AC700] text-white";
+  const activeCls =
+    "bg-[#FFF1B8] text-[#592803] shadow-sm";
+
   const inactiveCls =
-    "bg-black text-white hover:opacity-90";
+    "bg-white/10 text-[#FFF1E5] hover:bg-white/20";
 
   return (
-    <button
-      type="button"
-      className={`${base} ${active ? activeCls : inactiveCls}`}
-      onClick={onClick}
-    >
+    <Link href={href} className={`${base} ${active ? activeCls : inactiveCls}`}>
       {label}
-    </button>
+    </Link>
   );
 }

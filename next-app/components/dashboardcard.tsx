@@ -12,9 +12,18 @@ export default function DashboardCard({
   href,
 }: DashboardCardProps) {
   const card = (
-    <div className="bg-black rounded-xl h-28 flex flex-col justify-end p-4 hover:opacity-90 transition">
-      <p className="text-white font-bold">{title}</p>
-      {subtitle && <p className="text-white/70 text-xs mt-1">{subtitle}</p>}
+    <div className="group min-h-[140px] rounded-2xl bg-[#592803] p-5 flex flex-col justify-end border border-[#4B3A46]/10 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      <p className="text-white text-2xl font-bold tracking-tight">
+        {title}
+      </p>
+      {subtitle && (
+        <p className="text-white/75 text-sm mt-2">
+          {subtitle}
+        </p>
+      )}
+      <p className="text-[#FFF1B8] text-sm font-medium mt-4 opacity-0 transition group-hover:opacity-100">
+        Open subject →
+      </p>
     </div>
   );
 
