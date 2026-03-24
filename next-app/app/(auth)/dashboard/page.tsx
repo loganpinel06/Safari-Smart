@@ -3,6 +3,7 @@ import DashboardCard from "@/components/dashboardcard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { getSubjects } from "@/utils/categories/util";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -11,46 +12,19 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/signin");
-  }
-
   const { data: profile } = await supabase
     .from("users")
     .select("*")
-    .eq("id", user.id)
+    .eq("id", user!.id)
     .single();
+
+  const subjects = await getSubjects(null, profile, supabase);
 
   async function logout() {
     "use server";
     const supabase = await createClient();
     await supabase.auth.signOut();
     redirect("/signin");
-  }
-
-  const categoryRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/category`,
-    {
-      headers: {
-        Cookie: (await cookies()).toString(),
-      },
-    },
-  );
-
-  if (!categoryRes.ok) {
-    throw new Error(`API request failed: ${categoryRes.status}`);
-  }
-
-  const { categories } = await categoryRes.json();
-
-  console.log(categories);
-
-  const subjects = [];
-  for (const category of categories) {
-    subjects.push({
-      title: category.name,
-      href: "/dashboard/" + category.id,
-    });
   }
 
   return (
