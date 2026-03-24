@@ -4,7 +4,6 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { getSubjects } from "@/utils/categories/util";
 
 export default async function DashboardCategoryPage({
