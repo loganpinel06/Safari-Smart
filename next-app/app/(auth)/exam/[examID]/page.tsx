@@ -1,10 +1,8 @@
 import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
-import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import ExamQuestionCard from "@/components/ExamQuestionCard";
-import QuizChoiceButton from "@/components/QuizChoiceButton";
+import ExamRunner from "@/components/ExamRunner";
 
 export default async function ExamPage({
   params,
@@ -13,7 +11,6 @@ export default async function ExamPage({
 }) {
   const supabase = await createClient();
   const examID = (await params).examID;
-  const choices = ["Option A", "Option B", "Option C", "Option D"];
 
   const {
     data: { user },
@@ -29,6 +26,7 @@ export default async function ExamPage({
     .eq("id", user.id)
     .single();
 
+  // For now examID is still acting like the selected topic/category id
   const { data: currentExamCategory } = await supabase
     .from("category")
     .select("name, parent_id")
@@ -40,6 +38,27 @@ export default async function ExamPage({
     .select("name")
     .eq("id", currentExamCategory?.parent_id)
     .single();
+
+  // Load the real exam row for this topic/category if it exists
+  const { data: exam } = await supabase
+    .from("exam")
+    .select("*")
+    .eq("topic_id", examID)
+    .order("order", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  let questions: any[] = [];
+
+  if (exam) {
+    const { data: examQuestions } = await supabase
+      .from("exam_question")
+      .select("*")
+      .eq("exam_id", exam.id)
+      .order("id", { ascending: true });
+
+    questions = examQuestions ?? [];
+  }
 
   async function logout() {
     "use server";
@@ -61,31 +80,13 @@ export default async function ExamPage({
         </div>
 
         <div className="flex-1 px-10 py-10">
-          <div className="max-w-4xl space-y-8">
+          <div className="max-w-5xl space-y-8">
             <PageHeader
-            title={`${currentExamCategory?.name ?? "Topic"} Exam`}
-            subtitle={`${parentCategory?.name ?? "Subject"} • Question 1 of 5`}
+              title={`${currentExamCategory?.name ?? "Topic"} Exam`}
+              subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
             />
 
-            <ExamQuestionCard question="Which answer best matches this exam-style structure?" />
-
-            <SectionCard>
-              <div className="grid gap-4">
-                {choices.map((choice) => (
-                  <QuizChoiceButton key={choice} label={choice} />
-                ))}
-              </div>
-            </SectionCard>
-
-            <SectionCard className="flex items-center justify-between">
-              <button className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40">
-                Previous
-              </button>
-
-              <button className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90">
-                Next Question
-              </button>
-            </SectionCard>
+            <ExamRunner questions={questions} />
           </div>
         </div>
       </div>
