@@ -79,6 +79,16 @@ export default async function ExamPage({
                     ))}
                 </div>
                 </SectionCard>
+
+                <SectionCard className="flex items-center justify-between">
+                    <button className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40">
+                        Previous
+                    </button>
+
+                    <button className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90">
+                        Next Question
+                    </button>
+                    </SectionCard>
             </div>
         </div>
       </div>
