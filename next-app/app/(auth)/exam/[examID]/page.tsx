@@ -26,6 +26,18 @@ export default async function ExamPage({
     .eq("id", user.id)
     .single();
 
+    const { data: currentExamCategory } = await supabase
+    .from("category")
+    .select("name, parent_id")
+    .eq("id", examID)
+    .single();
+
+    const { data: parentCategory } = await supabase
+    .from("category")
+    .select("name")
+    .eq("id", currentExamCategory?.parent_id)
+    .single();
+
   async function logout() {
     "use server";
     const supabase = await createClient();
@@ -48,9 +60,9 @@ export default async function ExamPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
             <PageHeader
-              title="Exam"
-              subtitle={`Exam ID: ${examID}`}
-            />
+                title={`${currentExamCategory?.name ?? "Topic"} Exam`}
+                subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
+                />
 
             <SectionCard>
               <p className="text-sm text-[#4B3A46]">
