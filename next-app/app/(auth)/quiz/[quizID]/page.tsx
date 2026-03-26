@@ -5,6 +5,7 @@ import QuizChoiceButton from "@/components/QuizChoiceButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import QuizRunner from "@/components/QuizRunner";
 
 export default async function QuizPage({
   params,
