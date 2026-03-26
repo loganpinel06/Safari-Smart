@@ -159,11 +159,12 @@ export default function ExamRunner({ questions }: ExamRunnerProps) {
 
           {currentIndex < questions.length - 1 ? (
             <button
-              type="button"
-              onClick={handleNext}
-              className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90"
-            >
-              Next Question
+                type="button"
+                onClick={handleNext}
+                disabled={selectedChoiceIndex === undefined}
+                className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                Next Question
             </button>
           ) : (
             <button
