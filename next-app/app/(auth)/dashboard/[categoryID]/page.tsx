@@ -1,5 +1,5 @@
 import Sidebar from "@/components/Sidebar";
-import DashboardCard from "@/components/dashboardcard";
+import DashboardCard from "@/components/DashboardCard";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
