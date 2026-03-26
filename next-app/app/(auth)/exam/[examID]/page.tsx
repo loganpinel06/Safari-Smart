@@ -29,19 +29,17 @@ export default async function ExamPage({
     .eq("id", user.id)
     .single();
 
-    const { data: currentExamCategory } = await supabase
+  const { data: currentExamCategory } = await supabase
     .from("category")
     .select("name, parent_id")
     .eq("id", examID)
     .single();
 
-    const { data: parentCategory } = await supabase
+  const { data: parentCategory } = await supabase
     .from("category")
     .select("name")
     .eq("id", currentExamCategory?.parent_id)
     .single();
-
-
 
   async function logout() {
     "use server";
@@ -62,34 +60,33 @@ export default async function ExamPage({
           />
         </div>
 
-
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
             <PageHeader
-                title={`${currentExamCategory?.name ?? "Topic"} Exam`}
-                subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
-                />
+              title={`${currentExamCategory?.name ?? "Topic"} Exam`}
+              subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
+            />
 
             <ExamQuestionCard question="Which answer best matches this exam-style structure?" />
 
-                <SectionCard>
-                <div className="grid gap-4">
-                    {choices.map((choice) => (
-                    <QuizChoiceButton key={choice} label={choice} />
-                    ))}
-                </div>
-                </SectionCard>
+            <SectionCard>
+              <div className="grid gap-4">
+                {choices.map((choice) => (
+                  <QuizChoiceButton key={choice} label={choice} />
+                ))}
+              </div>
+            </SectionCard>
 
-                <SectionCard className="flex items-center justify-between">
-                    <button className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40">
-                        Previous
-                    </button>
+            <SectionCard className="flex items-center justify-between">
+              <button className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40">
+                Previous
+              </button>
 
-                    <button className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90">
-                        Next Question
-                    </button>
-                    </SectionCard>
-            </div>
+              <button className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90">
+                Next Question
+              </button>
+            </SectionCard>
+          </div>
         </div>
       </div>
     </main>
