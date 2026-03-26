@@ -13,6 +13,7 @@ export default async function ExamPage({
 }) {
   const supabase = await createClient();
   const examID = (await params).examID;
+  const choices = ["Option A", "Option B", "Option C", "Option D"];
 
   const {
     data: { user },
@@ -40,6 +41,8 @@ export default async function ExamPage({
     .eq("id", currentExamCategory?.parent_id)
     .single();
 
+
+
   async function logout() {
     "use server";
     const supabase = await createClient();
@@ -59,6 +62,7 @@ export default async function ExamPage({
           />
         </div>
 
+
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
             <PageHeader
@@ -66,12 +70,16 @@ export default async function ExamPage({
                 subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
                 />
 
-            <SectionCard>
-              <p className="text-sm text-[#4B3A46]">
-                This page will display exam-style questions for the selected topic.
-              </p>
-            </SectionCard>
-          </div>
+            <ExamQuestionCard question="Which answer best matches this exam-style structure?" />
+
+                <SectionCard>
+                <div className="grid gap-4">
+                    {choices.map((choice) => (
+                    <QuizChoiceButton key={choice} label={choice} />
+                    ))}
+                </div>
+                </SectionCard>
+            </div>
         </div>
       </div>
     </main>
