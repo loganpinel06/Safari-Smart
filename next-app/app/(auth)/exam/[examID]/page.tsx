@@ -3,6 +3,8 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import ExamQuestionCard from "@/components/ExamQuestionCard";
+import QuizChoiceButton from "@/components/QuizChoiceButton";
 
 export default async function ExamPage({
   params,
