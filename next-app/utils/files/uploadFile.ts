@@ -63,7 +63,10 @@ export async function uploadFile(
 
   const path = `${crypto.randomUUID()}${ext}`;
 
-  const { error } = await supabase.storage.from(bucket).upload(path, file, {
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  const { error } = await supabase.storage.from(bucket).upload(path, buffer, {
     contentType: mime,
     upsert: false,
   });

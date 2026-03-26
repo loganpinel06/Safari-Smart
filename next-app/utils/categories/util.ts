@@ -4,6 +4,7 @@ export async function getSubjects(
   supabase: any,
 ) {
   const subjects = [];
+  let areCategories = true;
   if (profile.account_type === "Student") {
     if (categoryID === null) {
       const test = profile.exam_type === "BECE" ? 1 : 2;
@@ -93,7 +94,9 @@ export async function getSubjects(
         href: "/topic/" + topic.id,
       });
     }
+
+    areCategories = false;
   }
 
-  return subjects;
+  return { subjects, areCategories };
 }
