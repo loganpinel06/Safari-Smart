@@ -63,8 +63,8 @@ export default async function ExamPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
             <PageHeader
-              title={`${currentExamCategory?.name ?? "Topic"} Exam`}
-              subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
+            title={`${currentExamCategory?.name ?? "Topic"} Exam`}
+            subtitle={`${parentCategory?.name ?? "Subject"} • Question 1 of 5`}
             />
 
             <ExamQuestionCard question="Which answer best matches this exam-style structure?" />
