@@ -14,7 +14,7 @@ export async function getSubjects(
         .eq("parent_id", test);
       if (res.error) {
         console.error("Error fetching subjects:", res.error);
-        return [];
+        return { subjects: [], areCategories: true };
       }
 
       for (const category of res.data) {
@@ -30,7 +30,7 @@ export async function getSubjects(
         .eq("parent_id", categoryID);
       if (res.error) {
         console.error("Error fetching subjects:", res.error);
-        return [];
+        return { subjects: [], areCategories: true };
       }
 
       for (const category of res.data) {
@@ -49,7 +49,7 @@ export async function getSubjects(
 
       if (res.error) {
         console.error("Error fetching subjects:", res.error);
-        return [];
+        return { subjects: [], areCategories: true };
       }
 
       for (const category of res.data) {
@@ -66,7 +66,7 @@ export async function getSubjects(
 
       if (res.error) {
         console.error("Error fetching subjects:", res.error);
-        return [];
+        return { subjects: [], areCategories: true };
       }
 
       for (const category of res.data) {
@@ -82,10 +82,11 @@ export async function getSubjects(
     const res = await supabase
       .from("topic")
       .select("*")
-      .eq("category_id", categoryID);
+      .eq("category_id", categoryID)
+      .order("order", { ascending: true });
     if (res.error) {
       console.error("Error fetching topics:", res.error);
-      return [];
+      return { subjects: [], areCategories: true };
     }
 
     for (const topic of res.data) {

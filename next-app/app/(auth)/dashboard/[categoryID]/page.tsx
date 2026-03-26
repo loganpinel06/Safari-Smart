@@ -24,7 +24,7 @@ export default async function DashboardCategoryPage({
     .eq("id", user!.id)
     .single();
 
-  const subjects = await getSubjects(
+  const { subjects } = await getSubjects(
     categoryID ? parseInt(categoryID) : null,
     profile,
     supabase,

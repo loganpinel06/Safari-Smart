@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import CreateCategoryModal from "../CreateCategoryModal";
+import CreateCategoryModal from "./CreateCategoryModal";
 
 type AdminCategoriesClientProps = {
   parentId?: number | null;

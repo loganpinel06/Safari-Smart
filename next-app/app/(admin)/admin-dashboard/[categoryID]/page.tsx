@@ -3,6 +3,7 @@ import DashboardCard from "@/components/dashboardcard";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import AdminCategoriesClient from "@/components/Admin/AdminCategoriesClient";
+import AdminTopicsClient from "@/components/Admin/AdminTopicsClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getSubjects } from "@/utils/categories/util";
@@ -30,13 +31,13 @@ export default async function AdminDashboardCategoryPage({
     redirect("/dashboard");
   }
 
-  const items = await getSubjects(
+  const { subjects, areCategories } = await getSubjects(
     Number.isFinite(categoryIdNumber) ? categoryIdNumber : null,
     profile,
     supabase,
   );
 
-  const adminItems = items.map((item) => ({
+  const adminItems = subjects.map((item) => ({
     ...item,
     href: item.href.startsWith("/dashboard/")
       ? item.href.replace("/dashboard/", "/admin-dashboard/")
@@ -100,31 +101,49 @@ export default async function AdminDashboardCategoryPage({
                     Available Items
                   </h2>
                   <p className="text-sm text-[#4B3A46] mt-1">
-                    Open a child category/topic or add a new child category
-                    here.
+                    Open a child category/topic or add a new item here.
                   </p>
                 </div>
-                <AdminCategoriesClient
-                  parentId={
-                    Number.isFinite(categoryIdNumber) ? categoryIdNumber : null
-                  }
-                  buttonLabel="+ Create Child Category"
-                />
+                {areCategories ? (
+                  <AdminCategoriesClient
+                    parentId={
+                      Number.isFinite(categoryIdNumber) ? categoryIdNumber : null
+                    }
+                    buttonLabel="+ Create Child Category"
+                  />
+                ) : (
+                  <AdminTopicsClient
+                    categoryId={
+                      Number.isFinite(categoryIdNumber) ? categoryIdNumber : null
+                    }
+                    buttonLabel="+ Create Topic"
+                  />
+                )}
               </div>
 
               {adminItems.length === 0 ? (
                 <div className="rounded-lg border-2 border-dashed border-[#4B3A46]/20 p-12 text-center">
                   <p className="text-[#4B3A46] mb-4">
-                    No items yet. Add a child category for this level.
+                    No items yet. Add a child category or topic for this level.
                   </p>
-                  <AdminCategoriesClient
-                    parentId={
-                      Number.isFinite(categoryIdNumber)
-                        ? categoryIdNumber
-                        : null
-                    }
-                    buttonLabel="+ Create Child Category"
-                  />
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <AdminCategoriesClient
+                      parentId={
+                        Number.isFinite(categoryIdNumber)
+                          ? categoryIdNumber
+                          : null
+                      }
+                      buttonLabel="+ Create Child Category"
+                    />
+                    <AdminTopicsClient
+                      categoryId={
+                        Number.isFinite(categoryIdNumber)
+                          ? categoryIdNumber
+                          : null
+                      }
+                      buttonLabel="+ Create Topic"
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">

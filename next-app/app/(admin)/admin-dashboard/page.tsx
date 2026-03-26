@@ -25,12 +25,12 @@ export default async function AdminDashboardPage() {
     redirect("/dashboard");
   }
 
-  const categories = await getSubjects(null, profile, supabase);
-  const adminCategories = categories.map((category) => ({
-    ...category,
-    href: category.href.startsWith("/dashboard/")
-      ? category.href.replace("/dashboard/", "/admin-dashboard/")
-      : category.href,
+  const { subjects } = await getSubjects(null, profile, supabase);
+  const adminCategories = subjects.map((subject) => ({
+    ...subject,
+    href: subject.href.startsWith("/dashboard/")
+      ? subject.href.replace("/dashboard/", "/admin-dashboard/")
+      : subject.href,
   }));
 
   async function logout() {
