@@ -41,7 +41,9 @@ export default async function AdminDashboardCategoryPage({
     ...item,
     href: item.href.startsWith("/dashboard/")
       ? item.href.replace("/dashboard/", "/admin-dashboard/")
-      : item.href,
+      : item.href.startsWith("/topic/")
+        ? item.href.replace("/topic/", "/admin-topic/")
+        : item.href,
   }));
 
   async function logout() {
