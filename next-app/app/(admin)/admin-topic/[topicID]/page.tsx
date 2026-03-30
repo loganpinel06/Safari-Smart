@@ -40,10 +40,6 @@ export default async function AdminTopicPage({
     .eq("id", user!.id)
     .single();
 
-  if (profile?.account_type !== "Admin") {
-    redirect("/dashboard");
-  }
-
   if (!Number.isFinite(topicIdNum)) {
     redirect("/admin-dashboard");
   }
@@ -71,7 +67,10 @@ export default async function AdminTopicPage({
           .single()
       : { data: null };
 
-  const { lessons, quizzes, exams } = await getTopicDetails(topicIdNum, supabase);
+  const { lessons, quizzes, exams } = await getTopicDetails(
+    topicIdNum,
+    supabase,
+  );
 
   async function logout() {
     "use server";
@@ -104,8 +103,9 @@ export default async function AdminTopicPage({
           <Sidebar
             userName={profile?.name ?? "Admin"}
             examTrack={profile?.exam_type ?? "BECE"}
-            activeItem="Dashboard"
+            activeItem="Admin Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

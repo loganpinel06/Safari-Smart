@@ -12,7 +12,16 @@ export default async function AuthLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/signin?message=Please+sign+in+to+view+this+page");
+  const { data: profile } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", user!.id)
+    .single();
+
+  // Check if user is admin
+  if (profile?.account_type !== "Admin") {
+    redirect("/dashboard");
+  }
 
   // logic for fetching user data and passing into context for children
 

@@ -20,11 +20,6 @@ export default async function AdminDashboardPage() {
     .eq("id", user!.id)
     .single();
 
-  // Check if user is admin
-  if (profile?.account_type !== "Admin") {
-    redirect("/dashboard");
-  }
-
   const { subjects } = await getSubjects(null, profile, supabase);
   const adminCategories = subjects.map((subject) => ({
     ...subject,
@@ -47,8 +42,9 @@ export default async function AdminDashboardPage() {
           <Sidebar
             userName={profile?.name ?? "Admin"}
             examTrack={profile?.exam_type ?? "BECE"}
-            activeItem="Dashboard"
+            activeItem="Admin Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

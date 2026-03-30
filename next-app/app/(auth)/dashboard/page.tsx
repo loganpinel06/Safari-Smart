@@ -39,6 +39,7 @@ export default async function DashboardPage() {
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

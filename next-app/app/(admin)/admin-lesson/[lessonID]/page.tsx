@@ -26,10 +26,6 @@ export default async function AdminLessonPage({
     .eq("id", user!.id)
     .single();
 
-  if (profile?.account_type !== "Admin") {
-    redirect("/dashboard");
-  }
-
   if (!Number.isFinite(lessonIdNum)) {
     redirect("/admin-dashboard");
   }
@@ -84,8 +80,9 @@ export default async function AdminLessonPage({
           <Sidebar
             userName={profile?.name ?? "Admin"}
             examTrack={profile?.exam_type ?? "BECE"}
-            activeItem="Dashboard"
+            activeItem="Admin Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

@@ -27,10 +27,6 @@ export default async function AdminDashboardCategoryPage({
     .eq("id", user!.id)
     .single();
 
-  if (profile?.account_type !== "Admin") {
-    redirect("/dashboard");
-  }
-
   const { subjects, areCategories } = await getSubjects(
     Number.isFinite(categoryIdNumber) ? categoryIdNumber : null,
     profile,
@@ -60,8 +56,9 @@ export default async function AdminDashboardCategoryPage({
           <Sidebar
             userName={profile?.name ?? "Admin"}
             examTrack={profile?.exam_type ?? "BECE"}
-            activeItem="Dashboard"
+            activeItem="Admin Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 
@@ -109,14 +106,18 @@ export default async function AdminDashboardCategoryPage({
                 {areCategories ? (
                   <AdminCategoriesClient
                     parentId={
-                      Number.isFinite(categoryIdNumber) ? categoryIdNumber : null
+                      Number.isFinite(categoryIdNumber)
+                        ? categoryIdNumber
+                        : null
                     }
                     buttonLabel="+ Create Child Category"
                   />
                 ) : (
                   <AdminTopicsClient
                     categoryId={
-                      Number.isFinite(categoryIdNumber) ? categoryIdNumber : null
+                      Number.isFinite(categoryIdNumber)
+                        ? categoryIdNumber
+                        : null
                     }
                     buttonLabel="+ Create Topic"
                   />

@@ -37,6 +37,7 @@ export default async function GoodStartPage() {
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="GoodStart AI"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 
@@ -49,7 +50,8 @@ export default async function GoodStartPage() {
 
             <SectionCard>
               <p className="text-[#4B3A46]">
-                This page is currently a placeholder for the GoodStart AI experience.
+                This page is currently a placeholder for the GoodStart AI
+                experience.
               </p>
             </SectionCard>
           </div>
