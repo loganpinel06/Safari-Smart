@@ -25,7 +25,7 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
-  const subjects = await getSubjects(null, profile, supabase);
+  const { subjects } = await getSubjects(null, profile, supabase);
 
   async function logout() {
     "use server";
@@ -46,6 +46,7 @@ export default async function DashboardPage() {
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

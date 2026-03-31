@@ -61,6 +61,7 @@ export default async function QuizPage({
             role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
@@ -81,7 +82,6 @@ export default async function QuizPage({
                 },
               ]}
             />
-
             <PageHeader
               title={`${currentQuizCategory?.name ?? "Topic"} Quiz`}
               subtitle={

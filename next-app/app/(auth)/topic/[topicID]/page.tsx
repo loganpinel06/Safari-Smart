@@ -143,6 +143,7 @@ export default async function TopicPage({
             role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
@@ -159,7 +160,6 @@ export default async function TopicPage({
                 },
               ]}
             />
-
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
               subtitle={

@@ -37,6 +37,7 @@ export default async function ManageAccountPage() {
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Manage Account"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
