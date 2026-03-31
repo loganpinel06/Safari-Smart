@@ -2,12 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
 
-type ActiveItem = "Dashboard" | "Manage Account" | "GoodStart AI" | "Settings";
+type ActiveItem = "Manage Account" | "Dashboard" | "GoodStart AI" | "Settings";
 
 type SidebarProps = {
   userName: string;
   activeItem: ActiveItem;
   examTrack?: string;
+  role?: string;
   logoutAction: () => Promise<void>;
 };
 
@@ -15,61 +16,70 @@ export default function Sidebar({
   userName,
   activeItem,
   examTrack,
+  role = "Student",
   logoutAction,
 }: SidebarProps) {
+  const isStudent = role === "Student";
+
   return (
-    <aside className="min-h-screen flex flex-col justify-between bg-[#592803] text-[#FFF1E5]">
-      <div className="px-8 pt-10">
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="/sslogo.png"
-            alt="Safari Smart"
-            width={110}
-            height={110}
-            className="rounded-full border-4 border-white/10 shadow-md"
-            priority
-          />
+    <aside className="bg-[#6B3300] min-h-screen flex flex-col justify-between">
+      <div className="px-8 pt-10 flex flex-col items-center gap-4">
+        <Image
+          src="/sslogo.png"
+          alt="Safari Smart"
+          width={140}
+          height={140}
+          className="rounded-full"
+          priority
+        />
 
-          <h2 className="mt-6 text-3xl font-extrabold leading-tight tracking-tight">
+        <div className="text-center">
+          <p className="font-extrabold text-2xl tracking-wide text-white">
             {userName.toUpperCase()}
-          </h2>
+          </p>
 
-          <div className="mt-3 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-[#FFF1E5]/90">
-            Exam Track: <span className="font-semibold">{examTrack}</span>
-          </div>
+          <p className="text-sm text-white/80 mt-1">
+            {isStudent ? (
+              <>
+                Exam Track: <span className="font-semibold">{examTrack}</span>
+              </>
+            ) : (
+              <>
+                Role: <span className="font-semibold">{role}</span>
+              </>
+            )}
+          </p>
         </div>
 
-        <div className="mt-8">
-          <Link
-            href="/manageaccount"
-            className="block w-full rounded-xl bg-[#FFF1B8] px-4 py-3 text-center text-sm font-semibold text-[#592803] shadow-sm transition hover:bg-[#f7e89b]"
-          >
-            Manage Account
-          </Link>
-        </div>
+        <Link
+          href="/manageaccount"
+          className="w-full bg-[#FFF1B8] text-[#592803] py-3 text-sm font-semibold rounded-lg hover:opacity-90 transition mt-4 text-center"
+        >
+          Manage Account
+        </Link>
+      </div>
 
-        <div className="mt-10 space-y-4">
-          <SidebarNavItem
-            label="Dashboard"
-            href="/dashboard"
-            active={activeItem === "Dashboard"}
-          />
-          <SidebarNavItem
-            label="GoodStart AI"
-            href="/goodstart"
-            active={activeItem === "GoodStart AI"}
-          />
-          <SidebarNavItem
-            label="Settings"
-            href="/settings"
-            active={activeItem === "Settings"}
-          />
-        </div>
+      <div className="px-4 space-y-6">
+        <SidebarNavItem
+          label="Dashboard"
+          href="/dashboard"
+          active={activeItem === "Dashboard"}
+        />
+        <SidebarNavItem
+          label="GoodStart AI"
+          href="/goodstart"
+          active={activeItem === "GoodStart AI"}
+        />
+        <SidebarNavItem
+          label="Settings"
+          href="/settings"
+          active={activeItem === "Settings"}
+        />
       </div>
 
       <div className="px-8 pb-10">
         <form action={logoutAction}>
-          <button className="w-full rounded-xl border border-[#FFF1E5]/30 px-4 py-3 text-sm font-semibold text-[#FFF1E5] transition hover:bg-white/10">
+          <button className="w-full border border-white/30 text-white py-3 text-sm rounded hover:bg-white/5">
             Log Out
           </button>
         </form>
