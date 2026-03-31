@@ -4,7 +4,6 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { getSubjects } from "@/utils/categories/util";
 
 export default async function DashboardCategoryPage({
@@ -13,22 +12,26 @@ export default async function DashboardCategoryPage({
   params: Promise<{ categoryID: string }>;
 }) {
   const supabase = await createClient();
-  let categoryID = (await params).categoryID;
+  const categoryID = (await params).categoryID;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) {
+    redirect("/signin");
+  }
+
   const { data: profile } = await supabase
     .from("users")
     .select("*")
-    .eq("id", user!.id)
+    .eq("id", user.id)
     .single();
 
   const subjects = await getSubjects(
     categoryID ? parseInt(categoryID) : null,
     profile,
-    supabase,
+    supabase
   );
 
   async function logout() {
@@ -38,6 +41,9 @@ export default async function DashboardCategoryPage({
     redirect("/signin");
   }
 
+  const isTeacher = profile?.account_type === "Teacher";
+  const isParent = profile?.account_type === "Parent";
+
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
@@ -45,6 +51,7 @@ export default async function DashboardCategoryPage({
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
+            role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
           />
@@ -54,7 +61,13 @@ export default async function DashboardCategoryPage({
           <div className="max-w-6xl space-y-8">
             <PageHeader
               title="Category"
-              subtitle="Choose a topic to continue learning."
+              subtitle={
+                isTeacher
+                  ? "Review and manage topic content for this subject."
+                  : isParent
+                  ? "View topic structure and student progress in this subject."
+                  : "Choose a topic to continue learning."
+              }
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -66,7 +79,11 @@ export default async function DashboardCategoryPage({
                   Current Subject
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
-                  Select one of the available topics below.
+                  {isTeacher
+                    ? "Select a topic to manage lessons, quizzes, and exam content."
+                    : isParent
+                    ? "Select a topic to view student activity and progress."
+                    : "Select one of the available topics below."}
                 </p>
               </div>
 
@@ -86,8 +103,11 @@ export default async function DashboardCategoryPage({
                   Available Topics
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  These topics lead into lesson content, quizzes, and exam
-                  practice.
+                  {isTeacher
+                    ? "Open a topic to review or manage content."
+                    : isParent
+                    ? "Open a topic to view the student-facing learning structure."
+                    : "These topics lead into lesson content, quizzes, and exam practice."}
                 </p>
               </div>
 
