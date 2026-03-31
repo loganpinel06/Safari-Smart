@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
 
 type ActiveItem = "Dashboard" | "GoodStart AI" | "Settings";
@@ -50,15 +51,30 @@ export default function Sidebar({
           </p>
         </div>
 
-        <button className="w-full bg-[#FFF1B8] text-[#592803] py-3 text-sm font-semibold rounded-lg hover:opacity-90 transition mt-4">
+        <Link
+          href="/manageaccount"
+          className="w-full bg-[#FFF1B8] text-[#592803] py-3 text-sm font-semibold rounded-lg hover:opacity-90 transition mt-4 text-center"
+        >
           Manage Account
-        </button>
+        </Link>
       </div>
 
       <div className="px-4 space-y-6">
-        <SidebarNavItem label="Dashboard" active={activeItem === "Dashboard"} />
-        <SidebarNavItem label="GoodStart AI" active={activeItem === "GoodStart AI"} />
-        <SidebarNavItem label="Settings" active={activeItem === "Settings"} />
+        <SidebarNavItem
+          label="Dashboard"
+          href="/dashboard"
+          active={activeItem === "Dashboard"}
+        />
+        <SidebarNavItem
+          label="GoodStart AI"
+          href="/goodstart"
+          active={activeItem === "GoodStart AI"}
+        />
+        <SidebarNavItem
+          label="Settings"
+          href="/settings"
+          active={activeItem === "Settings"}
+        />
       </div>
 
       <div className="px-8 pb-10">
