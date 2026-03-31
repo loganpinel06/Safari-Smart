@@ -59,26 +59,27 @@ export default async function QuizPage({
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-4xl space-y-8">
             <Breadcrumbs
-                items={[
-                    {
-                    label: parentCategory?.name ?? "Subject",
-                    href: `/dashboard/${currentQuizCategory?.parent_id}`,
-                    },
-                    {
-                    label: currentQuizCategory?.name ?? "Topic",
-                    href: `/topic/${quizID}`,
-                    },
-                    {
-                    label: "Quiz",
-                    },
-                ]}
-                />
+              items={[
+                {
+                  label: parentCategory?.name ?? "Subject",
+                  href: `/dashboard/${currentQuizCategory?.parent_id}`,
+                },
+                {
+                  label: currentQuizCategory?.name ?? "Topic",
+                  href: `/topic/${quizID}`,
+                },
+                {
+                  label: "Quiz",
+                },
+              ]}
+            />
             <PageHeader
               title={`${currentQuizCategory?.name ?? "Topic"} Quiz`}
               subtitle={`${parentCategory?.name ?? "Subject"} • Question 1 of 5`}

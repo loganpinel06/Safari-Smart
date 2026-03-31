@@ -110,6 +110,7 @@ export default async function TopicPage({
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
@@ -117,16 +118,16 @@ export default async function TopicPage({
           <div className="max-w-6xl space-y-8">
 
             <Breadcrumbs
-                items={[
-                    {
-                    label: parentCategory?.name ?? "Subject",
-                    href: `/dashboard/${currentTopicCategory?.parent_id}`,
-                    },
-                    {
-                    label: currentTopicCategory?.name ?? "Topic",
-                    },
-                ]}
-                />
+              items={[
+                {
+                  label: parentCategory?.name ?? "Subject",
+                  href: `/dashboard/${currentTopicCategory?.parent_id}`,
+                },
+                {
+                  label: currentTopicCategory?.name ?? "Topic",
+                },
+              ]}
+            />
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
               subtitle={`${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`}
