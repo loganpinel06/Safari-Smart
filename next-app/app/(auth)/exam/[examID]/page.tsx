@@ -6,6 +6,20 @@ import ExamRunner from "@/components/ExamRunner";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import SectionCard from "@/components/SectionCard";
 
+type Choice =
+  | string
+  | {
+      text: string;
+      correct?: boolean;
+    };
+
+type ExamQuestion = {
+  id: string;
+  top_text?: string | null;
+  question: string;
+  choices?: Choice[] | null;
+};
+
 export default async function ExamPage({
   params,
 }: {
@@ -53,7 +67,7 @@ export default async function ExamPage({
     .limit(1)
     .maybeSingle();
 
-  let questions: any[] = [];
+  let questions: ExamQuestion[] = [];
 
   if (exam) {
     const { data: examQuestions } = await supabase
