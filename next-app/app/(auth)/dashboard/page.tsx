@@ -34,6 +34,7 @@ export default async function DashboardPage() {
   }
 
   const isTeacher = profile?.account_type === "Teacher";
+  const isParent = profile?.account_type === "Parent";
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
