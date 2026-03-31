@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
 
-type ActiveItem = "Dashboard" | "GoodStart AI" | "Settings";
+type ActiveItem = "Manage Account" | "Dashboard" | "GoodStart AI" | "Settings";
 
 type SidebarProps = {
   userName: string;
