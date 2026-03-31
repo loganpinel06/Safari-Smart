@@ -28,7 +28,9 @@ export default async function TopicPage({
     .eq("id", user.id)
     .single();
 
-  // Right now topicID is still really coming from the category hierarchy
+  const isTeacher = profile?.account_type === "Teacher";
+  const isParent = profile?.account_type === "Parent";
+
   const { data: currentTopicCategory } = await supabase
     .from("category")
     .select("name, parent_id")
@@ -48,26 +50,44 @@ export default async function TopicPage({
     redirect("/signin");
   }
 
-  // Placeholder/mock items for now.
-  // Later these should come from backend lesson / quiz / exam tables.
   const lessons = [
     {
       title: "Lesson 1: Introduction",
-      description: "Start with the core ideas and overview for this topic.",
+      description: isTeacher
+        ? "Preview or manage this lesson for student assignment."
+        : isParent
+        ? "View lesson content and completion progress."
+        : "Start with the core ideas and overview for this topic.",
       href: `/lesson/${topicID}`,
       kind: "Lesson" as const,
-      status: "Complete" as const,
+      status: isTeacher
+        ? ("In Progress" as const)
+        : isParent
+        ? ("Complete" as const)
+        : ("Complete" as const),
     },
     {
       title: "Lesson 2: Guided Practice",
-      description: "Work through examples and explanations step by step.",
+      description: isTeacher
+        ? "Review lesson structure and student-facing content."
+        : isParent
+        ? "Read-only lesson progress overview."
+        : "Work through examples and explanations step by step.",
       href: `/lesson/${topicID}`,
       kind: "Lesson" as const,
-      status: "In Progress" as const,
+      status: isTeacher
+        ? ("Not Started" as const)
+        : isParent
+        ? ("In Progress" as const)
+        : ("In Progress" as const),
     },
     {
       title: "Lesson 3: Extended Review",
-      description: "Review the topic with additional notes and support.",
+      description: isTeacher
+        ? "Manage advanced review material for this topic."
+        : isParent
+        ? "View whether the student has started this lesson."
+        : "Review the topic with additional notes and support.",
       href: `/lesson/${topicID}`,
       kind: "Lesson" as const,
       status: "Not Started" as const,
@@ -77,14 +97,22 @@ export default async function TopicPage({
   const quizzes = [
     {
       title: "Quiz 1",
-      description: "Check your understanding with short practice questions.",
+      description: isTeacher
+        ? "Preview quiz questions and review student performance."
+        : isParent
+        ? "View student quiz progress and outcomes."
+        : "Check your understanding with short practice questions.",
       href: `/quiz/${topicID}`,
       kind: "Quiz" as const,
       status: "Not Started" as const,
     },
     {
       title: "Quiz 2",
-      description: "A second quiz to reinforce the topic.",
+      description: isTeacher
+        ? "Review quiz structure and assignment flow."
+        : isParent
+        ? "Read-only quiz overview for this topic."
+        : "A second quiz to reinforce the topic.",
       href: `/quiz/${topicID}`,
       kind: "Quiz" as const,
       status: "Not Started" as const,
@@ -94,7 +122,11 @@ export default async function TopicPage({
   const exams = [
     {
       title: "Exam Practice 1",
-      description: "Try an exam-style set of questions for this topic.",
+      description: isTeacher
+        ? "Preview exam-style practice and manage assessment content."
+        : isParent
+        ? "View exam-practice progress and completion."
+        : "Try an exam-style set of questions for this topic.",
       href: `/exam/${topicID}`,
       kind: "Exam" as const,
       status: "Not Started" as const,
@@ -108,6 +140,7 @@ export default async function TopicPage({
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
+            role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
             profile={profile ?? undefined}
@@ -116,7 +149,6 @@ export default async function TopicPage({
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
-
             <Breadcrumbs
               items={[
                 {
@@ -130,7 +162,13 @@ export default async function TopicPage({
             />
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
-              subtitle={`${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`}
+              subtitle={
+                isTeacher
+                  ? `${parentCategory?.name ?? "Subject"} • Manage content and review progress for this topic.`
+                  : isParent
+                  ? `${parentCategory?.name ?? "Subject"} • View student progress in this topic.`
+                  : `${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`
+              }
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -142,10 +180,18 @@ export default async function TopicPage({
                   {currentTopicCategory?.name ?? "Current Topic"}
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
-                  Subject:{" "}
-                  <span className="font-semibold text-[#592803]">
-                    {parentCategory?.name ?? "Unknown"}
-                  </span>
+                  {isTeacher
+                    ? "Teacher view for this topic."
+                    : isParent
+                    ? "Parent view of student activity for this topic."
+                    : (
+                      <>
+                        Subject:{" "}
+                        <span className="font-semibold text-[#592803]">
+                          {parentCategory?.name ?? "Unknown"}
+                        </span>
+                      </>
+                    )}
                 </p>
               </div>
 
@@ -183,7 +229,11 @@ export default async function TopicPage({
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">Lessons</h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Work through the lessons in order to build understanding.
+                  {isTeacher
+                    ? "Preview and manage lesson content assigned to students."
+                    : isParent
+                    ? "View lesson content and monitor student completion."
+                    : "Work through the lessons in order to build understanding."}
                 </p>
               </div>
 
@@ -205,7 +255,11 @@ export default async function TopicPage({
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">Quizzes</h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Check your understanding with quiz practice for this topic.
+                  {isTeacher
+                    ? "Review quiz content and track student performance."
+                    : isParent
+                    ? "View quiz activity and student performance for this topic."
+                    : "Check your understanding with quiz practice for this topic."}
                 </p>
               </div>
 
@@ -229,7 +283,11 @@ export default async function TopicPage({
                   Exam Practice
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Apply what you learned with exam-style practice.
+                  {isTeacher
+                    ? "Preview exam-style practice and manage assessment flow."
+                    : isParent
+                    ? "View exam-practice progress and completion."
+                    : "Apply what you learned with exam-style practice."}
                 </p>
               </div>
 
