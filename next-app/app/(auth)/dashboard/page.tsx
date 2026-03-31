@@ -8,7 +8,6 @@ import { getSubjects } from "@/utils/categories/util";
 import TeacherDashboardContent from "@/components/TeacherDashboardContent";
 import ParentDashboardContent from "@/components/ParentDashboardContent";
 
-
 export default async function DashboardPage() {
   const supabase = await createClient();
 
@@ -60,6 +59,10 @@ export default async function DashboardPage() {
             {isTeacher ? (
               <TeacherDashboardContent
                 teacherName={profile?.name ?? "Teacher"}
+              />
+            ) : isParent ? (
+              <ParentDashboardContent
+                parentName={profile?.name ?? "Parent"}
               />
             ) : (
               <>
