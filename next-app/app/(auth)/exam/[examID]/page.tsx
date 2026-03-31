@@ -3,6 +3,8 @@ import PageHeader from "@/components/PageHeader";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import ExamRunner from "@/components/ExamRunner";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import SectionCard from "@/components/SectionCard";
 
 export default async function ExamPage({
   params,
@@ -25,6 +27,9 @@ export default async function ExamPage({
     .select("*")
     .eq("id", user.id)
     .single();
+
+  const isTeacher = profile?.account_type === "Teacher";
+  const isParent = profile?.account_type === "Parent";
 
   // For now examID is still acting like the selected topic/category id
   const { data: currentExamCategory } = await supabase
@@ -74,6 +79,7 @@ export default async function ExamPage({
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
+            role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
           />
@@ -81,12 +87,56 @@ export default async function ExamPage({
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-5xl space-y-8">
-            <PageHeader
-              title={`${currentExamCategory?.name ?? "Topic"} Exam`}
-              subtitle={`${parentCategory?.name ?? "Subject"} • Exam Mode`}
+            <Breadcrumbs
+              items={[
+                {
+                  label: parentCategory?.name ?? "Subject",
+                  href: `/dashboard/${currentExamCategory?.parent_id}`,
+                },
+                {
+                  label: currentExamCategory?.name ?? "Topic",
+                  href: `/topic/${examID}`,
+                },
+                {
+                  label: "Exam",
+                },
+              ]}
             />
 
-            <ExamRunner questions={questions} />
+            <PageHeader
+              title={`${currentExamCategory?.name ?? "Topic"} Exam`}
+              subtitle={
+                isTeacher
+                  ? `${parentCategory?.name ?? "Subject"} • Teacher preview mode`
+                  : isParent
+                  ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
+                  : `${parentCategory?.name ?? "Subject"} • Exam Mode`
+              }
+            />
+
+            {isTeacher ? (
+              <SectionCard>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  Teacher Preview
+                </h2>
+                <p className="mt-2 text-sm text-[#4B3A46]">
+                  Teachers can preview exam structure and questions here. This is where
+                  exam editing, assignment controls, and analytics can be added later.
+                </p>
+              </SectionCard>
+            ) : isParent ? (
+              <SectionCard>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  Parent View
+                </h2>
+                <p className="mt-2 text-sm text-[#4B3A46]">
+                  Parents can review exam content and monitor progress, but cannot answer
+                  or submit exam questions.
+                </p>
+              </SectionCard>
+            ) : (
+              <ExamRunner questions={questions} />
+            )}
           </div>
         </div>
       </div>
