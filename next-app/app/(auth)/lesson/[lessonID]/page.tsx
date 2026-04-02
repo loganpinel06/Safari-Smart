@@ -57,11 +57,11 @@ export default async function LessonPage({
               items={[
                 ...(topic
                   ? [
-                      {
-                        label: topic.name,
-                        href: `/topic/${topic.id}`,
-                      },
-                    ]
+                    {
+                      label: topic.name,
+                      href: `/topic/${topic.id}`,
+                    },
+                  ]
                   : []),
                 {
                   label: "Lesson",

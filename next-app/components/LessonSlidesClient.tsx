@@ -65,27 +65,25 @@ export default function LessonSlidesClient({
 
   const nextLabel = !hasPages ? "Back to topic" : isLast ? "Finish" : "Next";
 
+  const pageForMedia = hasPages ? pages[pageIndex] : null;
+  const mediaFetchKey =
+    pageForMedia &&
+    (pageForMedia.type === "Image" || pageForMedia.type === "Video") &&
+    pageForMedia.path
+      ? `${pageForMedia.id}\u001f${pageForMedia.path}`
+      : null;
+
   useEffect(() => {
-    if (!hasPages) {
+    if (!mediaFetchKey) {
       setSignedMediaUrl(null);
       setMediaLoading(false);
       return;
     }
 
-    const page = pages[pageIndex];
-    if (!page) {
-      setSignedMediaUrl(null);
-      setMediaLoading(false);
-      return;
-    }
-
-    if (page.type !== "Image" && page.type !== "Video") {
-      setSignedMediaUrl(null);
-      setMediaLoading(false);
-      return;
-    }
-
-    if (!page.path) {
+    const sep = mediaFetchKey.indexOf("\u001f");
+    const pathInLesson =
+      sep === -1 ? null : mediaFetchKey.slice(sep + 1);
+    if (!pathInLesson) {
       setSignedMediaUrl(null);
       setMediaLoading(false);
       return;
@@ -96,7 +94,7 @@ export default function LessonSlidesClient({
     setMediaLoading(true);
 
     void (async () => {
-      const url = await getSignedUrlFromStoredPath(supabase(), page.path);
+      const url = await getSignedUrlFromStoredPath(supabase(), pathInLesson);
       if (!cancelled) {
         setSignedMediaUrl(url);
         setMediaLoading(false);
@@ -106,7 +104,7 @@ export default function LessonSlidesClient({
     return () => {
       cancelled = true;
     };
-  }, [hasPages, pages, pageIndex]);
+  }, [mediaFetchKey]);
 
   if (!hasPages || !current) {
     return (
