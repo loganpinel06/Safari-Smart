@@ -5,6 +5,7 @@ import LearningItemCard from "@/components/LearningItemCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { getTopicDetails } from "@/utils/topic/util";
 
 export default async function TopicPage({
   params,
@@ -12,7 +13,7 @@ export default async function TopicPage({
   params: Promise<{ topicID: string }>;
 }) {
   const supabase = await createClient();
-  const topicID = (await params).topicID;
+  const topicID = Number.parseInt((await params).topicID, 10);
 
   const {
     data: { user },
@@ -32,16 +33,12 @@ export default async function TopicPage({
   const isParent = profile?.account_type === "Parent";
 
   const { data: currentTopicCategory } = await supabase
-    .from("category")
-    .select("name, parent_id")
+    .from("topic")
+    .select("name")
     .eq("id", topicID)
     .single();
 
-  const { data: parentCategory } = await supabase
-    .from("category")
-    .select("name")
-    .eq("id", currentTopicCategory?.parent_id)
-    .single();
+  const { lessons, quizzes, exams } = await getTopicDetails(topicID, supabase);
 
   async function logout() {
     "use server";
@@ -49,89 +46,6 @@ export default async function TopicPage({
     await supabase.auth.signOut();
     redirect("/signin");
   }
-
-  const lessons = [
-    {
-      title: "Lesson 1: Introduction",
-      description: isTeacher
-        ? "Preview or manage this lesson for student assignment."
-        : isParent
-        ? "View lesson content and completion progress."
-        : "Start with the core ideas and overview for this topic.",
-      href: `/lesson/${topicID}`,
-      kind: "Lesson" as const,
-      status: isTeacher
-        ? ("In Progress" as const)
-        : isParent
-        ? ("Complete" as const)
-        : ("Complete" as const),
-    },
-    {
-      title: "Lesson 2: Guided Practice",
-      description: isTeacher
-        ? "Review lesson structure and student-facing content."
-        : isParent
-        ? "Read-only lesson progress overview."
-        : "Work through examples and explanations step by step.",
-      href: `/lesson/${topicID}`,
-      kind: "Lesson" as const,
-      status: isTeacher
-        ? ("Not Started" as const)
-        : isParent
-        ? ("In Progress" as const)
-        : ("In Progress" as const),
-    },
-    {
-      title: "Lesson 3: Extended Review",
-      description: isTeacher
-        ? "Manage advanced review material for this topic."
-        : isParent
-        ? "View whether the student has started this lesson."
-        : "Review the topic with additional notes and support.",
-      href: `/lesson/${topicID}`,
-      kind: "Lesson" as const,
-      status: "Not Started" as const,
-    },
-  ];
-
-  const quizzes = [
-    {
-      title: "Quiz 1",
-      description: isTeacher
-        ? "Preview quiz questions and review student performance."
-        : isParent
-        ? "View student quiz progress and outcomes."
-        : "Check your understanding with short practice questions.",
-      href: `/quiz/${topicID}`,
-      kind: "Quiz" as const,
-      status: "Not Started" as const,
-    },
-    {
-      title: "Quiz 2",
-      description: isTeacher
-        ? "Review quiz structure and assignment flow."
-        : isParent
-        ? "Read-only quiz overview for this topic."
-        : "A second quiz to reinforce the topic.",
-      href: `/quiz/${topicID}`,
-      kind: "Quiz" as const,
-      status: "Not Started" as const,
-    },
-  ];
-
-  const exams = [
-    {
-      title: "Exam Practice 1",
-      description: isTeacher
-        ? "Preview exam-style practice and manage assessment content."
-        : isParent
-        ? "View exam-practice progress and completion."
-        : "Try an exam-style set of questions for this topic.",
-      href: `/exam/${topicID}`,
-      kind: "Exam" as const,
-      status: "Not Started" as const,
-    },
-  ];
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
@@ -152,23 +66,12 @@ export default async function TopicPage({
             <Breadcrumbs
               items={[
                 {
-                  label: parentCategory?.name ?? "Subject",
-                  href: `/dashboard/${currentTopicCategory?.parent_id}`,
-                },
-                {
                   label: currentTopicCategory?.name ?? "Topic",
                 },
               ]}
             />
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
-              subtitle={
-                isTeacher
-                  ? `${parentCategory?.name ?? "Subject"} • Manage content and review progress for this topic.`
-                  : isParent
-                  ? `${parentCategory?.name ?? "Subject"} • View student progress in this topic.`
-                  : `${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`
-              }
             />
 
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -183,15 +86,8 @@ export default async function TopicPage({
                   {isTeacher
                     ? "Teacher view for this topic."
                     : isParent
-                    ? "Parent view of student activity for this topic."
-                    : (
-                      <>
-                        Subject:{" "}
-                        <span className="font-semibold text-[#592803]">
-                          {parentCategory?.name ?? "Unknown"}
-                        </span>
-                      </>
-                    )}
+                      ? "Parent view of student activity for this topic."
+                      : "View topic structure and student progress in this topic."}
                 </p>
               </div>
 
@@ -232,20 +128,20 @@ export default async function TopicPage({
                   {isTeacher
                     ? "Preview and manage lesson content assigned to students."
                     : isParent
-                    ? "View lesson content and monitor student completion."
-                    : "Work through the lessons in order to build understanding."}
+                      ? "View lesson content and monitor student completion."
+                      : "Work through the lessons in order to build understanding."}
                 </p>
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 {lessons.map((lesson) => (
                   <LearningItemCard
-                    key={lesson.title}
-                    title={lesson.title}
-                    description={lesson.description}
-                    href={lesson.href}
-                    kind={lesson.kind}
-                    status={lesson.status}
+                    key={lesson.id}
+                    title={lesson.name}
+                    description={"View lesson content and monitor student completion."}
+                    href={`/lesson/${lesson.id}`}
+                    kind="Lesson"
+                    status="Not Started"
                   />
                 ))}
               </div>
@@ -258,20 +154,20 @@ export default async function TopicPage({
                   {isTeacher
                     ? "Review quiz content and track student performance."
                     : isParent
-                    ? "View quiz activity and student performance for this topic."
-                    : "Check your understanding with quiz practice for this topic."}
+                      ? "View quiz activity and student performance for this topic."
+                      : "Check your understanding with quiz practice for this topic."}
                 </p>
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 {quizzes.map((quiz) => (
                   <LearningItemCard
-                    key={quiz.title}
-                    title={quiz.title}
-                    description={quiz.description}
-                    href={quiz.href}
-                    kind={quiz.kind}
-                    status={quiz.status}
+                    key={quiz.id}
+                    title={quiz.name}
+                    description={"View quiz content and monitor student completion."}
+                    href={`/quiz/${quiz.id}`}
+                    kind="Quiz"
+                    status="Not Started"
                   />
                 ))}
               </div>
@@ -286,20 +182,20 @@ export default async function TopicPage({
                   {isTeacher
                     ? "Preview exam-style practice and manage assessment flow."
                     : isParent
-                    ? "View exam-practice progress and completion."
-                    : "Apply what you learned with exam-style practice."}
+                      ? "View exam-practice progress and completion."
+                      : "Apply what you learned with exam-style practice."}
                 </p>
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 {exams.map((exam) => (
                   <LearningItemCard
-                    key={exam.title}
-                    title={exam.title}
-                    description={exam.description}
-                    href={exam.href}
-                    kind={exam.kind}
-                    status={exam.status}
+                    key={exam.id}
+                    title={exam.name}
+                    description={"View exam content and monitor student completion."}
+                    href={`/exam/${exam.id}`}
+                    kind="Exam"
+                    status="Not Started"
                   />
                 ))}
               </div>
