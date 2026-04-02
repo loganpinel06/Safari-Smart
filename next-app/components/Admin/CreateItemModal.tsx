@@ -1,23 +1,32 @@
+//reusable modal component for creating lessons, quizzes, and exams in the admin topic page
+
 "use client";
 
 import { useState } from "react";
 
-type CreateLessonModalProps = {
+type ItemType = "lesson" | "quiz" | "exam";
+
+type CreateItemModalProps = {
   isOpen: boolean;
   onClose: () => void;
   topicId: number;
+  itemType: ItemType;
 };
 
-export default function CreateLessonModal({
+export default function CreateItemModal({
   isOpen,
   onClose,
   topicId,
-}: CreateLessonModalProps) {
+  itemType,
+}: CreateItemModalProps) {
   const [name, setName] = useState("");
   const [order, setOrder] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  const itemTypeCapitalized =
+    itemType.charAt(0).toUpperCase() + itemType.slice(1);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,14 +46,14 @@ export default function CreateLessonModal({
       formData.append("topic_id", topicId.toString());
       formData.append("order", order.trim());
 
-      const response = await fetch("/api/lesson/create", {
+      const response = await fetch(`/api/${itemType}/create`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
         const data = (await response.json()) as { error?: string };
-        throw new Error(data.error || "Failed to create lesson");
+        throw new Error(data.error || `Failed to create ${itemType}`);
       }
 
       setSuccess(true);
@@ -74,7 +83,9 @@ export default function CreateLessonModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-2xl bg-[#FFF1E5] p-6 shadow-lg">
-        <h2 className="mb-4 text-2xl font-bold text-[#592803]">Create Lesson</h2>
+        <h2 className="mb-4 text-2xl font-bold text-[#592803]">
+          Create {itemTypeCapitalized}
+        </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -83,7 +94,7 @@ export default function CreateLessonModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter lesson name"
+              placeholder={`Enter ${itemType} name`}
               className="w-full rounded-lg border border-[#4B3A46]/20 bg-white px-4 py-2 text-[#592803] placeholder-[#4B3A46]/50 focus:outline-none focus:ring-2 focus:ring-[#592803]/40"
               disabled={loading}
               autoFocus
@@ -91,7 +102,9 @@ export default function CreateLessonModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-[#592803]">Order</label>
+            <label className="text-sm font-semibold text-[#592803]">
+              Order
+            </label>
             <input
               type="number"
               value={order}
@@ -111,7 +124,7 @@ export default function CreateLessonModal({
 
           {success && (
             <div className="rounded-lg bg-green-100 p-3 text-sm text-green-800">
-              Lesson created successfully!
+              {itemTypeCapitalized} created successfully!
             </div>
           )}
 

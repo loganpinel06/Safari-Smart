@@ -1,18 +1,28 @@
+//reusable client component for admin topic page to create lessons, quizzes, and exams
+//to show the button
+
 "use client";
 
 import { useState } from "react";
-import CreateLessonModal from "./CreateLessonModal";
+import CreateItemModal from "./CreateItemModal";
 
-type AdminLessonsClientProps = {
+type ItemType = "lesson" | "quiz" | "exam";
+
+type AdminItemClientProps = {
   topicId: number;
+  itemType: ItemType;
   buttonLabel?: string;
 };
 
-export default function AdminLessonsClient({
+export default function AdminItemClient({
   topicId,
-  buttonLabel = "+ New lesson",
-}: AdminLessonsClientProps) {
+  itemType,
+  buttonLabel,
+}: AdminItemClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const defaultLabel = `+ New ${itemType}`;
+  const label = buttonLabel ?? defaultLabel;
 
   return (
     <>
@@ -21,12 +31,13 @@ export default function AdminLessonsClient({
         onClick={() => setIsModalOpen(true)}
         className="rounded-lg bg-[#592803] px-6 py-2 font-semibold text-white transition hover:bg-[#4B3A46]"
       >
-        {buttonLabel}
+        {label}
       </button>
-      <CreateLessonModal
+      <CreateItemModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         topicId={topicId}
+        itemType={itemType}
       />
     </>
   );

@@ -2,7 +2,7 @@ import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import AdminLessonsClient from "@/components/Admin/AdminLessonsClient";
+import AdminItemClient from "@/components/Admin/AdminItemClient";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -176,7 +176,11 @@ export default async function AdminTopicPage({
                     Ordered content for this topic.
                   </p>
                 </div>
-                <AdminLessonsClient topicId={topicIdNum} />
+                <AdminItemClient
+                  topicId={topicIdNum}
+                  itemType="lesson"
+                  buttonLabel="+ New lesson"
+                />
               </div>
 
               {lessons.length === 0 ? (
@@ -207,7 +211,11 @@ export default async function AdminTopicPage({
                     Practice quizzes for this topic.
                   </p>
                 </div>
-                <PlaceholderActionButton label="+ New quiz" />
+                <AdminItemClient
+                  topicId={topicIdNum}
+                  itemType="quiz"
+                  buttonLabel="+ New quiz"
+                />
               </div>
 
               {quizzes.length === 0 ? (
@@ -237,7 +245,11 @@ export default async function AdminTopicPage({
                     Exam-style material for this topic.
                   </p>
                 </div>
-                <PlaceholderActionButton label="+ New exam" />
+                <AdminItemClient
+                  topicId={topicIdNum}
+                  itemType="exam"
+                  buttonLabel="+ New exam"
+                />
               </div>
 
               {exams.length === 0 ? (
