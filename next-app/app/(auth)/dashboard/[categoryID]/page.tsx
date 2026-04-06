@@ -60,7 +60,7 @@ export default async function DashboardCategoryPage({
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
             <PageHeader
-              title="Category"
+              title="Subject"
               subtitle={
                 isTeacher
                   ? "Review and manage topic content for this subject."
@@ -73,10 +73,10 @@ export default async function DashboardCategoryPage({
             <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
                 <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-                  Subject
+                  Subject Overview
                 </p>
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  Current Subject
+                  Available Topics
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
                   {isTeacher
@@ -100,7 +100,7 @@ export default async function DashboardCategoryPage({
             <SectionCard>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">
-                  Available Topics
+                  Topics in This Subject
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
                   {isTeacher
