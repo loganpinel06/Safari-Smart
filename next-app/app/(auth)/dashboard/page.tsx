@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getSubjects } from "@/utils/categories/util";
 import TeacherDashboardContent from "@/components/TeacherDashboardContent";
 import ParentDashboardContent from "@/components/ParentDashboardContent";
+import JoinClassSection from "@/components/JoinClassSection";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
