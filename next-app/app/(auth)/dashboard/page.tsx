@@ -8,6 +8,7 @@ import { getSubjects } from "@/utils/categories/util";
 import TeacherDashboardContent from "@/components/TeacherDashboardContent";
 import ParentDashboardContent from "@/components/ParentDashboardContent";
 import JoinClassSection from "@/components/JoinClassSection";
+import TeacherClassCard from "@/components/TeacherClassCard";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
