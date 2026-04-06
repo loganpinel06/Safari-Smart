@@ -8,7 +8,6 @@ import { getSubjects } from "@/utils/categories/util";
 import TeacherDashboardContent from "@/components/TeacherDashboardContent";
 import ParentDashboardContent from "@/components/ParentDashboardContent";
 import JoinClassSection from "@/components/JoinClassSection";
-import TeacherClassCard from "@/components/TeacherClassCard";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -46,6 +45,7 @@ export default async function DashboardPage() {
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
+            role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
           />
@@ -102,6 +102,33 @@ export default async function DashboardPage() {
                       <p className="mt-2 text-2xl font-extrabold text-[#592803]">
                         {profile?.account_type ?? "Student"}
                       </p>
+                    </div>
+                  </div>
+                </SectionCard>
+
+                <JoinClassSection />
+
+                <SectionCard>
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-[#592803]">
+                      Your Classes
+                    </h2>
+                    <p className="text-sm text-[#4B3A46] mt-1">
+                      Classes you have joined using a teacher’s class code.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 shadow-sm">
+                      <h3 className="text-xl font-bold text-[#592803]">
+                        BECE English A
+                      </h3>
+                      <p className="mt-2 text-sm text-[#4B3A46]">
+                        Class Code: ENG231
+                      </p>
+                      <button className="mt-4 rounded-xl border border-[#4B3A46]/20 px-4 py-2 text-sm font-semibold text-[#592803] transition hover:bg-white/40">
+                        Leave Class
+                      </button>
                     </div>
                   </div>
                 </SectionCard>
