@@ -1,4 +1,5 @@
 import SectionCard from "@/components/SectionCard";
+import TeacherClassCard from "@/components/TeacherClassCard";
 
 type TeacherDashboardContentProps = {
   teacherName: string;
@@ -89,20 +90,19 @@ export default function TeacherDashboardContent({
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 shadow-sm">
-            <h3 className="text-xl font-bold text-[#592803]">BECE English A</h3>
-            <p className="mt-2 text-sm text-[#4B3A46]">Class Code: ENG231</p>
-            <p className="mt-1 text-sm text-[#4B3A46]">18 students enrolled</p>
+          <div className="grid gap-5 md:grid-cols-2">
+              <TeacherClassCard
+                name="BECE English A"
+                code="ENG231"
+                studentCount={18}
+              />
+              <TeacherClassCard
+                name="WASSCE Writing Prep"
+                code="WRT482"
+                studentCount={24}
+              />
           </div>
-
-          <div className="rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 shadow-sm">
-            <h3 className="text-xl font-bold text-[#592803]">WASSCE Writing Prep</h3>
-            <p className="mt-2 text-sm text-[#4B3A46]">Class Code: WRT482</p>
-            <p className="mt-1 text-sm text-[#4B3A46]">24 students enrolled</p>
-          </div>
-        </div>
-      </SectionCard>
-    </div>
+        </SectionCard>
+      </div>
   );
 }
