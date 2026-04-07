@@ -223,15 +223,16 @@ export default async function AdminTopicPage({
               ) : (
                 <div className="flex flex-col gap-3">
                   {quizzes.map((quiz) => (
-                    <div
+                    <Link
                       key={quiz.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#4B3A46]/15 bg-white/60 px-4 py-3"
+                      href={`/admin-quiz/${quiz.id}`}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#4B3A46]/15 bg-white/60 px-4 py-3 transition hover:border-[#592803]/40 hover:bg-white/90"
                     >
                       <span className="font-semibold">{quiz.name}</span>
                       <span className="text-sm text-[#4B3A46]">
                         Order {quiz.order}
                       </span>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

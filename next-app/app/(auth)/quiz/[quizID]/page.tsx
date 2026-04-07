@@ -88,28 +88,36 @@ export default async function QuizPage({
                 isTeacher
                   ? `${parentCategory?.name ?? "Subject"} • Teacher preview mode`
                   : isParent
-                  ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
-                  : `${parentCategory?.name ?? "Subject"} • Practice Mode`
+                    ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
+                    : `${parentCategory?.name ?? "Subject"} • Practice Mode`
               }
             />
 
             {isTeacher ? (
               <SectionCard>
-                <h2 className="text-2xl font-bold text-[#592803]">Teacher Preview</h2>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  Teacher Preview
+                </h2>
                 <p className="mt-2 text-sm text-[#4B3A46]">
-                  Teachers can preview quiz structure and questions here. This is where quiz editing
-                  and assignment controls can be added later.
+                  Teachers can preview quiz structure and questions here. This
+                  is where quiz editing and assignment controls can be added
+                  later.
                 </p>
               </SectionCard>
             ) : isParent ? (
               <SectionCard>
-                <h2 className="text-2xl font-bold text-[#592803]">Parent View</h2>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  Parent View
+                </h2>
                 <p className="mt-2 text-sm text-[#4B3A46]">
-                  Parents can review quiz content and monitor progress, but cannot answer or submit quiz questions.
+                  Parents can review quiz content and monitor progress, but
+                  cannot answer or submit quiz questions.
                 </p>
               </SectionCard>
             ) : (
-              <QuizRunner topicName={currentQuizCategory?.name ?? "Sample Topic"} />
+              <QuizRunner
+                topicName={currentQuizCategory?.name ?? "Sample Topic"}
+              />
             )}
           </div>
         </div>
