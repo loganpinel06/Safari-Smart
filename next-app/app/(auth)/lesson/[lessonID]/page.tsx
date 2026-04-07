@@ -59,6 +59,7 @@ export default async function LessonPage({
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
@@ -66,20 +67,20 @@ export default async function LessonPage({
           <div className="max-w-5xl space-y-8">
 
             <Breadcrumbs
-                items={[
-                    {
-                    label: parentCategory?.name ?? "Subject",
-                    href: `/dashboard/${currentLessonCategory?.parent_id}`,
-                    },
-                    {
-                    label: currentLessonCategory?.name ?? "Topic",
-                    href: `/topic/${lessonID}`,
-                    },
-                    {
-                    label: "Lesson",
-                    },
-                ]}
-                />
+              items={[
+                {
+                  label: parentCategory?.name ?? "Subject",
+                  href: `/dashboard/${currentLessonCategory?.parent_id}`,
+                },
+                {
+                  label: currentLessonCategory?.name ?? "Topic",
+                  href: `/topic/${lessonID}`,
+                },
+                {
+                  label: "Lesson",
+                },
+              ]}
+            />
             <PageHeader
               title={currentLessonCategory?.name ?? "Lesson"}
               subtitle={`${parentCategory?.name ?? "Subject"} • Lesson Content`}

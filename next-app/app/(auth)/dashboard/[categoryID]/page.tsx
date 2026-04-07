@@ -28,7 +28,7 @@ export default async function DashboardCategoryPage({
     .eq("id", user.id)
     .single();
 
-  const subjects = await getSubjects(
+  const { subjects } = await getSubjects(
     categoryID ? parseInt(categoryID) : null,
     profile,
     supabase
@@ -54,6 +54,7 @@ export default async function DashboardCategoryPage({
             role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 

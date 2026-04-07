@@ -38,6 +38,7 @@ export default async function SettingsPage() {
             role={profile?.account_type ?? "Student"}
             activeItem="Settings"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

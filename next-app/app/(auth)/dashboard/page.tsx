@@ -27,7 +27,7 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
-  const subjects = await getSubjects(null, profile, supabase);
+  const { subjects } = await getSubjects(null, profile, supabase);
 
   async function logout() {
     "use server";
@@ -49,6 +49,7 @@ export default async function DashboardPage() {
             role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

@@ -44,6 +44,7 @@ export default async function ManageAccountPage() {
             role={profile?.account_type ?? "Student"}
             activeItem="Manage Account"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
