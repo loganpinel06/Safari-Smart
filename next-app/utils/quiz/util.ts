@@ -14,8 +14,13 @@ export type QuizQuestionDetail = {
   order: number;
   main_text: string | null;
   question: string;
-  choices: unknown;
+  choices: QuizQuestionChoice[];
   path: string | null;
+};
+
+export type QuizQuestionChoice = {
+  text: string;
+  correct: boolean;
 };
 
 export async function getQuizQuestions(
@@ -64,6 +69,8 @@ export async function getQuizQuestionsDetail(
     console.error("Error fetching quiz questions (detail):", res.error);
     return [];
   }
+
+  // convert choices from string to object
 
   return (res.data ?? []) as QuizQuestionDetail[];
 }
