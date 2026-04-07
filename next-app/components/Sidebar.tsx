@@ -96,7 +96,6 @@ export default function Sidebar({
             active={activeItem === "Settings"}
           />
         </div>
-      </div>
 
       <div className="px-8 pb-10">
         <form action={logoutAction}>
