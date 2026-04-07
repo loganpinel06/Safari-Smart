@@ -1,3 +1,5 @@
+import { get } from "http";
+
 export type QuizQuestionType = "Image" | "Text" | "Video";
 
 export type QuizQuestionSummary = {
@@ -19,7 +21,7 @@ export type QuizQuestionDetail = {
 };
 
 export type QuizQuestionChoice = {
-  text: string;
+  name: string;
   correct: boolean;
 };
 
@@ -48,6 +50,7 @@ export async function getQuizQuestions(
   return (res.data ?? []) as QuizQuestionSummary[];
 }
 
+//this function is used to get the quiz questions with all details including choices for students to view
 export async function getQuizQuestionsDetail(
   quizID: string | number,
   supabase: any,
@@ -70,7 +73,17 @@ export async function getQuizQuestionsDetail(
     return [];
   }
 
-  // convert choices from string to object
-
-  return (res.data ?? []) as QuizQuestionDetail[];
+  //add logic to get choices for each quiz question for students to view
+  //get the json for choices and map it to QuizQuestionChoice[]
+  const questions = (res.data ?? []) as QuizQuestionDetail[];
+  for (const question of questions) {
+    if (typeof question.choices === "string") {
+      try {
+        question.choices = JSON.parse(question.choices);
+      } catch {
+        question.choices = [];
+      }
+    }
+  }
+  return questions;
 }

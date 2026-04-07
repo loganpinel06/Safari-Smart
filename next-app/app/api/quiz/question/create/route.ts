@@ -5,6 +5,10 @@ import { uploadFile } from "@/utils/files/uploadFile";
 
 const QUESTION_TYPES = ["Text", "Image", "Video"] as const;
 type QuestionType = (typeof QUESTION_TYPES)[number];
+type QuizChoice = {
+  name: string;
+  correct: boolean;
+};
 
 function parseQuestionType(raw: unknown): QuestionType | null {
   if (typeof raw !== "string") return null;
@@ -21,7 +25,7 @@ function optionalText(raw: unknown): string | null {
   return text === "" ? null : text;
 }
 
-function parseChoices(raw: unknown): string[] | null {
+function parseChoices(raw: unknown): QuizChoice[] | null {
   if (typeof raw !== "string") return null;
 
   try {
@@ -29,11 +33,19 @@ function parseChoices(raw: unknown): string[] | null {
     if (!Array.isArray(parsed)) return null;
 
     const choices = parsed
-      .filter((item): item is string => typeof item === "string")
-      .map((item) => item.trim())
-      .filter(Boolean);
+      .map((item) => {
+        if (typeof item !== "object" || item === null) return null;
+        const rawName = (item as { name?: unknown }).name;
+        const rawCorrect = (item as { correct?: unknown }).correct;
+        const name = typeof rawName === "string" ? rawName.trim() : "";
+        const correct = typeof rawCorrect === "boolean" ? rawCorrect : null;
+        if (!name || correct === null) return null;
+        return { name, correct };
+      })
+      .filter((item): item is QuizChoice => item !== null);
 
     if (choices.length < 2) return null;
+    if (!choices.some((choice) => choice.correct)) return null;
     return choices;
   } catch {
     return null;

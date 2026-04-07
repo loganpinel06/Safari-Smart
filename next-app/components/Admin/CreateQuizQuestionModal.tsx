@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type QuizQuestionModalType = "Text" | "Image" | "Video";
 type ModalPanel = "editing" | "preview";
+type ChoiceDraft = {
+  name: string;
+  correct: boolean;
+};
+
+const EMPTY_CHOICE: ChoiceDraft = {
+  name: "",
+  correct: false,
+};
 
 type CreateQuizQuestionModalProps = {
   isOpen: boolean;
@@ -23,7 +32,7 @@ export default function CreateQuizQuestionModal({
   const [order, setOrder] = useState(String(defaultOrder));
   const [mainText, setMainText] = useState("");
   const [question, setQuestion] = useState("");
-  const [choicesInput, setChoicesInput] = useState("");
+  const [choices, setChoices] = useState<ChoiceDraft[]>([{ ...EMPTY_CHOICE }]);
   const [file, setFile] = useState<File | null>(null);
   const [mediaObjectUrl, setMediaObjectUrl] = useState<string | null>(null);
 
@@ -33,14 +42,12 @@ export default function CreateQuizQuestionModal({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const parsedChoices = useMemo(
-    () =>
-      choicesInput
-        .split("\n")
-        .map((choice) => choice.trim())
-        .filter(Boolean),
-    [choicesInput],
-  );
+  const normalizedChoices = choices
+    .map((choice) => ({
+      name: choice.name.trim(),
+      correct: choice.correct,
+    }))
+    .filter((choice) => choice.name.length > 0);
 
   useEffect(() => {
     if (!file) {
@@ -58,7 +65,7 @@ export default function CreateQuizQuestionModal({
     setOrder(String(defaultOrder));
     setMainText("");
     setQuestion("");
-    setChoicesInput("");
+    setChoices([{ ...EMPTY_CHOICE }]);
     setFile(null);
     setError(null);
     setSuccess(false);
@@ -68,6 +75,29 @@ export default function CreateQuizQuestionModal({
   const handleTypeChange = (type: QuizQuestionModalType) => {
     setQuestionType(type);
     setFile(null);
+  };
+
+  const handleChoiceNameChange = (index: number, name: string) => {
+    setChoices((prev) =>
+      prev.map((choice, i) => (i === index ? { ...choice, name } : choice)),
+    );
+  };
+
+  const handleChoiceCorrectChange = (index: number, correct: boolean) => {
+    setChoices((prev) =>
+      prev.map((choice, i) => (i === index ? { ...choice, correct } : choice)),
+    );
+  };
+
+  const handleAddChoice = () => {
+    setChoices((prev) => [...prev, { ...EMPTY_CHOICE }]);
+  };
+
+  const handleRemoveChoice = (index: number) => {
+    setChoices((prev) => {
+      if (prev.length <= 1) return prev;
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,8 +116,13 @@ export default function CreateQuizQuestionModal({
       return;
     }
 
-    if (parsedChoices.length < 2) {
-      setError("Please provide at least 2 choices (one per line)");
+    if (normalizedChoices.length < 2) {
+      setError("Please provide at least 2 choices");
+      return;
+    }
+
+    if (!normalizedChoices.some((choice) => choice.correct)) {
+      setError("Please mark at least 1 choice as correct");
       return;
     }
 
@@ -107,7 +142,7 @@ export default function CreateQuizQuestionModal({
       formData.append("quiz_id", quizId.toString());
       formData.append("order", String(orderNum));
       formData.append("question", question.trim());
-      formData.append("choices", JSON.stringify(parsedChoices));
+      formData.append("choices", JSON.stringify(normalizedChoices));
       if (mainText.trim()) formData.append("main_text", mainText.trim());
       if (file) formData.append("file", file);
 
@@ -124,7 +159,7 @@ export default function CreateQuizQuestionModal({
       setSuccess(true);
       setMainText("");
       setQuestion("");
-      setChoicesInput("");
+      setChoices([{ ...EMPTY_CHOICE }]);
       setFile(null);
 
       setTimeout(() => {
@@ -296,21 +331,66 @@ export default function CreateQuizQuestionModal({
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                   <label className="text-sm font-semibold text-[#592803]">
-                    Choices{" "}
-                    <span className="font-normal text-[#4B3A46]">
-                      (one per line)
-                    </span>
+                    Choices
                   </label>
-                  <textarea
-                    value={choicesInput}
-                    onChange={(e) => setChoicesInput(e.target.value)}
-                    rows={6}
-                    placeholder={"Choice 1\nChoice 2\nChoice 3\nChoice 4"}
-                    className="w-full resize-y rounded-lg border border-[#4B3A46]/20 bg-white px-4 py-2 text-[#592803] placeholder-[#4B3A46]/50 focus:outline-none focus:ring-2 focus:ring-[#592803]/40"
+
+                  {choices.map((choice, index) => (
+                    <div
+                      key={`choice-${index}`}
+                      className="rounded-lg border border-[#4B3A46]/15 bg-white/80 p-3"
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <p className="text-sm font-semibold text-[#592803]">
+                          Choice {index + 1}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveChoice(index)}
+                          disabled={loading || choices.length === 1}
+                          className="text-xs font-semibold text-[#4B3A46] transition hover:text-[#592803] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          Remove
+                        </button>
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                        <input
+                          type="text"
+                          value={choice.name}
+                          onChange={(e) =>
+                            handleChoiceNameChange(index, e.target.value)
+                          }
+                          placeholder="Choice name"
+                          className="w-full rounded-lg border border-[#4B3A46]/20 bg-white px-4 py-2 text-[#592803] placeholder-[#4B3A46]/50 focus:outline-none focus:ring-2 focus:ring-[#592803]/40"
+                          disabled={loading}
+                        />
+
+                        <label className="inline-flex items-center gap-2 rounded-lg border border-[#4B3A46]/15 bg-[#FFF1B8]/40 px-3 py-2 text-sm font-medium text-[#592803]">
+                          <input
+                            type="checkbox"
+                            checked={choice.correct}
+                            onChange={(e) =>
+                              handleChoiceCorrectChange(index, e.target.checked)
+                            }
+                            disabled={loading}
+                            className="h-4 w-4"
+                          />
+                          Correct
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={handleAddChoice}
                     disabled={loading}
-                  />
+                    className="self-start rounded-lg border border-[#592803]/30 bg-white px-4 py-2 text-sm font-semibold text-[#592803] transition hover:bg-[#FFF1B8] disabled:opacity-50"
+                  >
+                    + Add choice
+                  </button>
                 </div>
 
                 {error && (
@@ -391,13 +471,22 @@ export default function CreateQuizQuestionModal({
                   </h3>
 
                   <div className="mt-4 grid gap-2">
-                    {parsedChoices.length > 0 ? (
-                      parsedChoices.map((choice, index) => (
+                    {normalizedChoices.length > 0 ? (
+                      normalizedChoices.map((choice, index) => (
                         <div
-                          key={`${choice}-${index}`}
-                          className="rounded-lg border border-[#4B3A46]/15 bg-[#FFF1B8]/30 px-3 py-2 text-sm text-[#592803]"
+                          key={`${choice.name}-${index}`}
+                          className="flex items-center justify-between rounded-lg border border-[#4B3A46]/15 bg-[#FFF1B8]/30 px-3 py-2 text-sm text-[#592803]"
                         >
-                          {choice}
+                          <span>{choice.name}</span>
+                          <span
+                            className={`rounded-md px-2 py-0.5 text-xs font-semibold ${
+                              choice.correct
+                                ? "bg-green-100 text-green-800"
+                                : "bg-white/80 text-[#4B3A46]"
+                            }`}
+                          >
+                            {choice.correct ? "Correct" : "Incorrect"}
+                          </span>
                         </div>
                       ))
                     ) : (
