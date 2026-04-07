@@ -38,7 +38,10 @@ export default async function TopicPage({
     .eq("id", topicID)
     .single();
 
-  const { lessons, quizzes, exams } = await getTopicDetails(topicID, supabase);
+  const topicContent = await getTopicDetails(topicID, supabase);
+  const lessons = topicContent.filter((c) => c.type === "lesson");
+  const quizzes = topicContent.filter((c) => c.type === "quiz");
+  const exams = topicContent.filter((c) => c.type === "exam");
 
   async function logout() {
     "use server";
