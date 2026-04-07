@@ -7,8 +7,8 @@ import { redirect } from "next/navigation";
 import { getSubjects } from "@/utils/categories/util";
 import TeacherDashboardContent from "@/components/TeacherDashboardContent";
 import ParentDashboardContent from "@/components/ParentDashboardContent";
-import JoinClassSection from "@/components/JoinClassSection";
 import StudentClassCard from "@/components/StudentClassCard";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -27,7 +27,11 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
-  const { subjects } = await getSubjects(null, profile, supabase);
+  const subjects = await getSubjects(null, profile, supabase);
+
+  const subjectList = Array.isArray(subjects)
+  ? subjects
+  : subjects?.subjects ?? subjects?.categories ?? [];
 
   async function logout() {
     "use server";
@@ -42,7 +46,7 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
       <div className="flex min-h-screen">
-        <div className="w-[320px]">
+        <div className="w-[320px] shrink-0">
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
@@ -93,7 +97,7 @@ export default async function DashboardPage() {
                         Subjects
                       </p>
                       <p className="mt-2 text-2xl font-extrabold text-[#592803]">
-                        {subjects.length}
+                        {subjectList.length}
                       </p>
                     </div>
 
@@ -108,16 +112,23 @@ export default async function DashboardPage() {
                   </div>
                 </SectionCard>
 
-                <JoinClassSection />
-
                 <SectionCard>
-                  <div className="mb-6">
-                    <h2 className="text-2xl font-bold text-[#592803]">
-                      Your Classes
-                    </h2>
-                    <p className="text-sm text-[#4B3A46] mt-1">
-                      Classes you have joined using a teacher’s class code.
-                    </p>
+                  <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="text-2xl font-bold text-[#592803]">
+                        Your Classes
+                      </h2>
+                      <p className="text-sm text-[#4B3A46] mt-1">
+                        Classes you have joined using a teacher’s class code.
+                      </p>
+                    </div>
+
+                    <Link
+                      href="/manageaccount"
+                      className="rounded-lg border border-[#4B3A46]/15 bg-white/70 px-4 py-2 text-sm font-semibold text-[#592803] transition hover:bg-white"
+                    >
+                      Manage Classes
+                    </Link>
                   </div>
 
                   <div className="grid gap-5 md:grid-cols-2">
@@ -142,7 +153,7 @@ export default async function DashboardPage() {
                   </div>
 
                   <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                    {subjects.map((s) => (
+                    {subjectList.map((s) => (
                       <DashboardCard
                         key={s.title}
                         title={s.title}
