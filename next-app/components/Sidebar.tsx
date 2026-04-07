@@ -78,7 +78,7 @@ export default function Sidebar({
           </Link>
         </div>
 
-        <div className="mt-6 space-y-5">
+        <div className="pt-16 space-y-5">
           <SidebarNavItem
             label="Dashboard"
             href="/dashboard"
