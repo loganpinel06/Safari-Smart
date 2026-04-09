@@ -6,6 +6,7 @@ import LevelMap from "@/components/LevelMap";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { getTopicDetails } from "@/utils/topic/util";
 
 export default async function TopicPage({
   params,
@@ -13,7 +14,7 @@ export default async function TopicPage({
   params: Promise<{ topicID: string }>;
 }) {
   const supabase = await createClient();
-  const topicID = (await params).topicID;
+  const topicID = Number.parseInt((await params).topicID, 10);
 
   const {
     data: { user },
@@ -29,17 +30,19 @@ export default async function TopicPage({
     .eq("id", user.id)
     .single();
 
+  const isTeacher = profile?.account_type === "Teacher";
+  const isParent = profile?.account_type === "Parent";
+
   const { data: currentTopicCategory } = await supabase
-    .from("category")
-    .select("name, parent_id")
+    .from("topic")
+    .select("name")
     .eq("id", topicID)
     .single();
 
-  const { data: parentCategory } = await supabase
-    .from("category")
-    .select("name")
-    .eq("id", currentTopicCategory?.parent_id)
-    .single();
+  const topicContent = await getTopicDetails(topicID, supabase);
+  const lessons = topicContent.filter((c) => c.type === "lesson");
+  const quizzes = topicContent.filter((c) => c.type === "quiz");
+  const exams = topicContent.filter((c) => c.type === "exam");
 
   async function logout() {
     "use server";
@@ -153,14 +156,15 @@ export default async function TopicPage({
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
+            role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-6xl space-y-8">
-
             <Breadcrumbs
               items={[
                 {
@@ -172,10 +176,8 @@ export default async function TopicPage({
                 },
               ]}
             />
-
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
-              subtitle={`${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`}
             />
 
             {/* Topic info */}
@@ -188,10 +190,11 @@ export default async function TopicPage({
                   {currentTopicCategory?.name ?? "Current Topic"}
                 </h2>
                 <p className="text-sm text-[#4B3A46]">
-                  Subject:{" "}
-                  <span className="font-semibold text-[#592803]">
-                    {parentCategory?.name ?? "Unknown"}
-                  </span>
+                  {isTeacher
+                    ? "Teacher view for this topic."
+                    : isParent
+                      ? "Parent view of student activity for this topic."
+                      : "View topic structure and student progress in this topic."}
                 </p>
               </div>
             </SectionCard>
@@ -207,18 +210,22 @@ export default async function TopicPage({
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">Lessons</h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Work through the lessons in order to build understanding.
+                  {isTeacher
+                    ? "Preview and manage lesson content assigned to students."
+                    : isParent
+                      ? "View lesson content and monitor student completion."
+                      : "Work through the lessons in order to build understanding."}
                 </p>
               </div>
               <div className="grid gap-5 md:grid-cols-2">
                 {lessons.map((lesson) => (
                   <LearningItemCard
-                    key={lesson.title}
-                    title={lesson.title}
-                    description={lesson.description}
-                    href={lesson.href}
-                    kind={lesson.kind}
-                    status={lesson.status}
+                    key={lesson.id}
+                    title={lesson.name}
+                    description={"View lesson content and monitor student completion."}
+                    href={`/lesson/${lesson.id}`}
+                    kind="Lesson"
+                    status="Not Started"
                   />
                 ))}
               </div>
@@ -229,18 +236,22 @@ export default async function TopicPage({
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">Quizzes</h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Check your understanding with quiz practice for this topic.
+                  {isTeacher
+                    ? "Review quiz content and track student performance."
+                    : isParent
+                      ? "View quiz activity and student performance for this topic."
+                      : "Check your understanding with quiz practice for this topic."}
                 </p>
               </div>
               <div className="grid gap-5 md:grid-cols-2">
                 {quizzes.map((quiz) => (
                   <LearningItemCard
-                    key={quiz.title}
-                    title={quiz.title}
-                    description={quiz.description}
-                    href={quiz.href}
-                    kind={quiz.kind}
-                    status={quiz.status}
+                    key={quiz.id}
+                    title={quiz.name}
+                    description={"View quiz content and monitor student completion."}
+                    href={`/quiz/${quiz.id}`}
+                    kind="Quiz"
+                    status="Not Started"
                   />
                 ))}
               </div>
@@ -253,18 +264,22 @@ export default async function TopicPage({
                   Exam Practice
                 </h2>
                 <p className="text-sm text-[#4B3A46] mt-1">
-                  Apply what you learned with exam-style practice.
+                  {isTeacher
+                    ? "Preview exam-style practice and manage assessment flow."
+                    : isParent
+                      ? "View exam-practice progress and completion."
+                      : "Apply what you learned with exam-style practice."}
                 </p>
               </div>
               <div className="grid gap-5 md:grid-cols-2">
                 {exams.map((exam) => (
                   <LearningItemCard
-                    key={exam.title}
-                    title={exam.title}
-                    description={exam.description}
-                    href={exam.href}
-                    kind={exam.kind}
-                    status={exam.status}
+                    key={exam.id}
+                    title={exam.name}
+                    description={"View exam content and monitor student completion."}
+                    href={`/exam/${exam.id}`}
+                    kind="Exam"
+                    status="Not Started"
                   />
                 ))}
               </div>

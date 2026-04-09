@@ -1,12 +1,10 @@
 import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
-import SectionCard from "@/components/SectionCard";
-import LessonContentCard from "@/components/LessonContentCard";
-import VideoPlaceholder from "@/components/VideoPlaceholder";
+import LessonSlidesClient from "@/components/LessonSlidesClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { getLessonPagesDetail, getTopicFromLessonID } from "@/utils/lesson/util";
 
 export default async function LessonPage({
   params,
@@ -14,7 +12,7 @@ export default async function LessonPage({
   params: Promise<{ lessonID: string }>;
 }) {
   const supabase = await createClient();
-  const lessonID = (await params).lessonID;
+  const lessonID = Number.parseInt((await params).lessonID, 10);
 
   const {
     data: { user },
@@ -30,18 +28,8 @@ export default async function LessonPage({
     .eq("id", user.id)
     .single();
 
-  // For now, lessonID is really the selected topic/category id
-  const { data: currentLessonCategory } = await supabase
-    .from("category")
-    .select("name, parent_id")
-    .eq("id", lessonID)
-    .single();
-
-  const { data: parentCategory } = await supabase
-    .from("category")
-    .select("name")
-    .eq("id", currentLessonCategory?.parent_id)
-    .single();
+  const lessonPages = await getLessonPagesDetail(lessonID, supabase);
+  const topic = await getTopicFromLessonID(lessonID, supabase);
 
   async function logout() {
     "use server";
@@ -59,71 +47,40 @@ export default async function LessonPage({
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile ?? undefined}
           />
         </div>
 
         <div className="flex-1 px-10 py-10">
-          <div className="max-w-5xl space-y-8">
-
+          <div className="flex max-w-5xl flex-col gap-8">
             <Breadcrumbs
-                items={[
+              items={[
+                ...(topic
+                  ? [
                     {
-                    label: parentCategory?.name ?? "Subject",
-                    href: `/dashboard/${currentLessonCategory?.parent_id}`,
+                      label: topic.name,
+                      href: `/topic/${topic.id}`,
                     },
-                    {
-                    label: currentLessonCategory?.name ?? "Topic",
-                    href: `/topic/${lessonID}`,
-                    },
-                    {
-                    label: "Lesson",
-                    },
-                ]}
-                />
+                  ]
+                  : []),
+                {
+                  label: "Lesson",
+                },
+              ]}
+            />
             <PageHeader
-              title={currentLessonCategory?.name ?? "Lesson"}
-              subtitle={`${parentCategory?.name ?? "Subject"} • Lesson Content`}
+              title="Lesson"
+              subtitle={
+                topic
+                  ? `${topic.name} · Lesson content`
+                  : "Lesson content"
+              }
             />
 
-            <SectionCard>
-              <p className="text-sm text-[#4B3A46]">
-                This lesson page supports different lesson types such as video,
-                reading, and guided notes.
-              </p>
-            </SectionCard>
-
-            <LessonContentCard
-              title="Lesson Media"
-              description="This area can display a video, image, or embedded resource."
-            >
-              <VideoPlaceholder />
-            </LessonContentCard>
-
-            <LessonContentCard
-              title="Lesson Summary"
-              description="This will later be pulled from the lesson_page table."
-            >
-              <div className="rounded-2xl bg-[#F3EFEA] p-5 text-sm leading-7 text-[#4B3A46]">
-                Placeholder lesson summary text for{" "}
-                <span className="font-semibold text-[#592803]">
-                  {currentLessonCategory?.name ?? "this lesson"}
-                </span>
-                . This block can later render lesson content from the backend.
-              </div>
-            </LessonContentCard>
-
-            <SectionCard className="flex flex-wrap gap-4">
-              <button className="rounded-xl bg-[#6AC700] px-5 py-3 font-semibold text-white transition hover:bg-[#5bb000]">
-                Mark Lesson Complete
-              </button>
-
-              <Link
-                href={`/quiz/${lessonID}`}
-                className="rounded-xl bg-[#E57E25] px-5 py-3 font-semibold text-white transition hover:opacity-90"
-              >
-                Proceed to Quiz
-              </Link>
-            </SectionCard>
+            <LessonSlidesClient
+              pages={lessonPages}
+              topicId={topic?.id ?? null}
+            />
           </div>
         </div>
       </div>

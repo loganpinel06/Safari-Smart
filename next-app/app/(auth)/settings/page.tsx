@@ -37,6 +37,7 @@ export default async function SettingsPage() {
             examTrack={profile?.exam_type ?? "BECE"}
             activeItem="Settings"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 

@@ -2,13 +2,27 @@ import Image from "next/image";
 import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
 
-type ActiveItem = "Dashboard" | "Manage Account" | "GoodStart AI" | "Settings";
+type ActiveItem =
+  | "Dashboard"
+  | "Manage Account"
+  | "GoodStart AI"
+  | "Settings"
+  | "Admin Dashboard";
+
+type Profile = {
+  id: string;
+  name: string;
+  exam_type: string;
+  account_type: string;
+};
 
 type SidebarProps = {
   userName: string;
   activeItem: ActiveItem;
   examTrack?: string;
+  role?: string;
   logoutAction: () => Promise<void>;
+  profile: Profile;
 };
 
 export default function Sidebar({
@@ -16,6 +30,7 @@ export default function Sidebar({
   activeItem,
   examTrack,
   logoutAction,
+  profile,
 }: SidebarProps) {
   return (
     <aside className="min-h-screen flex flex-col justify-between bg-[#592803] text-[#FFF1E5]">
@@ -54,6 +69,13 @@ export default function Sidebar({
             href="/dashboard"
             active={activeItem === "Dashboard"}
           />
+          {profile?.account_type === "Admin" && (
+            <SidebarNavItem
+              label="Admin Dashboard"
+              href="/admin-dashboard"
+              active={activeItem === "Admin Dashboard"}
+            />
+          )}
           <SidebarNavItem
             label="GoodStart AI"
             href="/goodstart"
