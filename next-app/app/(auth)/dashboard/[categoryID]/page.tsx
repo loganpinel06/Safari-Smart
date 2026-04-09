@@ -1,5 +1,5 @@
 import Sidebar from "@/components/Sidebar";
-import DashboardCard from "@/components/DashboardCard";
+import DashboardCard from "@/components/dashboardcard";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
@@ -31,7 +31,7 @@ export default async function DashboardCategoryPage({
   const { subjects } = await getSubjects(
     categoryID ? parseInt(categoryID) : null,
     profile,
-    supabase
+    supabase,
   );
 
   async function logout() {
@@ -66,8 +66,8 @@ export default async function DashboardCategoryPage({
                 isTeacher
                   ? "Review and manage topic content for this subject."
                   : isParent
-                  ? "View topic structure and student progress in this subject."
-                  : "Choose a topic to continue learning."
+                    ? "View topic structure and student progress in this subject."
+                    : "Choose a topic to continue learning."
               }
             />
 
@@ -83,8 +83,8 @@ export default async function DashboardCategoryPage({
                   {isTeacher
                     ? "Select a topic to manage lessons, quizzes, and exam content."
                     : isParent
-                    ? "Select a topic to view student activity and progress."
-                    : "Select one of the available topics below."}
+                      ? "Select a topic to view student activity and progress."
+                      : "Select one of the available topics below."}
                 </p>
               </div>
 
@@ -107,8 +107,8 @@ export default async function DashboardCategoryPage({
                   {isTeacher
                     ? "Open a topic to review or manage content."
                     : isParent
-                    ? "Open a topic to view the student-facing learning structure."
-                    : "These topics lead into lesson content, quizzes, and exam practice."}
+                      ? "Open a topic to view the student-facing learning structure."
+                      : "These topics lead into lesson content, quizzes, and exam practice."}
                 </p>
               </div>
 

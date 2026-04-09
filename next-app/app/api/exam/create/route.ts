@@ -3,5 +3,5 @@ import { createItem } from "@/utils/api/createItem";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
-  return createItem({ request, supabase, itemType: "lesson" });
+  return createItem({ request, supabase, itemType: "exam" });
 }

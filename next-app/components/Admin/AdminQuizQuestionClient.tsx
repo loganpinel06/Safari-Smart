@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import CreateLessonModal from "./CreateLessonModal";
+import CreateQuizQuestionModal from "./CreateQuizQuestionModal";
 
-type AdminLessonsClientProps = {
-  topicId: number;
+type AdminQuizQuestionClientProps = {
+  quizId: number;
+  defaultOrder: number;
   buttonLabel?: string;
 };
 
-export default function AdminLessonsClient({
-  topicId,
-  buttonLabel = "+ New lesson",
-}: AdminLessonsClientProps) {
+export default function AdminQuizQuestionClient({
+  quizId,
+  defaultOrder,
+  buttonLabel = "+ Create question",
+}: AdminQuizQuestionClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -23,10 +25,11 @@ export default function AdminLessonsClient({
       >
         {buttonLabel}
       </button>
-      <CreateLessonModal
+      <CreateQuizQuestionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        topicId={topicId}
+        quizId={quizId}
+        defaultOrder={defaultOrder}
       />
     </>
   );

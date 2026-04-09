@@ -1,24 +1,27 @@
+export type TopicContentType = "lesson" | "quiz" | "exam";
+
 export type TopicContentRow = {
+  id: number;
+  name: string;
+  order: number;
+  type: TopicContentType;
+};
+
+type TopicContentDbRow = {
   id: number;
   name: string;
   order: number;
 };
 
-export type TopicDetails = {
-  lessons: TopicContentRow[];
-  quizzes: TopicContentRow[];
-  exams: TopicContentRow[];
-};
-
 export async function getTopicDetails(
   topicID: string | number,
   supabase: any,
-): Promise<TopicDetails> {
+): Promise<TopicContentRow[]> {
   const topicIdNum =
     typeof topicID === "string" ? Number.parseInt(topicID, 10) : topicID;
 
   if (!Number.isFinite(topicIdNum)) {
-    return { lessons: [], quizzes: [], exams: [] };
+    return [];
   }
 
   const [lessonsRes, quizzesRes, examsRes] = await Promise.all([
@@ -49,9 +52,17 @@ export async function getTopicDetails(
     console.error("Error fetching exams:", examsRes.error);
   }
 
-  return {
-    lessons: lessonsRes.error ? [] : (lessonsRes.data ?? []),
-    quizzes: quizzesRes.error ? [] : (quizzesRes.data ?? []),
-    exams: examsRes.error ? [] : (examsRes.data ?? []),
-  };
+  const lessonRows: TopicContentRow[] = (
+    lessonsRes.error ? [] : (lessonsRes.data as TopicContentDbRow[] | null) ?? []
+  ).map((row) => ({ ...row, type: "lesson" as const }));
+  const quizRows: TopicContentRow[] = (
+    quizzesRes.error ? [] : (quizzesRes.data as TopicContentDbRow[] | null) ?? []
+  ).map((row) => ({ ...row, type: "quiz" as const }));
+  const examRows: TopicContentRow[] = (
+    examsRes.error ? [] : (examsRes.data as TopicContentDbRow[] | null) ?? []
+  ).map((row) => ({ ...row, type: "exam" as const }));
+
+  const combined = [...lessonRows, ...quizRows, ...examRows];
+  combined.sort((a, b) => a.order - b.order);
+  return combined;
 }

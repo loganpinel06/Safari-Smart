@@ -1,5 +1,5 @@
 import Sidebar from "@/components/Sidebar";
-import DashboardCard from "@/components/DashboardCard";
+import DashboardCard from "@/components/dashboardcard";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
@@ -69,9 +69,7 @@ export default async function DashboardPage() {
                 teacherName={profile?.name ?? "Teacher"}
               />
             ) : isParent ? (
-              <ParentDashboardContent
-                parentName={profile?.name ?? "Parent"}
-              />
+              <ParentDashboardContent parentName={profile?.name ?? "Parent"} />
             ) : (
               <>
                 <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

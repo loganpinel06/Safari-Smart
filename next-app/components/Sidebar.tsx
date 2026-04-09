@@ -29,12 +29,9 @@ export default function Sidebar({
   userName,
   activeItem,
   examTrack,
-  role = "Student",
   logoutAction,
   profile,
 }: SidebarProps) {
-  const isStudent = role === "Student";
-
   return (
     <aside className="sticky top-0 h-screen bg-[#6B3300] flex flex-col px-4 py-4">
       <div className="flex flex-col gap-4">

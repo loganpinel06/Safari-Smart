@@ -23,9 +23,9 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>(
-    {}
-  );
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    Record<number, number>
+  >({});
   const [submitted, setSubmitted] = useState(false);
 
   const currentQuestion = questions[currentIndex];
@@ -52,8 +52,7 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
     }
   }
 
-  const allAnswered =
-    Object.keys(selectedAnswers).length === questions.length;
+  const allAnswered = Object.keys(selectedAnswers).length === questions.length;
 
   return (
     <div className="space-y-8">
@@ -124,9 +123,7 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
         </SectionCard>
       ) : (
         <SectionCard>
-          <h3 className="text-2xl font-bold text-[#592803]">
-            Quiz Submitted
-          </h3>
+          <h3 className="text-2xl font-bold text-[#592803]">Quiz Submitted</h3>
           <p className="mt-2 text-sm text-[#4B3A46]">
             You answered all questions for {topicName}.
           </p>
