@@ -35,6 +35,7 @@ export default async function SettingsPage() {
           <Sidebar
             userName={profile?.name ?? "John Doe"}
             examTrack={profile?.exam_type ?? "BECE"}
+            role={profile?.account_type ?? "Student"}
             activeItem="Settings"
             logoutAction={logout}
             profile={profile}
@@ -45,12 +46,33 @@ export default async function SettingsPage() {
           <div className="max-w-5xl space-y-8">
             <PageHeader
               title="Settings"
-              subtitle="Control preferences and account-related options."
+              subtitle="Control preferences and account options."
             />
 
             <SectionCard>
+              <h2 className="text-2xl font-bold text-[#592803] mb-4">
+                Notifications
+              </h2>
               <p className="text-[#4B3A46]">
-                Settings page placeholder. More options can be added here later.
+                Notification preferences coming soon.
+              </p>
+            </SectionCard>
+
+            <SectionCard>
+              <h2 className="text-2xl font-bold text-[#592803] mb-4">
+                Account Settings
+              </h2>
+              <p className="text-[#4B3A46]">
+                Password updates and account settings will be added here.
+              </p>
+            </SectionCard>
+
+            <SectionCard>
+              <h2 className="text-2xl font-bold text-[#592803] mb-4">
+                Accessibility Preferences
+              </h2>
+              <p className="text-[#4B3A46]">
+                Adjust font size, contrast, and accessibility options.
               </p>
             </SectionCard>
           </div>
