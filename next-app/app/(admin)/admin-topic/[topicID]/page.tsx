@@ -18,21 +18,54 @@ function ContentTypeIcon({
   const common = className ?? "h-7 w-7 text-[#592803]";
   if (type === "lesson") {
     return (
-      <svg className={common} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+      <svg
+        className={common}
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        aria-hidden
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
+        />
       </svg>
     );
   }
   if (type === "quiz") {
     return (
-      <svg className={common} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+      <svg
+        className={common}
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        aria-hidden
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+        />
       </svg>
     );
   }
   return (
-    <svg className={common} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6 9.75H12m7.5-3H12m-9.75 0H6m13.5-4.5v15.75a48.52 48.52 0 013.408-.982m0 0a48.475 48.475 0 00-5.593-11.04m7.5 0a48.475 48.475 0 00-5.593 11.04m7.5 0v6.375c0 .621-.504 1.125-1.125 1.125H5.625a1.125 1.125 0 01-1.125-1.125v-6.375m12-6.375v-1.5c0-.621-.504-1.125-1.125-1.125H8.25c-.621 0-1.125.504-1.125 1.125v1.5" />
+    <svg
+      className={common}
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6 9.75H12m7.5-3H12m-9.75 0H6m13.5-4.5v15.75a48.52 48.52 0 013.408-.982m0 0a48.475 48.475 0 00-5.593-11.04m7.5 0a48.475 48.475 0 00-5.593 11.04m7.5 0v6.375c0 .621-.504 1.125-1.125 1.125H5.625a1.125 1.125 0 01-1.125-1.125v-6.375m12-6.375v-1.5c0-.621-.504-1.125-1.125-1.125H8.25c-.621 0-1.125.504-1.125 1.125v1.5"
+      />
     </svg>
   );
 }
@@ -93,8 +126,18 @@ function ContentRowChevron() {
       className="ml-auto flex shrink-0 text-[#592803]/35 transition group-hover:translate-x-0.5 group-hover:text-[#592803]/55"
       aria-hidden="true"
     >
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+      <svg
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2}
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8.25 4.5l7.5 7.5-7.5 7.5"
+        />
       </svg>
     </span>
   );
@@ -131,19 +174,19 @@ export default async function AdminTopicPage({
 
   const { data: category } = topic
     ? await supabase
-      .from("category")
-      .select("name, parent_id")
-      .eq("id", topic.category_id)
-      .single()
+        .from("category")
+        .select("name, parent_id")
+        .eq("id", topic.category_id)
+        .single()
     : { data: null };
 
   const { data: subjectCategory } =
     category?.parent_id != null
       ? await supabase
-        .from("category")
-        .select("name")
-        .eq("id", category.parent_id)
-        .single()
+          .from("category")
+          .select("name")
+          .eq("id", category.parent_id)
+          .single()
       : { data: null };
 
   const topicContent = await getTopicDetails(topicIdNum, supabase);
@@ -250,7 +293,8 @@ export default async function AdminTopicPage({
             <SectionCard>
               <h2 className="text-lg font-bold text-[#592803]">Add content</h2>
               <p className="mt-1 text-sm text-[#4B3A46]">
-                Create new items for this topic. They appear in the list below by order.
+                Create new items for this topic. They appear in the list below
+                by order.
               </p>
               <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                 <AdminItemClient
@@ -265,28 +309,12 @@ export default async function AdminTopicPage({
                   buttonLabel="New quiz"
                   size="large"
                 />
-                <button
-                  type="button"
-                  disabled
-                  className="flex min-h-[148px] w-full cursor-not-allowed flex-col items-center gap-4 rounded-2xl border-2 border-dashed border-[#4B3A46]/22 bg-gradient-to-br from-[#FAF7F4]/80 to-[#EDE8E4]/50 px-6 py-8 text-center text-[#592803] opacity-[0.72] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
-                  aria-disabled="true"
-                >
-                  <div className="flex h-[3.75rem] w-[3.75rem] shrink-0 items-center justify-center rounded-2xl bg-[#E8D4C4]/45 ring-1 ring-[#8B5E3C]/15">
-                    <ContentTypeIcon
-                      type="exam"
-                      className="h-8 w-8 text-[#592803]/75"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-lg font-bold leading-snug tracking-tight">
-                      New exam
-                    </span>
-                    <span className="text-sm text-[#4B3A46]/85">Coming soon</span>
-                    <span className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#4B3A46]/45">
-                      Not available yet
-                    </span>
-                  </div>
-                </button>
+                <AdminItemClient
+                  topicId={topicIdNum}
+                  itemType="exam"
+                  buttonLabel="New Exam"
+                  size="large"
+                />
               </div>
             </SectionCard>
 
@@ -355,6 +383,17 @@ export default async function AdminTopicPage({
                         <Link
                           key={`quiz-${item.id}`}
                           href={`/admin-quiz/${item.id}`}
+                          className={shell}
+                        >
+                          {inner}
+                        </Link>
+                      );
+                    }
+                    if (item.type === "exam") {
+                      return (
+                        <Link
+                          key={`exam-${item.id}`}
+                          href={`/admin-exam/${item.id}`}
                           className={shell}
                         >
                           {inner}
