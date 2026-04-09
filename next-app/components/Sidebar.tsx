@@ -25,15 +25,15 @@ type SidebarProps = {
   profile: Profile;
 };
 
-const isStudent = role === "Student";
-
 export default function Sidebar({
   userName,
   activeItem,
   examTrack,
   logoutAction,
   profile,
+  role,
 }: SidebarProps) {
+  const isStudent = role === "Student";
   return (
     <aside className="sticky top-0 h-screen bg-[#6B3300] flex flex-col px-4 py-4">
       <div className="flex flex-col gap-4">
@@ -67,11 +67,10 @@ export default function Sidebar({
 
           <Link
             href="/manageaccount"
-            className={`w-full text-center py-2.5 text-sm font-semibold rounded-lg transition ${
-              activeItem === "Manage Account"
-                ? "bg-[#FFF1B8] text-[#592803] shadow-sm"
-                : "bg-[#FFF1B8] text-[#592803] hover:opacity-90"
-            }`}
+            className={`w-full text-center py-2.5 text-sm font-semibold rounded-lg transition ${activeItem === "Manage Account"
+              ? "bg-[#FFF1B8] text-[#592803] shadow-sm"
+              : "bg-[#FFF1B8] text-[#592803] hover:opacity-90"
+              }`}
           >
             Manage Account
           </Link>
