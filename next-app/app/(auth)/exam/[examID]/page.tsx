@@ -9,9 +9,9 @@ import SectionCard from "@/components/SectionCard";
 type Choice =
   | string
   | {
-      text: string;
-      correct?: boolean;
-    };
+    text: string;
+    correct?: boolean;
+  };
 
 type ExamQuestion = {
   id: string;
@@ -96,6 +96,7 @@ export default async function ExamPage({
             role={profile?.account_type ?? "Student"}
             activeItem="Dashboard"
             logoutAction={logout}
+            profile={profile}
           />
         </div>
 
@@ -123,8 +124,8 @@ export default async function ExamPage({
                 isTeacher
                   ? `${parentCategory?.name ?? "Subject"} • Teacher preview mode`
                   : isParent
-                  ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
-                  : `${parentCategory?.name ?? "Subject"} • Exam Mode`
+                    ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
+                    : `${parentCategory?.name ?? "Subject"} • Exam Mode`
               }
             />
 

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import QuizRunner from "@/components/QuizRunner";
 import SectionCard from "@/components/SectionCard";
+import { getQuizQuestionsDetail } from "@/utils/quiz/util";
 
 export default async function QuizPage({
   params,
@@ -31,18 +32,9 @@ export default async function QuizPage({
   const isTeacher = profile?.account_type === "Teacher";
   const isParent = profile?.account_type === "Parent";
 
-  // For now, quizID is really the selected topic/category id
-  const { data: currentQuizCategory } = await supabase
-    .from("category")
-    .select("name, parent_id")
-    .eq("id", quizID)
-    .single();
+  const { data: quiz } = await supabase.from("quiz").select("name, topic_id").eq("id", quizID).single();
 
-  const { data: parentCategory } = await supabase
-    .from("category")
-    .select("name")
-    .eq("id", currentQuizCategory?.parent_id)
-    .single();
+  const questions = await getQuizQuestionsDetail(quizID, supabase);
 
   async function logout() {
     "use server";
@@ -70,12 +62,8 @@ export default async function QuizPage({
             <Breadcrumbs
               items={[
                 {
-                  label: parentCategory?.name ?? "Subject",
-                  href: `/dashboard/${currentQuizCategory?.parent_id}`,
-                },
-                {
-                  label: currentQuizCategory?.name ?? "Topic",
-                  href: `/topic/${quizID}`,
+                  label: quiz?.name ?? "Quiz",
+                  href: `/topic/${quiz?.topic_id}`,
                 },
                 {
                   label: "Quiz",
@@ -83,13 +71,13 @@ export default async function QuizPage({
               ]}
             />
             <PageHeader
-              title={`${currentQuizCategory?.name ?? "Topic"} Quiz`}
+              title={`${quiz?.name ?? "Quiz"} Quiz`}
               subtitle={
                 isTeacher
-                  ? `${parentCategory?.name ?? "Subject"} • Teacher preview mode`
+                  ? `${quiz?.name ?? "Quiz"} • Teacher preview mode`
                   : isParent
-                    ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
-                    : `${parentCategory?.name ?? "Subject"} • Practice Mode`
+                    ? `${quiz?.name ?? "Quiz"} • Parent read-only view`
+                    : `${quiz?.name ?? "Quiz"} • Practice Mode`
               }
             />
 
@@ -116,7 +104,8 @@ export default async function QuizPage({
               </SectionCard>
             ) : (
               <QuizRunner
-                topicName={currentQuizCategory?.name ?? "Sample Topic"}
+                topicName={quiz?.name ?? "Quiz"}
+                questions={questions}
               />
             )}
           </div>

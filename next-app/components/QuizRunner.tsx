@@ -3,12 +3,14 @@
 import { useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
+import { QuizQuestionDetail } from "@/utils/quiz/util";
 
 type QuizRunnerProps = {
   topicName: string;
+  questions: QuizQuestionDetail[];
 };
 
-export default function QuizRunner({ topicName }: QuizRunnerProps) {
+export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
   const questions = [
     {
       id: 1,

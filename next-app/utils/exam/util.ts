@@ -1,7 +1,5 @@
 //util for getting exam related data from supabase
 
-import { QuizQuestionSummary } from "../quiz/util";
-
 export type ExamQuestionType = "Image" | "Text" | "Video";
 
 export type ExamQuestionSummary = {

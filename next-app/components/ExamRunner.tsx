@@ -4,23 +4,10 @@ import { useMemo, useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import ExamQuestionCard from "@/components/ExamQuestionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
-
-type Choice =
-  | string
-  | {
-      text: string;
-      correct?: boolean;
-    };
-
-type ExamQuestion = {
-  id: string;
-  top_text?: string | null;
-  question: string;
-  choices?: Choice[] | null;
-};
+import { ExamQuestionDetail } from "@/utils/exam/util";
 
 type ExamRunnerProps = {
-  questions: ExamQuestion[];
+  questions: ExamQuestionDetail[];
 };
 
 export default function ExamRunner({ questions }: ExamRunnerProps) {
@@ -159,12 +146,12 @@ export default function ExamRunner({ questions }: ExamRunnerProps) {
 
           {currentIndex < questions.length - 1 ? (
             <button
-                type="button"
-                onClick={handleNext}
-                disabled={selectedChoiceIndex === undefined}
-                className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                Next Question
+              type="button"
+              onClick={handleNext}
+              disabled={selectedChoiceIndex === undefined}
+              className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Next Question
             </button>
           ) : (
             <button
