@@ -2,6 +2,7 @@ import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import LearningItemCard from "@/components/LearningItemCard";
+import LevelMap from "@/components/LevelMap";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -28,7 +29,6 @@ export default async function TopicPage({
     .eq("id", user.id)
     .single();
 
-  // Right now topicID is still really coming from the category hierarchy
   const { data: currentTopicCategory } = await supabase
     .from("category")
     .select("name, parent_id")
@@ -48,8 +48,53 @@ export default async function TopicPage({
     redirect("/signin");
   }
 
-  // Placeholder/mock items for now.
-  // Later these should come from backend lesson / quiz / exam tables.
+  // Level Map Nodes
+  const levels = [
+    {
+      id: "l1",
+      label: "Introduction",
+      type: "lesson" as const,
+      status: "completed" as const,
+      href: `/lesson/${topicID}`,
+    },
+    {
+      id: "l2",
+      label: "Guided Practice",
+      type: "lesson" as const,
+      status: "current" as const,
+      href: `/lesson/${topicID}`,
+    },
+    {
+      id: "q1",
+      label: "Quiz 1",
+      type: "quiz" as const,
+      status: "available" as const,
+      href: `/quiz/${topicID}`,
+    },
+    {
+      id: "l3",
+      label: "Extended Review",
+      type: "lesson" as const,
+      status: "available" as const,
+      href: `/lesson/${topicID}`,
+    },
+    {
+      id: "q2",
+      label: "Quiz 2",
+      type: "quiz" as const,
+      status: "available" as const,
+      href: `/quiz/${topicID}`,
+    },
+    {
+      id: "e1",
+      label: "Exam Practice",
+      type: "exam" as const,
+      status: "available" as const,
+      href: `/exam/${topicID}`,
+    },
+  ];
+
+  // Listings
   const lessons = [
     {
       title: "Lesson 1: Introduction",
@@ -117,23 +162,25 @@ export default async function TopicPage({
           <div className="max-w-6xl space-y-8">
 
             <Breadcrumbs
-                items={[
-                    {
-                    label: parentCategory?.name ?? "Subject",
-                    href: `/dashboard/${currentTopicCategory?.parent_id}`,
-                    },
-                    {
-                    label: currentTopicCategory?.name ?? "Topic",
-                    },
-                ]}
-                />
+              items={[
+                {
+                  label: parentCategory?.name ?? "Subject",
+                  href: `/dashboard/${currentTopicCategory?.parent_id}`,
+                },
+                {
+                  label: currentTopicCategory?.name ?? "Topic",
+                },
+              ]}
+            />
+
             <PageHeader
               title={currentTopicCategory?.name ?? "Topic"}
               subtitle={`${parentCategory?.name ?? "Subject"} • Continue learning in this topic.`}
             />
 
-            <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="space-y-2">
+            {/* Topic info */}
+            <SectionCard>
+              <div className="space-y-1">
                 <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
                   Topic
                 </p>
@@ -147,37 +194,15 @@ export default async function TopicPage({
                   </span>
                 </p>
               </div>
-
-              <div className="grid grid-cols-3 gap-3 md:w-[360px]">
-                <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
-                    Lessons
-                  </p>
-                  <p className="mt-2 text-2xl font-extrabold text-[#592803]">
-                    {lessons.length}
-                  </p>
-                </div>
-
-                <div className="rounded-xl bg-white/80 p-4 border border-[#4B3A46]/10">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
-                    Quizzes
-                  </p>
-                  <p className="mt-2 text-2xl font-extrabold text-[#592803]">
-                    {quizzes.length}
-                  </p>
-                </div>
-
-                <div className="rounded-xl bg-white/80 p-4 border border-[#4B3A46]/10">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
-                    Exams
-                  </p>
-                  <p className="mt-2 text-2xl font-extrabold text-[#592803]">
-                    {exams.length}
-                  </p>
-                </div>
-              </div>
             </SectionCard>
 
+            {/* Level map replaces the three stat cards */}
+            <LevelMap
+              levels={levels}
+              subjectTitle={currentTopicCategory?.name ?? "Topic"}
+            />
+
+            {/* Lessons */}
             <SectionCard>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">Lessons</h2>
@@ -185,7 +210,6 @@ export default async function TopicPage({
                   Work through the lessons in order to build understanding.
                 </p>
               </div>
-
               <div className="grid gap-5 md:grid-cols-2">
                 {lessons.map((lesson) => (
                   <LearningItemCard
@@ -200,6 +224,7 @@ export default async function TopicPage({
               </div>
             </SectionCard>
 
+            {/* Quizzes */}
             <SectionCard>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">Quizzes</h2>
@@ -207,7 +232,6 @@ export default async function TopicPage({
                   Check your understanding with quiz practice for this topic.
                 </p>
               </div>
-
               <div className="grid gap-5 md:grid-cols-2">
                 {quizzes.map((quiz) => (
                   <LearningItemCard
@@ -222,6 +246,7 @@ export default async function TopicPage({
               </div>
             </SectionCard>
 
+            {/* Exams */}
             <SectionCard>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-[#592803]">
@@ -231,7 +256,6 @@ export default async function TopicPage({
                   Apply what you learned with exam-style practice.
                 </p>
               </div>
-
               <div className="grid gap-5 md:grid-cols-2">
                 {exams.map((exam) => (
                   <LearningItemCard
@@ -245,9 +269,11 @@ export default async function TopicPage({
                 ))}
               </div>
             </SectionCard>
+
           </div>
         </div>
       </div>
     </main>
   );
 }
+
