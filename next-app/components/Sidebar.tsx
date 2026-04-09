@@ -25,6 +25,8 @@ type SidebarProps = {
   profile: Profile;
 };
 
+const isStudent = role === "Student";
+
 export default function Sidebar({
   userName,
   activeItem,
