@@ -105,7 +105,6 @@ export default async function QuizPage({
             ) : (
               <QuizRunner
                 topicName={quiz?.name ?? "Quiz"}
-                questions={questions}
               />
             )}
           </div>
