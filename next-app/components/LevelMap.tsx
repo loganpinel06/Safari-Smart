@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type LevelType   = "lesson" | "quiz" | "exam";
+type LevelType = "lesson" | "quiz" | "exam";
 type LevelStatus = "completed" | "current" | "available";
 
-interface Level {
+export interface Level {
   id: string;
   label: string;
   type: LevelType;
@@ -19,28 +19,28 @@ interface LevelMapProps {
 }
 
 // Layout Constants for Nodes
-const COLS        = 4;
-const COL_GAP     = 130;
-const ROW_GAP     = 140;
+const COLS = 4;
+const COL_GAP = 130;
+const ROW_GAP = 140;
 const LEFT_MARGIN = 80;
-const TOP_MARGIN  = 70;
-const NODE_R      = 30;
-const LABEL_H     = 44;
+const TOP_MARGIN = 70;
+const NODE_R = 30;
+const LABEL_H = 44;
 
 // Colors for Level Types and States
 const TYPE_COLOR: Record<LevelType, { fill: string; ring: string }> = {
   lesson: { fill: "#6AC700", ring: "#4e9600" },
-  quiz:   { fill: "#E57E25", ring: "#b85f10" },
-  exam:   { fill: "#D4A017", ring: "#a07a00" },
+  quiz: { fill: "#E57E25", ring: "#b85f10" },
+  exam: { fill: "#D4A017", ring: "#a07a00" },
 };
 
 function getPos(i: number) {
-  const row     = Math.floor(i / COLS);
-  const col     = i % COLS;
+  const row = Math.floor(i / COLS);
+  const col = i % COLS;
   const evenRow = row % 2 === 0;
   return {
     x: LEFT_MARGIN + (evenRow ? col : COLS - 1 - col) * COL_GAP,
-    y: TOP_MARGIN  + row * ROW_GAP,
+    y: TOP_MARGIN + row * ROW_GAP,
   };
 }
 
@@ -49,7 +49,7 @@ function getPos(i: number) {
 function BookPath() {
   return (
     <g fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-       transform="translate(-9,-9)">
+      transform="translate(-9,-9)">
       <path d="M2 16.5A2 2 0 014 15h12" />
       <path d="M4 1h12v16H4A2 2 0 012 15V3a2 2 0 012-2z" />
     </g>
@@ -59,7 +59,7 @@ function BookPath() {
 function QuizPath() {
   return (
     <g fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-       transform="translate(-9,-9)">
+      transform="translate(-9,-9)">
       <circle cx="9" cy="9" r="8" />
       <path d="M6.5 6.5a3 3 0 014 2.5c0 1.5-2 2.5-2 2.5" />
       <circle cx="9" cy="13.5" r="0.8" fill="white" />
@@ -98,13 +98,13 @@ export default function LevelMap({
     return () => clearTimeout(t);
   }, []);
 
-  const n         = levels.length;
-  const rows      = Math.ceil(n / COLS) || 1;
-  const svgW      = LEFT_MARGIN * 2 + (COLS - 1) * COL_GAP;
-  const svgH      = TOP_MARGIN + (rows - 1) * ROW_GAP + NODE_R * 2 + LABEL_H + 24;
+  const n = levels.length;
+  const rows = Math.ceil(n / COLS) || 1;
+  const svgW = LEFT_MARGIN * 2 + (COLS - 1) * COL_GAP;
+  const svgH = TOP_MARGIN + (rows - 1) * ROW_GAP + NODE_R * 2 + LABEL_H + 24;
 
   const completed = levels.filter(l => l.status === "completed").length;
-  const pct       = n ? Math.round((completed / n) * 100) : 0;
+  const pct = n ? Math.round((completed / n) * 100) : 0;
 
   return (
     <div className="w-full rounded-3xl overflow-hidden border-2 border-[#F0DCC8] bg-[#FFF8F0]">
@@ -124,8 +124,8 @@ export default function LevelMap({
         <div className="flex flex-wrap items-center gap-4">
           {([
             { color: "bg-[#6AC700]", label: "Lesson" },
-            { color: "bg-[#E57E25]", label: "Quiz"   },
-            { color: "bg-[#D4A017]", label: "Exam"   },
+            { color: "bg-[#E57E25]", label: "Quiz" },
+            { color: "bg-[#D4A017]", label: "Exam" },
           ] as { color: string; label: string }[]).map(({ color, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
@@ -159,8 +159,8 @@ export default function LevelMap({
           {/* Connector lines */}
           {levels.map((lv, i) => {
             if (i === 0) return null;
-            const a    = getPos(i - 1);
-            const b    = getPos(i);
+            const a = getPos(i - 1);
+            const b = getPos(i);
             const done = levels[i - 1]?.status === "completed";
             return (
               <line
@@ -175,14 +175,14 @@ export default function LevelMap({
           {/* Nodes */}
           {levels.map((lv, i) => {
             const { x, y } = getPos(i);
-            const current  = lv.status === "current";
-            const done     = lv.status === "completed";
-            const colors   = TYPE_COLOR[lv.type] ?? TYPE_COLOR.lesson;
-            const fill     = colors.fill;
-            const ring     = done ? colors.ring : "rgba(255,255,255,0.5)";
-            const isHov    = hovered === lv.id;
-            const sc       = visible ? (isHov ? 1.12 : 1) : 0.3;
-            const op       = visible ? 1 : 0;
+            const current = lv.status === "current";
+            const done = lv.status === "completed";
+            const colors = TYPE_COLOR[lv.type] ?? TYPE_COLOR.lesson;
+            const fill = colors.fill;
+            const ring = done ? colors.ring : "rgba(255,255,255,0.5)";
+            const isHov = hovered === lv.id;
+            const sc = visible ? (isHov ? 1.12 : 1) : 0.3;
+            const op = visible ? 1 : 0;
             const typeLabel = lv.type.charAt(0).toUpperCase() + lv.type.slice(1);
             const nameLabel = lv.label.length > 13 ? lv.label.slice(0, 12) + "…" : lv.label;
 
@@ -199,8 +199,8 @@ export default function LevelMap({
                 {/* Pulse ring for current node */}
                 {current && (
                   <circle cx={0} cy={0} r={NODE_R + 8} fill={`${fill}30`}>
-                    <animate attributeName="r"       values={`${NODE_R+8};${NODE_R+22}`} dur="1.8s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values=".5;0"                        dur="1.8s" repeatCount="indefinite" />
+                    <animate attributeName="r" values={`${NODE_R + 8};${NODE_R + 22}`} dur="1.8s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values=".5;0" dur="1.8s" repeatCount="indefinite" />
                   </circle>
                 )}
 
@@ -216,10 +216,10 @@ export default function LevelMap({
 
                 {/* Icon */}
                 <g style={{ transform: `scale(${sc})`, transformOrigin: "0 0", transition: "transform 0.18s" }}>
-                  {done                ? <CheckPath /> :
-                   lv.type === "lesson" ? <BookPath  /> :
-                   lv.type === "quiz"   ? <QuizPath  /> :
-                                          <StarPath  />}
+                  {done ? <CheckPath /> :
+                    lv.type === "lesson" ? <BookPath /> :
+                      lv.type === "quiz" ? <QuizPath /> :
+                        <StarPath />}
                 </g>
 
                 {/* Number badge */}

@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getTopicDetails } from "@/utils/topic/util";
+import { Level } from "@/components/LevelMap";
 
 export default async function TopicPage({
   params,
@@ -35,14 +36,21 @@ export default async function TopicPage({
 
   const { data: currentTopicCategory } = await supabase
     .from("topic")
-    .select("name")
+    .select("name, category_id")
     .eq("id", topicID)
     .single();
 
   const topicContent = await getTopicDetails(topicID, supabase);
-  const lessons = topicContent.filter((c) => c.type === "lesson");
-  const quizzes = topicContent.filter((c) => c.type === "quiz");
-  const exams = topicContent.filter((c) => c.type === "exam");
+  const levels = topicContent.map((c) => ({
+    id: c.id,
+    label: c.name,
+    type: c.type,
+    status: "not_started" as const,
+    href: c.type === "lesson" ? `/lesson/${c.id}` : c.type === "quiz" ? `/quiz/${c.id}` : c.type === "exam" ? `/exam/${c.id}` : undefined,
+  }))
+  const lessons = levels.filter((c) => c.type === "lesson");
+  const quizzes = levels.filter((c) => c.type === "quiz");
+  const exams = levels.filter((c) => c.type === "exam");
 
   async function logout() {
     "use server";
@@ -50,104 +58,6 @@ export default async function TopicPage({
     await supabase.auth.signOut();
     redirect("/signin");
   }
-
-  // Level Map Nodes
-  const levels = [
-    {
-      id: "l1",
-      label: "Introduction",
-      type: "lesson" as const,
-      status: "completed" as const,
-      href: `/lesson/${topicID}`,
-    },
-    {
-      id: "l2",
-      label: "Guided Practice",
-      type: "lesson" as const,
-      status: "current" as const,
-      href: `/lesson/${topicID}`,
-    },
-    {
-      id: "q1",
-      label: "Quiz 1",
-      type: "quiz" as const,
-      status: "available" as const,
-      href: `/quiz/${topicID}`,
-    },
-    {
-      id: "l3",
-      label: "Extended Review",
-      type: "lesson" as const,
-      status: "available" as const,
-      href: `/lesson/${topicID}`,
-    },
-    {
-      id: "q2",
-      label: "Quiz 2",
-      type: "quiz" as const,
-      status: "available" as const,
-      href: `/quiz/${topicID}`,
-    },
-    {
-      id: "e1",
-      label: "Exam Practice",
-      type: "exam" as const,
-      status: "available" as const,
-      href: `/exam/${topicID}`,
-    },
-  ];
-
-  // Listings
-  const lessons = [
-    {
-      title: "Lesson 1: Introduction",
-      description: "Start with the core ideas and overview for this topic.",
-      href: `/lesson/${topicID}`,
-      kind: "Lesson" as const,
-      status: "Complete" as const,
-    },
-    {
-      title: "Lesson 2: Guided Practice",
-      description: "Work through examples and explanations step by step.",
-      href: `/lesson/${topicID}`,
-      kind: "Lesson" as const,
-      status: "In Progress" as const,
-    },
-    {
-      title: "Lesson 3: Extended Review",
-      description: "Review the topic with additional notes and support.",
-      href: `/lesson/${topicID}`,
-      kind: "Lesson" as const,
-      status: "Not Started" as const,
-    },
-  ];
-
-  const quizzes = [
-    {
-      title: "Quiz 1",
-      description: "Check your understanding with short practice questions.",
-      href: `/quiz/${topicID}`,
-      kind: "Quiz" as const,
-      status: "Not Started" as const,
-    },
-    {
-      title: "Quiz 2",
-      description: "A second quiz to reinforce the topic.",
-      href: `/quiz/${topicID}`,
-      kind: "Quiz" as const,
-      status: "Not Started" as const,
-    },
-  ];
-
-  const exams = [
-    {
-      title: "Exam Practice 1",
-      description: "Try an exam-style set of questions for this topic.",
-      href: `/exam/${topicID}`,
-      kind: "Exam" as const,
-      status: "Not Started" as const,
-    },
-  ];
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
@@ -168,8 +78,8 @@ export default async function TopicPage({
             <Breadcrumbs
               items={[
                 {
-                  label: parentCategory?.name ?? "Subject",
-                  href: `/dashboard/${currentTopicCategory?.parent_id}`,
+                  label: currentTopicCategory?.name ?? "Subject",
+                  href: `/dashboard/${currentTopicCategory?.category_id}`,
                 },
                 {
                   label: currentTopicCategory?.name ?? "Topic",
@@ -201,7 +111,7 @@ export default async function TopicPage({
 
             {/* Level map replaces the three stat cards */}
             <LevelMap
-              levels={levels}
+              levels={levels as unknown as Level[]}
               subjectTitle={currentTopicCategory?.name ?? "Topic"}
             />
 
@@ -221,7 +131,7 @@ export default async function TopicPage({
                 {lessons.map((lesson) => (
                   <LearningItemCard
                     key={lesson.id}
-                    title={lesson.name}
+                    title={lesson.label}
                     description={"View lesson content and monitor student completion."}
                     href={`/lesson/${lesson.id}`}
                     kind="Lesson"
@@ -247,7 +157,7 @@ export default async function TopicPage({
                 {quizzes.map((quiz) => (
                   <LearningItemCard
                     key={quiz.id}
-                    title={quiz.name}
+                    title={quiz.label}
                     description={"View quiz content and monitor student completion."}
                     href={`/quiz/${quiz.id}`}
                     kind="Quiz"
@@ -275,7 +185,7 @@ export default async function TopicPage({
                 {exams.map((exam) => (
                   <LearningItemCard
                     key={exam.id}
-                    title={exam.name}
+                    title={exam.label}
                     description={"View exam content and monitor student completion."}
                     href={`/exam/${exam.id}`}
                     kind="Exam"
