@@ -53,6 +53,68 @@ export async function joinClassWithCode(joinCode: string): Promise<{
   }
 }
 
+export async function leaveClass(classId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  if (!classId.trim()) {
+    return { success: false, error: "Class is required" };
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("class_id", classId.trim());
+
+    const response = await fetch("/api/classes/leave", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const data = (await response.json()) as { error?: string };
+      return {
+        success: false,
+        error: data.error ?? "Failed to leave class",
+      };
+    }
+
+    return { success: true };
+  } catch {
+    return { success: false, error: "Failed to leave class" };
+  }
+}
+
+export async function deleteClass(classId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  if (!classId.trim()) {
+    return { success: false, error: "Class is required" };
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("class_id", classId.trim());
+
+    const response = await fetch("/api/classes/delete", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const data = (await response.json()) as { error?: string };
+      return {
+        success: false,
+        error: data.error ?? "Failed to delete class",
+      };
+    }
+
+    return { success: true };
+  } catch {
+    return { success: false, error: "Failed to delete class" };
+  }
+}
+
 // gets all classes a student is enrolled in, with class name + assignments
 export async function getStudentClassesWithAssignments(
   studentID: string,

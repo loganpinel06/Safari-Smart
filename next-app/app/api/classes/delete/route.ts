@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (userData.account_type !== "Teacher") {
+  if (userData.account_type !== "Teacher" && userData.account_type !== "Admin") {
     return NextResponse.json(
       { error: "Only teachers can delete classes" },
       { status: 403 },
@@ -54,6 +54,6 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    message: "Failed to create class after multiple attempts",
+    message: "Class deleted successfully",
   });
 }

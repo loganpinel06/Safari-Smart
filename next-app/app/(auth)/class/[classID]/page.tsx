@@ -1,6 +1,7 @@
 import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Sidebar from "@/components/Sidebar";
+import ClassDetailActions from "@/components/ClassDetailActions";
 import { createClient } from "@/utils/supabase/server";
 import { getClassFullInfo } from "@/utils/classes/util";
 import { redirect } from "next/navigation";
@@ -32,7 +33,22 @@ export default async function ClassDetailPage({ params }: PageProps) {
     redirect("/class");
   }
 
-  const isTeacher = profile?.account_type === "Teacher" || profile?.account_type === "Admin";
+  const isTeacherRole =
+    profile?.account_type === "Teacher" || profile?.account_type === "Admin";
+  const isClassOwner = user.id === classInfo.teacher_id;
+
+  const { data: membershipRow } = await supabase
+    .from("class_students")
+    .select("class_id")
+    .eq("class_id", classID)
+    .eq("student_id", user.id)
+    .maybeSingle();
+
+  const isEnrolledStudent =
+    profile?.account_type === "Student" && !!membershipRow;
+
+  const showLeaveClass = isEnrolledStudent;
+  const showDeleteClass = isTeacherRole && isClassOwner;
 
   const assignmentList = Array.isArray(classInfo.assignments)
     ? classInfo.assignments
@@ -61,10 +77,17 @@ export default async function ClassDetailPage({ params }: PageProps) {
 
         <div className="flex-1 px-10 py-10">
           <div className="max-w-5xl space-y-8">
-            <PageHeader
-              title={classInfo.name ?? "Class"}
-              subtitle={`Teacher: ${classInfo.teacher_name ?? "Unknown Teacher"}`}
-            />
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <PageHeader
+                title={classInfo.name ?? "Class"}
+                subtitle={`Teacher: ${classInfo.teacher_name ?? "Unknown Teacher"}`}
+              />
+              <ClassDetailActions
+                classId={classID}
+                showLeave={showLeaveClass}
+                showDelete={showDeleteClass}
+              />
+            </div>
 
             <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
               <SectionCard className="bg-white/70">
@@ -75,7 +98,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
                       Track work posted for this class.
                     </p>
                   </div>
-                  {isTeacher && (
+                  {isTeacherRole && isClassOwner && (
                     <button className="rounded-xl bg-[#FFF1B8] px-4 py-2 text-sm font-semibold text-[#592803] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFE78A] hover:shadow-md">
                       Create Assignment
                     </button>
