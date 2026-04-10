@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-function generateJoinCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
-
 export async function POST(request: Request) {
   const supabase = await createClient();
 
@@ -27,46 +23,34 @@ export async function POST(request: Request) {
     );
   }
 
-  if (userData.account_type !== "Teacher") {
+  if (userData.account_type !== "Student") {
     return NextResponse.json(
-      { error: "Only teachers can create classes" },
+      { error: "Only students can leave classes" },
       { status: 403 },
     );
   }
 
   const formData = await request.formData();
-  const name = formData.get("name")?.toString().trim();
+  const class_id = formData.get("class_id")?.toString().trim();
 
-  if (!name) {
+  if (!class_id) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 },
     );
   }
 
-  const MAX_ATTEMPTS = 5;
-  let attempt = 0;
+  const { error: leaveError } = await supabase
+    .from("class_students")
+    .delete()
+    .eq("class_id", class_id)
+    .eq("student_id", data.user.id);
 
-  while (attempt < MAX_ATTEMPTS) {
-    const { error: insertError } = await supabase.from("classes").insert({
-      name,
-      teacher_id: data.user.id,
-      join_code: generateJoinCode(),
-    });
-
-    if (!insertError) {
-      return NextResponse.json({ message: "Class created successfully" });
-    }
-
-    if (insertError.code !== "23505") {
-      attempt++;
-      continue;
-    }
-
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
+  if (leaveError) {
+    return NextResponse.json({ error: leaveError.message }, { status: 500 });
   }
 
   return NextResponse.json({
-    message: "Failed to create class after multiple attempts",
+    message: "Successfully left class",
   });
 }

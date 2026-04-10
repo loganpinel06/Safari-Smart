@@ -4,6 +4,7 @@ import SidebarNavItem from "./SidebarNavItem";
 
 type ActiveItem =
   | "Dashboard"
+  | "Classes"
   | "Manage Account"
   | "GoodStart AI"
   | "Settings"
@@ -81,6 +82,11 @@ export default function Sidebar({
             label="Dashboard"
             href="/dashboard"
             active={activeItem === "Dashboard"}
+          />
+          <SidebarNavItem
+            label="Classes"
+            href="/class"
+            active={activeItem === "Classes"}
           />
           {profile?.account_type === "Admin" && (
             <SidebarNavItem

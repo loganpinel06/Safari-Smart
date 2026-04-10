@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-type DeleteClassBody = {
-  class_id: string;
-};
-
 export async function POST(request: Request) {
   const supabase = await createClient();
 
@@ -34,8 +30,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const body = (await request.json()) as DeleteClassBody;
-  const { class_id } = body;
+  const formData = await request.formData();
+  const class_id = formData.get("class_id")?.toString().trim();
 
   if (!class_id) {
     return NextResponse.json(
