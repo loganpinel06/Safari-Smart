@@ -3,80 +3,126 @@
 import { useMemo, useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import ExamQuestionCard from "@/components/ExamQuestionCard";
-import QuizChoiceButton from "@/components/QuizChoiceButton";
 import { ExamQuestionDetail } from "@/utils/exam/util";
 
 type ExamRunnerProps = {
+  examTitle: string;
   questions: ExamQuestionDetail[];
 };
 
-export default function ExamRunner({ questions }: ExamRunnerProps) {
+export default function ExamRunner({
+  examTitle,
+  questions,
+}: ExamRunnerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>(
-    {}
-  );
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [reviewMode, setReviewMode] = useState(false);
 
   const currentQuestion = questions[currentIndex];
+  const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? "" : "";
 
-  const normalizedChoices = useMemo(() => {
-    if (!currentQuestion?.choices || currentQuestion.choices.length === 0) {
-      return [];
-    }
+  const answeredCount = useMemo(() => {
+    return questions.filter((question) => {
+      const value = answers[question.id];
+      return !!value?.trim();
+    }).length;
+  }, [questions, answers]);
 
-    return currentQuestion.choices.map((choice) =>
-      typeof choice === "string" ? { text: choice } : choice
-    );
-  }, [currentQuestion]);
+  const progressPercent =
+    questions.length > 0
+      ? Math.round((answeredCount / questions.length) * 100)
+      : 0;
 
-  const selectedChoiceIndex = currentQuestion
-    ? selectedAnswers[currentQuestion.id]
-    : undefined;
+  const allAnswered = questions.length > 0 && answeredCount === questions.length;
 
-  function handleSelect(choiceIndex: number) {
+  function handleTextChange(value: string) {
     if (!currentQuestion || submitted) return;
 
-    setSelectedAnswers((prev) => ({
+    setAnswers((prev) => ({
       ...prev,
-      [currentQuestion.id]: choiceIndex,
+      [currentQuestion.id]: value,
     }));
-  }
-
-  function handleNext() {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    }
   }
 
   function handlePrevious() {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
+      setReviewMode(false);
     }
   }
 
-  const answeredCount = Object.keys(selectedAnswers).length;
-  const allAnswered = questions.length > 0 && answeredCount === questions.length;
+  function handleNext() {
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      setReviewMode(false);
+    }
+  }
 
-  const score = useMemo(() => {
-    let total = 0;
+  function goToQuestion(index: number) {
+    setCurrentIndex(index);
+    setReviewMode(false);
+  }
 
-    for (const question of questions) {
-      if (!question.choices) continue;
+  function openReview() {
+    setReviewMode(true);
+  }
 
-      const choiceIndex = selectedAnswers[question.id];
-      if (choiceIndex === undefined) continue;
+  function submitExam() {
+    setSubmitted(true);
+    setReviewMode(false);
+  }
 
-      const normalized = question.choices.map((choice) =>
-        typeof choice === "string" ? { text: choice } : choice
+  function getWordCount(text: string) {
+    return text.trim() ? text.trim().split(/\s+/).length : 0;
+  }
+
+  function getQuestionStatus(question: ExamQuestionDetail) {
+    const value = answers[question.id];
+    return !!value?.trim();
+  }
+
+  function renderMedia(question: ExamQuestionDetail) {
+    if (!question.path) return null;
+
+    if (question.type === "Image") {
+      return (
+        <SectionCard>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+              Image Prompt
+            </p>
+            <img
+              src={question.path}
+              alt="Exam question media"
+              className="max-h-[420px] w-full rounded-2xl object-contain border border-[#4B3A46]/10 bg-white"
+            />
+          </div>
+        </SectionCard>
       );
-
-      if (normalized[choiceIndex]?.correct) {
-        total += 1;
-      }
     }
 
-    return total;
-  }, [questions, selectedAnswers]);
+    if (question.type === "Video") {
+      return (
+        <SectionCard>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+              Video Prompt
+            </p>
+            <video
+              controls
+              className="w-full rounded-2xl border border-[#4B3A46]/10 bg-black"
+            >
+              <source src={question.path} />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </SectionCard>
+      );
+    }
+
+    return null;
+  }
 
   if (!questions || questions.length === 0) {
     return (
@@ -88,67 +134,256 @@ export default function ExamRunner({ questions }: ExamRunnerProps) {
     );
   }
 
+  if (!currentQuestion) return null;
+
+  if (submitted) {
+    return (
+      <div className="space-y-8">
+        <SectionCard>
+          <div className="space-y-3">
+            <h2 className="text-2xl font-bold text-[#592803]">
+              Exam Submitted
+            </h2>
+            <p className="text-sm text-[#4B3A46]">
+              You completed {answeredCount} out of {questions.length} questions.
+            </p>
+            <p className="text-sm text-[#4B3A46]">
+              This exam includes written responses and may require teacher review.
+            </p>
+          </div>
+        </SectionCard>
+
+        <SectionCard>
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-[#592803]">
+              Submission Review
+            </h3>
+
+            <div className="space-y-4">
+              {questions.map((question, index) => (
+                <div
+                  key={question.id}
+                  className="rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                    Question {index + 1}
+                  </p>
+                  <p className="mt-2 font-semibold text-[#592803]">
+                    {question.question}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-[#4B3A46] whitespace-pre-wrap">
+                    {answers[question.id]?.trim() || "No response provided."}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SectionCard>
+      </div>
+    );
+  }
+
+  if (reviewMode) {
+    return (
+      <div className="space-y-8">
+        <SectionCard>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-[#592803]">
+                Review Before Submit
+              </h2>
+              <p className="mt-1 text-sm text-[#4B3A46]">
+                Check your responses before submitting the exam.
+              </p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                Completion
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-[#592803]">
+                {answeredCount}/{questions.length}
+              </p>
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard>
+          <div className="space-y-4">
+            {questions.map((question, index) => {
+              const answered = getQuestionStatus(question);
+
+              return (
+                <button
+                  key={question.id}
+                  type="button"
+                  onClick={() => goToQuestion(index)}
+                  className="flex w-full items-start justify-between rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+                      Question {index + 1}
+                    </p>
+                    <p className="mt-2 font-semibold text-[#592803]">
+                      {question.question}
+                    </p>
+                    <p className="mt-2 text-sm text-[#4B3A46]">
+                      {answered
+                        ? `${getWordCount(answers[question.id])} words written`
+                        : "No response yet"}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                      answered
+                        ? "bg-[#EAF7D7] text-[#4F6B1B] border border-[#C9E39B]"
+                        : "bg-[#FFF6CC] text-[#7A5E00] border border-[#E7D37A]"
+                    }`}
+                  >
+                    {answered ? "Answered" : "Unanswered"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </SectionCard>
+
+        <SectionCard className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setReviewMode(false)}
+            className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40"
+          >
+            Back to Exam
+          </button>
+
+          <button
+            type="button"
+            onClick={submitExam}
+            disabled={!allAnswered}
+            className="rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Submit Exam
+          </button>
+        </SectionCard>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <SectionCard>
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-            Question {currentIndex + 1} of {questions.length}
-          </p>
-          <p className="text-sm text-[#4B3A46]">
-            Answered {answeredCount} / {questions.length}
-          </p>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
+              {examTitle}
+            </p>
+            <p className="text-sm text-[#4B3A46]">
+              Answered {answeredCount} / {questions.length}
+            </p>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+              <span>Progress</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-[#4B3A46]/10">
+              <div
+                className="h-2 rounded-full bg-[#592803] transition-all"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard>
+        <div className="flex flex-wrap gap-3">
+          {questions.map((question, index) => {
+            const answered = getQuestionStatus(question);
+            const isCurrent = index === currentIndex;
+
+            return (
+              <button
+                key={question.id}
+                type="button"
+                onClick={() => goToQuestion(index)}
+                className={`h-10 w-10 rounded-full text-sm font-semibold transition ${
+                  isCurrent
+                    ? "bg-[#592803] text-[#FFF1E5]"
+                    : answered
+                    ? "bg-[#FFF1B8] text-[#592803] border border-[#592803]/20"
+                    : "bg-white text-[#592803] border border-[#4B3A46]/20"
+                }`}
+              >
+                {index + 1}
+              </button>
+            );
+          })}
         </div>
       </SectionCard>
 
       <ExamQuestionCard
         question={currentQuestion.question}
+        questionNumber={currentIndex + 1}
+        totalQuestions={questions.length}
+        questionType={currentQuestion.type}
       />
 
-      {currentQuestion.top_text && (
+      {currentQuestion.main_text && (
         <SectionCard>
-          <p className="text-sm leading-7 text-[#4B3A46]">
-            {currentQuestion.top_text}
-          </p>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+              Prompt
+            </p>
+            <p className="text-sm leading-7 text-[#4B3A46] whitespace-pre-wrap">
+              {currentQuestion.main_text}
+            </p>
+          </div>
         </SectionCard>
       )}
 
+      {renderMedia(currentQuestion)}
+
       <SectionCard>
-        {normalizedChoices.length > 0 ? (
-          <div className="grid gap-4">
-            {normalizedChoices.map((choice, index) => (
-              <QuizChoiceButton
-                key={`${currentQuestion.id}-${index}`}
-                label={choice.text}
-                selected={selectedChoiceIndex === index}
-                onClick={() => handleSelect(index)}
-                disabled={submitted}
-              />
-            ))}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
+              Your Response
+            </p>
+            <p className="text-xs text-[#4B3A46]">
+              {getWordCount(currentAnswer)} words
+            </p>
           </div>
-        ) : (
-          <p className="text-sm text-[#4B3A46]">
-            This exam question does not have answer choices loaded from the backend yet.
-          </p>
-        )}
+
+          <textarea
+            value={currentAnswer}
+            onChange={(e) => handleTextChange(e.target.value)}
+            rows={10}
+            className="w-full rounded-2xl border border-[#4B3A46]/15 bg-white p-4 text-[#592803] outline-none focus:border-[#592803]"
+            placeholder="Write your answer here..."
+          />
+        </div>
       </SectionCard>
 
-      {!submitted ? (
-        <SectionCard className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-            className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Previous
-          </button>
+      <SectionCard className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={handlePrevious}
+          disabled={currentIndex === 0}
+          className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Previous
+        </button>
 
+        <div className="flex gap-3">
           {currentIndex < questions.length - 1 ? (
             <button
               type="button"
               onClick={handleNext}
-              disabled={selectedChoiceIndex === undefined}
+              disabled={!currentAnswer.trim()}
               className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next Question
@@ -156,29 +391,15 @@ export default function ExamRunner({ questions }: ExamRunnerProps) {
           ) : (
             <button
               type="button"
-              onClick={() => setSubmitted(true)}
+              onClick={openReview}
               disabled={!allAnswered}
-              className="rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Submit Exam
+              Review Exam
             </button>
           )}
-        </SectionCard>
-      ) : (
-        <SectionCard>
-          <div className="space-y-3">
-            <h3 className="text-2xl font-bold text-[#592803]">
-              Exam Submitted
-            </h3>
-            <p className="text-sm text-[#4B3A46]">
-              You answered {answeredCount} out of {questions.length} questions.
-            </p>
-            <p className="text-sm text-[#4B3A46]">
-              Score: <span className="font-semibold text-[#592803]">{score}</span> / {questions.length}
-            </p>
-          </div>
-        </SectionCard>
-      )}
+        </div>
+      </SectionCard>
     </div>
   );
 }
