@@ -127,9 +127,19 @@ export default function ExamRunner({
   if (!questions || questions.length === 0) {
     return (
       <SectionCard>
-        <p className="text-sm text-[#4B3A46]">
-          No exam questions were found for this exam yet.
-        </p>
+        <div className="space-y-3 text-center py-6">
+          <h2 className="text-2xl font-bold text-[#592803]">
+            No Exam Available
+          </h2>
+
+          <p className="text-sm text-[#4B3A46]">
+            This topic does not have an exam yet.
+          </p>
+
+          <p className="text-sm text-[#4B3A46]">
+            Please check back later or ask your teacher for more information.
+          </p>
+        </div>
       </SectionCard>
     );
   }
