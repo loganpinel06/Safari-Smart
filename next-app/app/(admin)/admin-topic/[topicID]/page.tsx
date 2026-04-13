@@ -260,7 +260,7 @@ export default async function AdminTopicPage({
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 md:w-[360px]">
+              <div className="grid grid-cols-3 gap-3 md:w-90">
                 <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10">
                   <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
                     Lessons
@@ -341,7 +341,7 @@ export default async function AdminTopicPage({
                     const inner = (
                       <>
                         <div
-                          className={`flex h-[3.75rem] w-[3.75rem] shrink-0 items-center justify-center rounded-2xl transition group-hover:scale-[1.02] ${contentIconWrapClass(item.type)}`}
+                          className={`flex h-15 w-15 shrink-0 items-center justify-center rounded-2xl transition group-hover:scale-[1.02] ${contentIconWrapClass(item.type)}`}
                         >
                           <ContentTypeIcon
                             type={item.type}

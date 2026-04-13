@@ -3,9 +3,11 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminLessonPagesClient from "@/components/Admin/AdminLessonPagesClient";
+import EditLessonPageClient from "@/components/Admin/EditLessonPageClient";
+import DeleteLessonClient from "@/components/Admin/DeleteLessonClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getLessonPages } from "@/utils/lesson/util";
+import { getLessonPagesDetail } from "@/utils/lesson/util";
 
 export default async function AdminLessonPage({
   params,
@@ -46,7 +48,7 @@ export default async function AdminLessonPage({
     .eq("id", lesson.topic_id)
     .single();
 
-  const lessonPages = await getLessonPages(lessonIdNum, supabase);
+  const lessonPages = await getLessonPagesDetail(lessonIdNum, supabase);
   const nextOrder =
     lessonPages.length === 0
       ? 0
@@ -103,10 +105,16 @@ export default async function AdminLessonPage({
                     Add and reorder content slides for this lesson.
                   </p>
                 </div>
-                <AdminLessonPagesClient
-                  lessonId={lessonIdNum}
-                  defaultOrder={nextOrder}
-                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <AdminLessonPagesClient
+                    lessonId={lessonIdNum}
+                    defaultOrder={nextOrder}
+                  />
+                  <DeleteLessonClient
+                    lessonId={lessonIdNum}
+                    topicId={lesson.topic_id}
+                  />
+                </div>
               </div>
 
               {lessonPages.length === 0 ? (
@@ -145,6 +153,12 @@ export default async function AdminLessonPage({
                             {page.order}
                           </span>
                         </div>
+                      </div>
+                      <div className="mt-4">
+                        <EditLessonPageClient
+                          lessonId={lessonIdNum}
+                          page={page}
+                        />
                       </div>
                     </div>
                   ))}
