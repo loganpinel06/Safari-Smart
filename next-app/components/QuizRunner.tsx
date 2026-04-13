@@ -64,6 +64,43 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
   }
 
   const allAnswered = Object.keys(selectedAnswers).length === questions.length;
+  const [started, setStarted] = useState(false);
+
+  if (!started) {
+    return (
+      <SectionCard>
+        <div className="space-y-6 text-center py-6">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">Practice Mode</p>
+            <h2 className="mt-3 text-3xl font-bold text-[#592803]">{topicName} Quiz</h2>
+          </div>
+
+          <div className="flex justify-center gap-8 rounded-2xl bg-[#FFF1B8] py-6">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-[#592803]">{questions.length}</p>
+              <p className="text-xs font-semibold text-[#4B3A46]">Questions</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-[#592803]">4</p>
+              <p className="text-xs font-semibold text-[#4B3A46]">Choices each</p>
+            </div>
+          </div>
+
+          <p className="text-sm text-[#4B3A46]">
+            Answer all questions and submit when you're ready. You can navigate freely between questions.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setStarted(true)}
+            className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
+          >
+            Start Quiz 🚀
+          </button>
+        </div>
+      </SectionCard>
+    );
+  }
 
   // ── Results screen ──────────────────────────────────────────────
   if (submitted) {
@@ -203,6 +240,13 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
           </div>
         </div>
       </SectionCard>
+
+      {/* Unanswered warning */}
+      {currentIndex === questions.length - 1 && !allAnswered && (
+        <p className="text-center text-sm font-semibold text-red-500">
+          ⚠️ You have {questions.length - Object.keys(selectedAnswers).length} unanswered question(s) — use the circles above to go back!
+        </p>
+      )}
 
       <SectionCard className="flex items-center justify-between">
         <button
