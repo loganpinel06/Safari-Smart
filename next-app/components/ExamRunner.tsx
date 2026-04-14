@@ -228,7 +228,7 @@ export default function ExamRunner({
                   key={question.id}
                   type="button"
                   onClick={() => goToQuestion(index)}
-                  className="flex w-full items-start justify-between rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="flex w-full cursor-pointer items-start justify-between rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
@@ -263,7 +263,7 @@ export default function ExamRunner({
           <button
             type="button"
             onClick={() => setReviewMode(false)}
-            className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40"
+            className="rounded-xl cursor-pointer border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40"
           >
             Back to Exam
           </button>
@@ -272,7 +272,7 @@ export default function ExamRunner({
             type="button"
             onClick={submitExam}
             disabled={!allAnswered}
-            className="rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl cursor-pointer bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Submit Exam
           </button>
@@ -310,7 +310,7 @@ export default function ExamRunner({
       </SectionCard>
 
       <SectionCard>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex justify-center gap-3">
           {questions.map((question, index) => {
             const answered = getQuestionStatus(question);
             const isCurrent = index === currentIndex;
@@ -320,12 +320,12 @@ export default function ExamRunner({
                 key={question.id}
                 type="button"
                 onClick={() => goToQuestion(index)}
-                className={`h-10 w-10 rounded-full text-sm font-semibold transition ${
+                className={`cursor-pointer h-9 w-9 rounded-full text-xs font-bold transition-all ${
                   isCurrent
-                    ? "bg-[#592803] text-[#FFF1E5]"
+                    ? "bg-[#592803] text-[#FFF1E5] scale-110"
                     : answered
-                    ? "bg-[#FFF1B8] text-[#592803] border border-[#592803]/20"
-                    : "bg-white text-[#592803] border border-[#4B3A46]/20"
+                    ? "bg-[#FFF1B8] text-[#592803] border border-[#592803]"
+                    : "bg-white text-[#4B3A46] border border-[#4B3A46]/30"
                 }`}
               >
                 {index + 1}
@@ -338,8 +338,6 @@ export default function ExamRunner({
       <ExamQuestionCard
         question={currentQuestion.question}
         questionNumber={currentIndex + 1}
-        totalQuestions={questions.length}
-        questionType={currentQuestion.type}
       />
 
       {currentQuestion.main_text && (
@@ -383,7 +381,7 @@ export default function ExamRunner({
           type="button"
           onClick={handlePrevious}
           disabled={currentIndex === 0}
-          className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-xl cursor-pointer border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Previous
         </button>
@@ -394,7 +392,7 @@ export default function ExamRunner({
               type="button"
               onClick={handleNext}
               disabled={!currentAnswer.trim()}
-              className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl cursor-pointer bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next Question
             </button>
@@ -403,7 +401,7 @@ export default function ExamRunner({
               type="button"
               onClick={openReview}
               disabled={!allAnswered}
-              className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl cursor-pointer bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Review Exam
             </button>
