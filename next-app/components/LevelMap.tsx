@@ -188,7 +188,7 @@ export default function LevelMap({
 
             return (
               <g
-                key={lv.id}
+                key={lv.type + '-' + lv.id}
                 transform={`translate(${x},${y})`}
                 className="cursor-pointer"
                 style={{ opacity: op, transition: `opacity 0.4s ${i * 55}ms` }}
