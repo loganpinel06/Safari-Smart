@@ -1,5 +1,3 @@
-import { get } from "http";
-
 export type QuizQuestionType = "Image" | "Text" | "Video";
 
 export type QuizQuestionSummary = {
