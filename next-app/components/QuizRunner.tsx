@@ -3,34 +3,14 @@
 import { useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
-
-type Question = {
-  id: number;
-  question: string;
-  choices: string[];
-  correctIndex: number;
-};
+import { QuizQuestionDetail } from "@/utils/quiz/util";
 
 type QuizRunnerProps = {
   topicName: string;
+  questions: QuizQuestionDetail[];
 };
 
-export default function QuizRunner({ topicName }: QuizRunnerProps) {
-  const questions: Question[] = [
-    {
-      id: 1,
-      question: "Which answer best matches this placeholder quiz structure?",
-      choices: ["Option A", "Option B", "Option C", "Option D"],
-      correctIndex: 0,
-    },
-    {
-      id: 2,
-      question: "Which choice would be the next example question?",
-      choices: ["Choice 1", "Choice 2", "Choice 3", "Choice 4"],
-      correctIndex: 1,
-    },
-  ];
-
+export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -39,7 +19,7 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
   const selectedChoiceIndex = selectedAnswers[currentQuestion.id];
 
   const score = submitted
-    ? questions.filter((q) => selectedAnswers[q.id] === q.correctIndex).length
+    ? questions.filter((q) => selectedAnswers[q.id] === q.choices.findIndex((c) => c.correct)).length
     : 0;
 
   const progressPercent = Math.round(((currentIndex + 1) / questions.length) * 100);
@@ -117,8 +97,8 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
                 {score === questions.length
                   ? "Perfect score! Excellent work! 🌟"
                   : score >= questions.length / 2
-                  ? "Good effort! Keep practising! 💪"
-                  : "Keep going — you'll get there! 📚"}
+                    ? "Good effort! Keep practising! 💪"
+                    : "Keep going — you'll get there! 📚"}
               </p>
             </div>
           </div>
@@ -128,7 +108,7 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
         <div className="space-y-4">
           {questions.map((q, i) => {
             const chosen = selectedAnswers[q.id];
-            const isCorrect = chosen === q.correctIndex;
+            const isCorrect = chosen === q.choices.findIndex((c) => c.correct);
             return (
               <SectionCard key={q.id}>
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
@@ -138,12 +118,12 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
                 <div className="mt-3 space-y-2">
                   {q.choices.map((choice, idx) => {
                     let bg = "bg-white border border-[#4B3A46]/20";
-                    if (idx === q.correctIndex) bg = "bg-green-100 border border-green-400 text-green-800";
+                    if (idx === q.choices.findIndex((c) => c.correct)) bg = "bg-green-100 border border-green-400 text-green-800";
                     else if (idx === chosen && !isCorrect) bg = "bg-red-100 border border-red-400 text-red-800";
                     return (
-                      <div key={choice} className={`rounded-xl px-4 py-3 text-sm font-medium ${bg}`}>
-                        {choice}
-                        {idx === q.correctIndex && " ✓"}
+                      <div key={choice.name} className={`rounded-xl px-4 py-3 text-sm font-medium ${bg}`}>
+                        {choice.name}
+                        {idx === q.choices.findIndex((c) => c.correct) && " ✓"}
                         {idx === chosen && !isCorrect && " ✗"}
                       </div>
                     );
@@ -197,8 +177,8 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
                 ${isCurrent
                   ? "bg-[#592803] text-[#FFF1E5] scale-110"
                   : isAnswered
-                  ? "bg-[#FFF1B8] text-[#592803] border border-[#592803]"
-                  : "bg-white text-[#4B3A46] border border-[#4B3A46]/30"
+                    ? "bg-[#FFF1B8] text-[#592803] border border-[#592803]"
+                    : "bg-white text-[#4B3A46] border border-[#4B3A46]/30"
                 }`}
             >
               {i + 1}
@@ -230,8 +210,8 @@ export default function QuizRunner({ topicName }: QuizRunnerProps) {
           <div className="grid gap-4">
             {currentQuestion.choices.map((choice, index) => (
               <QuizChoiceButton
-                key={choice}
-                label={choice}
+                key={choice.name}
+                label={choice.name}
                 selected={selectedChoiceIndex === index}
                 onClick={() => handleSelect(index)}
                 disabled={submitted}
