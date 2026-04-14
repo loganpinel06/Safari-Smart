@@ -49,7 +49,7 @@ export async function getExamQuestions(
   return (res.data ?? []) as ExamQuestionSummary[];
 }
 
-//this function is used to get the quiz questions with all details including choices for students to view
+//this function is used to get exam questions with all details for admin and student views
 export async function getExamQuestionsDetail(
   examID: string | number,
   supabase: any,
@@ -63,7 +63,7 @@ export async function getExamQuestionsDetail(
 
   const res = await supabase
     .from("exam_question")
-    .select("id, exam_id, type, order, main_text, question, choices, path")
+    .select("id, exam_id, type, order, main_text, question, path")
     .eq("exam_id", examIdNum)
     .order("order", { ascending: true });
 

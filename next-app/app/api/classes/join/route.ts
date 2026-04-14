@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-type JoinBody = {
-  join_code: string;
-};
-
 export async function POST(request: Request) {
   const supabase = await createClient();
 
@@ -14,10 +10,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const body = (await request.json()) as JoinBody;
-  const { join_code } = body;
+  const formData = await request.formData();
+  const join_code = formData.get("join_code")?.toString().trim();
+  const normalizedJoinCode = join_code?.toUpperCase();
 
-  if (!join_code) {
+  if (!normalizedJoinCode) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 },
@@ -27,10 +24,19 @@ export async function POST(request: Request) {
   const { data: classData, error: classError } = await supabase
     .from("classes")
     .select("id")
-    .eq("join_code", join_code)
+    .eq("join_code", normalizedJoinCode)
     .single();
 
-  if (classError || !classData) {
+  if (classError) {
+    // Helps distinguish DB/RLS failures from bad join code.
+    console.error("Error looking up class by join code:", classError);
+    return NextResponse.json(
+      { error: "Unable to verify class code right now" },
+      { status: 500 },
+    );
+  }
+
+  if (!classData) {
     return NextResponse.json({ error: "Invalid join code" }, { status: 400 });
   }
 
@@ -40,6 +46,13 @@ export async function POST(request: Request) {
   });
 
   if (insertError) {
+    if (insertError.code === "23505") {
+      return NextResponse.json(
+        { error: "You are already in this class" },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
 

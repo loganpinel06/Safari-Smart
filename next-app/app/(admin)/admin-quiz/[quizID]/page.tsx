@@ -3,9 +3,11 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminQuizQuestionClient from "@/components/Admin/AdminQuizQuestionClient";
+import EditQuizQuestionClient from "@/components/Admin/EditQuizQuestionClient";
+import DeleteQuizClient from "@/components/Admin/DeleteQuizClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getQuizQuestions } from "@/utils/quiz/util";
+import { getQuizQuestionsDetail } from "@/utils/quiz/util";
 
 export default async function AdminQuizPage({
   params,
@@ -46,7 +48,7 @@ export default async function AdminQuizPage({
     .eq("id", quiz.topic_id)
     .single();
 
-  const questions = await getQuizQuestions(quizIdNum, supabase);
+  const questions = await getQuizQuestionsDetail(quizIdNum, supabase);
   const nextOrder =
     questions.length === 0 ? 0 : Math.max(...questions.map((q) => q.order)) + 1;
 
@@ -103,10 +105,16 @@ export default async function AdminQuizPage({
                     Add and manage question items for this quiz.
                   </p>
                 </div>
-                <AdminQuizQuestionClient
-                  quizId={quizIdNum}
-                  defaultOrder={nextOrder}
-                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <AdminQuizQuestionClient
+                    quizId={quizIdNum}
+                    defaultOrder={nextOrder}
+                  />
+                  <DeleteQuizClient
+                    quizId={quizIdNum}
+                    topicId={quiz.topic_id}
+                  />
+                </div>
               </div>
 
               {questions.length === 0 ? (
@@ -120,7 +128,7 @@ export default async function AdminQuizPage({
                       key={quizQuestion.id}
                       className="rounded-xl border border-[#4B3A46]/15 bg-white/70 px-5 py-4 shadow-sm"
                     >
-                      <div className="grid gap-3 sm:grid-cols-4">
+                      <div className="mb-3 grid gap-3 sm:grid-cols-4">
                         <div className="flex flex-col gap-1">
                           <span className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
                             ID
@@ -153,6 +161,12 @@ export default async function AdminQuizPage({
                             {quizQuestion.question}
                           </span>
                         </div>
+                      </div>
+                      <div className="border-t border-[#4B3A46]/10 pt-3">
+                        <EditQuizQuestionClient
+                          quizId={quizIdNum}
+                          question={quizQuestion}
+                        />
                       </div>
                     </div>
                   ))}

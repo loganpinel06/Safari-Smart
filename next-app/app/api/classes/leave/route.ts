@@ -23,9 +23,9 @@ export async function POST(request: Request) {
     );
   }
 
-  if (userData.account_type !== "Teacher" && userData.account_type !== "Admin") {
+  if (userData.account_type !== "Student") {
     return NextResponse.json(
-      { error: "Only teachers can delete classes" },
+      { error: "Only students can leave classes" },
       { status: 403 },
     );
   }
@@ -40,20 +40,17 @@ export async function POST(request: Request) {
     );
   }
 
-  const { error: deleteError } = await supabase
-    .from("classes")
+  const { error: leaveError } = await supabase
+    .from("class_students")
     .delete()
-    .eq("id", class_id)
-    .eq("teacher_id", data.user.id);
+    .eq("class_id", class_id)
+    .eq("student_id", data.user.id);
 
-  if (deleteError) {
-    return NextResponse.json(
-      { error: "Failed to delete class" },
-      { status: 500 },
-    );
+  if (leaveError) {
+    return NextResponse.json({ error: leaveError.message }, { status: 500 });
   }
 
   return NextResponse.json({
-    message: "Class deleted successfully",
+    message: "Successfully left class",
   });
 }

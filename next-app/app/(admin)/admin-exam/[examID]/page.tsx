@@ -3,9 +3,11 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminExamQuestionClient from "@/components/Admin/AdminExamQuestionClient";
+import EditExamQuestionClient from "@/components/Admin/EditExamQuestionClient";
+import DeleteExamClient from "@/components/Admin/DeleteExamClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getExamQuestions } from "@/utils/exam/util";
+import { getExamQuestionsDetail } from "@/utils/exam/util";
 
 export default async function AdminExamPage({
   params,
@@ -46,7 +48,7 @@ export default async function AdminExamPage({
     .eq("id", exam.topic_id)
     .single();
 
-  const questions = await getExamQuestions(examIdNum, supabase);
+  const questions = await getExamQuestionsDetail(examIdNum, supabase);
   const nextOrder =
     questions.length === 0 ? 0 : Math.max(...questions.map((q) => q.order)) + 1;
 
@@ -103,10 +105,16 @@ export default async function AdminExamPage({
                     Add and manage question items for this exam.
                   </p>
                 </div>
-                <AdminExamQuestionClient
-                  examId={examIdNum}
-                  defaultOrder={nextOrder}
-                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <AdminExamQuestionClient
+                    examId={examIdNum}
+                    defaultOrder={nextOrder}
+                  />
+                  <DeleteExamClient
+                    examId={examIdNum}
+                    topicId={exam.topic_id}
+                  />
+                </div>
               </div>
 
               {questions.length === 0 ? (
@@ -120,7 +128,7 @@ export default async function AdminExamPage({
                       key={examQuestion.id}
                       className="rounded-xl border border-[#4B3A46]/15 bg-white/70 px-5 py-4 shadow-sm"
                     >
-                      <div className="grid gap-3 sm:grid-cols-4">
+                      <div className="mb-3 grid gap-3 sm:grid-cols-4">
                         <div className="flex flex-col gap-1">
                           <span className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
                             ID
@@ -153,6 +161,12 @@ export default async function AdminExamPage({
                             {examQuestion.question}
                           </span>
                         </div>
+                      </div>
+                      <div className="border-t border-[#4B3A46]/10 pt-3">
+                        <EditExamQuestionClient
+                          examId={examIdNum}
+                          question={examQuestion}
+                        />
                       </div>
                     </div>
                   ))}

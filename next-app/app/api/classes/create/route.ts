@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-type ClassBody = {
-  name: string;
-};
-
 function generateJoinCode() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
@@ -38,8 +34,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const body = (await request.json()) as ClassBody;
-  const { name } = body;
+  const formData = await request.formData();
+  const name = formData.get("name")?.toString().trim();
 
   if (!name) {
     return NextResponse.json(
