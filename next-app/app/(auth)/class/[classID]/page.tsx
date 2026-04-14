@@ -35,6 +35,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
 
   const isTeacherRole =
     profile?.account_type === "Teacher" || profile?.account_type === "Admin";
+  const isTeacher = profile?.account_type === "Teacher";
   const isClassOwner = user.id === classInfo.teacher_id;
 
   const { data: membershipRow } = await supabase
@@ -78,10 +79,17 @@ export default async function ClassDetailPage({ params }: PageProps) {
         <div className="flex-1 px-10 py-10">
           <div className="max-w-5xl space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <PageHeader
-                title={classInfo.name ?? "Class"}
-                subtitle={`Teacher: ${classInfo.teacher_name ?? "Unknown Teacher"}`}
-              />
+              <div className="space-y-1">
+                <PageHeader
+                  title={classInfo.name ?? "Class"}
+                  subtitle={`Teacher: ${classInfo.teacher_name ?? "Unknown Teacher"}`}
+                />
+                {isTeacher && classInfo.join_code && (
+                  <p className="text-base text-[#4B3A46]">
+                    Class Code: {classInfo.join_code}
+                  </p>
+                )}
+              </div>
               <ClassDetailActions
                 classId={classID}
                 showLeave={showLeaveClass}
