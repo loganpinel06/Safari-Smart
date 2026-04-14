@@ -173,7 +173,7 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
               key={q.id}
               type="button"
               onClick={() => setCurrentIndex(i)}
-              className={`h-9 w-9 rounded-full text-xs font-bold transition-all
+              className={`cursor-pointer h-9 w-9 rounded-full text-xs font-bold transition-all
                 ${isCurrent
                   ? "bg-[#592803] text-[#FFF1E5] scale-110"
                   : isAnswered
@@ -188,19 +188,10 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
       </div>
 
       <SectionCard>
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-            Question {currentIndex + 1} of {questions.length}
-          </p>
-          <p className="text-sm text-[#4B3A46]">Practice Mode</p>
-        </div>
-      </SectionCard>
-
-      <SectionCard>
         <div className="space-y-6">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
-              {topicName}
+              Question {currentIndex + 1}
             </p>
             <h2 className="mt-3 text-2xl font-bold text-[#592803]">
               {currentQuestion.question}
@@ -233,7 +224,7 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
           type="button"
           onClick={handlePrevious}
           disabled={currentIndex === 0}
-          className="rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+          className="cursor-pointer rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Previous
         </button>
@@ -243,7 +234,7 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
             type="button"
             onClick={handleNext}
             disabled={selectedChoiceIndex === undefined}
-            className="rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next Question →
           </button>
@@ -252,7 +243,7 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
             type="button"
             onClick={() => setSubmitted(true)}
             disabled={!allAnswered}
-            className="rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Submit Quiz
           </button>
