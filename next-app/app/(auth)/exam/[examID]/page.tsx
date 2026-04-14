@@ -5,20 +5,7 @@ import { redirect } from "next/navigation";
 import ExamRunner from "@/components/ExamRunner";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import SectionCard from "@/components/SectionCard";
-
-type Choice =
-  | string
-  | {
-    text: string;
-    correct?: boolean;
-  };
-
-type ExamQuestion = {
-  id: string;
-  top_text?: string | null;
-  question: string;
-  choices?: Choice[] | null;
-};
+import { getExamQuestionsDetail } from "@/utils/exam/util";
 
 export default async function ExamPage({
   params,
@@ -27,6 +14,8 @@ export default async function ExamPage({
 }) {
   const supabase = await createClient();
   const examID = (await params).examID;
+
+  console.log("examID from route:", examID);
 
   const {
     data: { user },
@@ -45,7 +34,6 @@ export default async function ExamPage({
   const isTeacher = profile?.account_type === "Teacher";
   const isParent = profile?.account_type === "Parent";
 
-  // For now examID is still acting like the selected topic/category id
   const { data: currentExamCategory } = await supabase
     .from("category")
     .select("name, parent_id")
@@ -58,7 +46,6 @@ export default async function ExamPage({
     .eq("id", currentExamCategory?.parent_id)
     .single();
 
-  // Load the real exam row for this topic/category if it exists
   const { data: exam } = await supabase
     .from("exam")
     .select("*")
@@ -67,16 +54,15 @@ export default async function ExamPage({
     .limit(1)
     .maybeSingle();
 
-  let questions: ExamQuestion[] = [];
+  console.log("exam row:", exam);
+
+  let questions = [];
 
   if (exam) {
-    const { data: examQuestions } = await supabase
-      .from("exam_question")
-      .select("*")
-      .eq("exam_id", exam.id)
-      .order("id", { ascending: true });
-
-    questions = examQuestions ?? [];
+    questions = await getExamQuestionsDetail(exam.id, supabase);
+    console.log("exam questions:", questions);
+  } else {
+    console.log("No exam row found for topic_id:", examID);
   }
 
   async function logout() {
@@ -124,8 +110,8 @@ export default async function ExamPage({
                 isTeacher
                   ? `${parentCategory?.name ?? "Subject"} • Teacher preview mode`
                   : isParent
-                    ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
-                    : `${parentCategory?.name ?? "Subject"} • Exam Mode`
+                  ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
+                  : `${parentCategory?.name ?? "Subject"} • Exam Mode`
               }
             />
 
@@ -135,8 +121,8 @@ export default async function ExamPage({
                   Teacher Preview
                 </h2>
                 <p className="mt-2 text-sm text-[#4B3A46]">
-                  Teachers can preview exam structure and questions here. This is where
-                  exam editing, assignment controls, and analytics can be added later.
+                  Teachers can preview the exam structure, prompts, and media here.
+                  Later this page can support editing, assignment controls, and analytics.
                 </p>
               </SectionCard>
             ) : isParent ? (
@@ -150,7 +136,10 @@ export default async function ExamPage({
                 </p>
               </SectionCard>
             ) : (
-              <ExamRunner questions={questions} />
+              <ExamRunner
+                examTitle={currentExamCategory?.name ?? "Exam"}
+                questions={questions}
+              />
             )}
           </div>
         </div>
