@@ -47,7 +47,7 @@ export default async function ClassDetailPage({ params }: PageProps) {
   const isEnrolledStudent =
     profile?.account_type === "Student" && !!membershipRow;
 
-  const showLeaveClass = isEnrolledStudent;
+  const showLeaveClass = isEnrolledStudent || profile?.account_type === "Admin";
   const showDeleteClass = isTeacherRole && isClassOwner;
 
   const assignmentList = Array.isArray(classInfo.assignments)

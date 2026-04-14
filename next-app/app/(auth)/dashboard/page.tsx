@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 import { getSubjects } from "@/utils/categories/util";
 import TeacherDashboardContent from "@/components/TeacherDashboardContent";
 import ParentDashboardContent from "@/components/ParentDashboardContent";
-import StudentClassCard from "@/components/StudentClassCard";
 import Link from "next/link";
+import { getStudentClassesWithAssignments } from "@/utils/classes/util";
+import ClassCard from "@/components/ClassCard";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -30,8 +31,8 @@ export default async function DashboardPage() {
   const subjects = await getSubjects(null, profile, supabase);
 
   const subjectList = Array.isArray(subjects)
-  ? subjects
-  : subjects?.subjects ?? subjects?.categories ?? [];
+    ? subjects
+    : subjects?.subjects ?? [];
 
   async function logout() {
     "use server";
@@ -42,6 +43,10 @@ export default async function DashboardPage() {
 
   const isTeacher = profile?.account_type === "Teacher";
   const isParent = profile?.account_type === "Parent";
+  const classes =
+    !isTeacher && !isParent
+      ? await getStudentClassesWithAssignments(user.id, supabase)
+      : [];
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
@@ -122,7 +127,7 @@ export default async function DashboardPage() {
                     </div>
 
                     <Link
-                      href="/manageaccount"
+                      href="/class"
                       className="rounded-lg border border-[#4B3A46]/15 bg-white/70 px-4 py-2 text-sm font-semibold text-[#592803] transition hover:bg-white"
                     >
                       Manage Classes
@@ -130,12 +135,17 @@ export default async function DashboardPage() {
                   </div>
 
                   <div className="grid gap-5 md:grid-cols-2">
-                    <StudentClassCard
-                      name="BECE English A"
-                      code="ENG231"
-                      teacherName="Mrs. Mensah"
-                    />
+                    {classes.map((classItem) => (
+                      <ClassCard
+                        key={classItem.id}
+                        id={classItem.id}
+                        name={classItem.name}
+                      />
+                    ))}
                   </div>
+                  {classes.length === 0 && (
+                    <p className="text-sm text-[#4B3A46]">No classes yet.</p>
+                  )}
                 </SectionCard>
 
                 <SectionCard>

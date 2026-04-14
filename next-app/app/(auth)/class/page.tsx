@@ -4,12 +4,12 @@ import SectionCard from "@/components/SectionCard";
 import JoinClassSection from "@/components/JoinClassSection";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import {
   getStudentClassesWithAssignments,
   getTeacherClassesWithAssignments,
 } from "@/utils/classes/util";
 import CreateClassModal from "@/components/CreateClassModal";
+import ClassCard from "@/components/ClassCard";
 
 export default async function ClassPage() {
   const supabase = await createClient();
@@ -79,18 +79,11 @@ export default async function ClassPage() {
 
               <div className="grid gap-5 md:grid-cols-2">
                 {classes.map((classItem) => (
-                  <Link
+                  <ClassCard
                     key={classItem.id}
-                    href={`/class/${classItem.id}`}
-                    className="block rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#592803]/30 hover:bg-white hover:shadow-md"
-                  >
-                    <h3 className="text-xl font-bold text-[#592803]">
-                      {classItem.name}
-                    </h3>
-                    <p className="mt-3 text-sm font-semibold text-[#4B3A46]">
-                      Assignments
-                    </p>
-                  </Link>
+                    id={classItem.id}
+                    name={classItem.name}
+                  />
                 ))}
               </div>
               {classes.length === 0 && (
