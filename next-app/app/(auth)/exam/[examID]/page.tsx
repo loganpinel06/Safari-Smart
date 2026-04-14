@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import ExamRunner from "@/components/ExamRunner";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import SectionCard from "@/components/SectionCard";
-import { getExamQuestionsDetail } from "@/utils/exam/util";
+import { ExamQuestionDetail, getExamQuestionsDetail } from "@/utils/exam/util";
 
 export default async function ExamPage({
   params,
@@ -14,8 +14,6 @@ export default async function ExamPage({
 }) {
   const supabase = await createClient();
   const examID = (await params).examID;
-
-  console.log("examID from route:", examID);
 
   const {
     data: { user },
@@ -34,36 +32,19 @@ export default async function ExamPage({
   const isTeacher = profile?.account_type === "Teacher";
   const isParent = profile?.account_type === "Parent";
 
-  const { data: currentExamCategory } = await supabase
-    .from("category")
-    .select("name, parent_id")
-    .eq("id", examID)
-    .single();
-
-  const { data: parentCategory } = await supabase
-    .from("category")
-    .select("name")
-    .eq("id", currentExamCategory?.parent_id)
-    .single();
-
   const { data: exam } = await supabase
     .from("exam")
-    .select("*")
-    .eq("topic_id", examID)
-    .order("order", { ascending: true })
-    .limit(1)
+    .select("id, topic_id, name")
+    .eq("id", examID)
     .maybeSingle();
 
-  console.log("exam row:", exam);
+  const { data: topic } = await supabase
+    .from("topic")
+    .select("name, id")
+    .eq("id", exam?.topic_id)
+    .maybeSingle();
 
-  let questions = [];
-
-  if (exam) {
-    questions = await getExamQuestionsDetail(exam.id, supabase);
-    console.log("exam questions:", questions);
-  } else {
-    console.log("No exam row found for topic_id:", examID);
-  }
+  let questions: ExamQuestionDetail[] = await getExamQuestionsDetail(exam?.id, supabase);
 
   async function logout() {
     "use server";
@@ -91,27 +72,23 @@ export default async function ExamPage({
             <Breadcrumbs
               items={[
                 {
-                  label: parentCategory?.name ?? "Subject",
-                  href: `/dashboard/${currentExamCategory?.parent_id}`,
+                  label: topic?.name ?? "Topic",
+                  href: `/topic/${topic?.id}`,
                 },
                 {
-                  label: currentExamCategory?.name ?? "Topic",
-                  href: `/topic/${examID}`,
-                },
-                {
-                  label: "Exam",
+                  label: exam?.name ?? "Exam",
                 },
               ]}
             />
 
             <PageHeader
-              title={`${currentExamCategory?.name ?? "Topic"} Exam`}
+              title={`${exam?.name ?? "Exam"}`}
               subtitle={
                 isTeacher
-                  ? `${parentCategory?.name ?? "Subject"} • Teacher preview mode`
+                  ? `${topic?.name ?? "Topic"} • Teacher preview mode`
                   : isParent
-                  ? `${parentCategory?.name ?? "Subject"} • Parent read-only view`
-                  : `${parentCategory?.name ?? "Subject"} • Exam Mode`
+                    ? `${topic?.name ?? "Topic"} • Parent read-only view`
+                    : `${topic?.name ?? "Topic"} • Exam Mode`
               }
             />
 
@@ -137,7 +114,7 @@ export default async function ExamPage({
               </SectionCard>
             ) : (
               <ExamRunner
-                examTitle={currentExamCategory?.name ?? "Exam"}
+                examTitle={exam?.name ?? "Exam"}
                 questions={questions}
               />
             )}
