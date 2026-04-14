@@ -8,6 +8,7 @@ import type { LessonPageDetail } from "@/utils/lesson/util";
 import { getSignedUrlFromStoredPath } from "@/utils/files/getFile";
 import { supabase } from "@/utils/supabase/client";
 
+
 type LessonSlidesClientProps = {
   pages: LessonPageDetail[];
   topicId: number | null;
@@ -63,7 +64,7 @@ export default function LessonSlidesClient({
     setPageIndex((i) => i + 1);
   };
 
-  const nextLabel = !hasPages ? "Back to topic" : isLast ? "Finish" : "Next";
+  const nextLabel = !hasPages ? "BACK" : isLast ? "FINISH LESSON" : "NEXT";
 
   const pageForMedia = hasPages ? pages[pageIndex] : null;
   const mediaFetchKey =
@@ -122,7 +123,7 @@ export default function LessonSlidesClient({
             onClick={goToTopicOrDashboard}
             className="rounded-xl border-2 border-[#4B3A46]/25 bg-white/80 px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
           >
-            Back to topic
+            BACK TO TOPIC
           </button>
         </div>
       </SectionCard>
@@ -145,8 +146,8 @@ export default function LessonSlidesClient({
 
       <div className="flex min-h-[320px] w-full flex-col justify-center md:min-h-[400px]">
         {current.type === "Text" && (
-          <div className="rounded-2xl bg-[#F3EFEA] px-6 py-8 md:px-10 md:py-12">
-            <p className="text-lg leading-8 text-[#4B3A46] whitespace-pre-wrap md:text-xl md:leading-9">
+          <div className="flex flex-2 rounded-2xl font-semibold bg-[#F3EFEA] px-6 py-8 md:px-10 md:py-12">
+            <p className="text-lg leading-8 text-[#3a3b4b] whitespace-pre-wrap md:text-xl md:leading-9">
               {current.main_text ?? "No text content for this page."}
             </p>
           </div>
@@ -194,25 +195,31 @@ export default function LessonSlidesClient({
       </div>
 
       {current.sub_text ? (
-        <p className="border-t border-[#4B3A46]/10 pt-4 text-sm leading-7 text-[#4B3A46]">
+        <p className="border-t border-[#592803]/10 pt-4 text-sm leading-7 font-semibold text-[#4B3A46]">
           {current.sub_text}
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#4B3A46]/10 pt-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#592803]/10 pt-6">
         <button
           type="button"
           onClick={handleBack}
-          className="rounded-xl border-2 border-[#4B3A46]/25 bg-white/80 px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
+          className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1E5] px-5 py-3 font-semibold text-[#4B3A46] transition hover:border-[#592803]/40"
         >
-          {isFirst ? "Back to topic" : "Back"}
+          {isFirst ? "BACK TO TOPIC" : "BACK"}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+          </svg>
         </button>
         <button
           type="button"
           onClick={handleNext}
-          className="rounded-xl bg-[#6AC700] px-5 py-3 font-semibold text-white transition hover:bg-[#5bb000]"
+          className="flex items-center gap-2 rounded-xl bg-[#6AC700] px-5 py-3 font-semibold text-white transition hover:bg-[#5bb000]"
         >
           {nextLabel}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18l6-6-6-6" />
+          </svg>
         </button>
       </div>
     </SectionCard>
