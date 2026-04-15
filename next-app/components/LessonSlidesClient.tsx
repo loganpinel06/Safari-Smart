@@ -64,7 +64,7 @@ export default function LessonSlidesClient({
     setPageIndex((i) => i + 1);
   };
 
-  const nextLabel = !hasPages ? "BACK" : isLast ? "FINISH LESSON" : "NEXT";
+  const nextLabel = !hasPages ? "Back" : isLast ? "Finish Lesson" : "Next";
 
   const pageForMedia = hasPages ? pages[pageIndex] : null;
   const mediaFetchKey =
@@ -113,17 +113,17 @@ export default function LessonSlidesClient({
         <div className="h-2 w-full overflow-hidden rounded-full bg-[#F3EFEA]">
           <div className="h-full w-0 rounded-full bg-[#6AC700]" />
         </div>
-        <p className="text-sm text-[#4B3A46]">
+        <p className="text-sm text-[#592803]">
           There are no lesson pages for this lesson yet. When your teacher adds
           slides, they will appear here.
         </p>
-        <div className="flex flex-wrap items-center justify-end gap-4 border-t border-[#4B3A46]/10 pt-6">
+        <div className="flex flex-wrap items-center justify-end gap-4 border-t border-[#592803]/10 pt-6">
           <button
             type="button"
             onClick={goToTopicOrDashboard}
             className="rounded-xl border-2 border-[#4B3A46]/25 bg-white/80 px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
           >
-            BACK TO TOPIC
+            Back To Topic
           </button>
         </div>
       </SectionCard>
@@ -135,18 +135,18 @@ export default function LessonSlidesClient({
       <div className="flex flex-col gap-2">
         <div className="h-2 w-full overflow-hidden rounded-full bg-[#F3EFEA]">
           <div
-            className="h-full rounded-full bg-[#6AC700] transition-[width] duration-300 ease-out"
+            className="h-full rounded-full bg-[#592803] transition-[width] duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
-        <p className="text-right text-xs font-medium text-[#4B3A46]">
+        <p className="text-right text-xs font-medium text-[#592803]">
           {pageIndex + 1} / {pages.length}
         </p>
       </div>
 
       <div className="flex min-h-[320px] w-full flex-col justify-center md:min-h-[400px]">
         {current.type === "Text" && (
-          <div className="flex flex-2 rounded-2xl font-semibold bg-[#F3EFEA] px-6 py-8 md:px-10 md:py-12">
+          <div className="flex flex-2 rounded-2xl font-semibold bg-[#F3EFEA] border-4 border-[#E0C9B3] px-6 py-8 md:px-10 md:py-12">
             <p className="text-lg leading-8 text-[#3a3b4b] whitespace-pre-wrap md:text-xl md:leading-9">
               {current.main_text ?? "No text content for this page."}
             </p>
@@ -154,9 +154,9 @@ export default function LessonSlidesClient({
         )}
 
         {current.type === "Image" && (
-          <div className="flex min-h-[280px] flex-1 items-center justify-center md:min-h-[360px]">
+          <div className="flex min-h-[280px] flex-1 items-center justify-center rounded-2xl border-4 border-[#E0C9B3] bg-[#F3EFEA] p-4 md:min-h-[360px]">
             {mediaLoading ? (
-              <p className="text-center text-sm text-[#4B3A46]">
+              <p className="text-center text-sm text-[#592803]">
                 Loading image…
               </p>
             ) : signedMediaUrl ? (
@@ -166,7 +166,7 @@ export default function LessonSlidesClient({
                 className="max-h-[min(70vh,560px)] w-full max-w-full rounded-2xl object-contain"
               />
             ) : (
-              <p className="text-center text-sm text-[#4B3A46]">
+              <p className="text-center text-sm text-[#592803]">
                 Image is not available for this page.
               </p>
             )}
@@ -174,9 +174,9 @@ export default function LessonSlidesClient({
         )}
 
         {current.type === "Video" && (
-          <div className="flex w-full flex-1 items-center justify-center">
+          <div className="flex w-full flex-1 items-center justify-center rounded-2xl border-4 border-[#E0C9B3] bg-[#F3EFEA] p-4">
             {mediaLoading ? (
-              <p className="text-center text-sm text-[#4B3A46]">
+              <p className="text-center text-sm text-[#592803]">
                 Loading video…
               </p>
             ) : signedMediaUrl ? (
@@ -204,17 +204,17 @@ export default function LessonSlidesClient({
         <button
           type="button"
           onClick={handleBack}
-          className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1E5] px-5 py-3 font-semibold text-[#4B3A46] transition hover:border-[#592803]/40"
+          className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1E5] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
         >
-          {isFirst ? "BACK TO TOPIC" : "BACK"}
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6"/>
           </svg>
+          {isFirst ? "Back To Topic" : "Back"}
         </button>
         <button
           type="button"
           onClick={handleNext}
-          className="flex items-center gap-2 rounded-xl bg-[#6AC700] px-5 py-3 font-semibold text-white transition hover:bg-[#5bb000]"
+          className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
         >
           {nextLabel}
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

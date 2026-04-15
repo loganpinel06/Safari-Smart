@@ -229,7 +229,7 @@ export default function LevelMap({
                     x={NODE_R - 2} y={-(NODE_R - 2)}
                     textAnchor="middle" dominantBaseline="central"
                     fill="white" fontSize={9} fontWeight="900"
-                    fontFamily="sans-serif"
+                    fontFamily="inherit"
                   >{i + 1}</text>
                 </g>
 
@@ -239,7 +239,7 @@ export default function LevelMap({
                   textAnchor="middle"
                   fill="#592803"
                   fontSize={10} fontWeight="800"
-                  fontFamily="sans-serif"
+                  fontFamily="inherit"
                 >{typeLabel}</text>
 
                 {/* Name label */}
@@ -248,7 +248,7 @@ export default function LevelMap({
                   textAnchor="middle"
                   fill="#7a4f2c"
                   fontSize={10} fontWeight="600"
-                  fontFamily="sans-serif"
+                  fontFamily="inherit"
                 >{nameLabel}</text>
               </g>
             );
