@@ -164,7 +164,7 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
       </div>
 
       {/* Question dot navigator */}
-      <div className="flex justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-2">
         {questions.map((q, i) => {
           const isAnswered = selectedAnswers[q.id] !== undefined;
           const isCurrent = i === currentIndex;
@@ -219,7 +219,7 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
         </p>
       )}
 
-      <SectionCard className="flex items-center justify-between">
+      <SectionCard className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <button
           type="button"
           onClick={handlePrevious}
