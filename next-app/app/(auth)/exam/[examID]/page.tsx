@@ -6,6 +6,7 @@ import ExamRunner from "@/components/ExamRunner";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import SectionCard from "@/components/SectionCard";
 import { ExamQuestionDetail, getExamQuestionsDetail } from "@/utils/exam/util";
+import { hasCompletedExam } from "@/utils/progress/exam/util";
 
 export default async function ExamPage({
   params,
@@ -45,6 +46,8 @@ export default async function ExamPage({
     .maybeSingle();
 
   let questions: ExamQuestionDetail[] = await getExamQuestionsDetail(exam?.id, supabase);
+  const examIdNum = Number.parseInt(examID, 10);
+  const examCompletion = await hasCompletedExam(examIdNum, user.id, supabase);
 
   async function logout() {
     "use server";
@@ -116,6 +119,12 @@ export default async function ExamPage({
               <ExamRunner
                 examTitle={exam?.name ?? "Exam"}
                 questions={questions}
+                userId={user.id}
+                topicId={exam?.topic_id ?? null}
+                examId={Number.isFinite(examIdNum) ? examIdNum : null}
+                hasPreviousSubmission={examCompletion.completed}
+                previousStatus={examCompletion.status}
+                previousScore={examCompletion.score}
               />
             )}
           </div>

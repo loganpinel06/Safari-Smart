@@ -7,21 +7,30 @@ import VideoPlaceholder from "@/components/VideoPlaceholder";
 import type { LessonPageDetail } from "@/utils/lesson/util";
 import { getSignedUrlFromStoredPath } from "@/utils/files/getFile";
 import { supabase } from "@/utils/supabase/client";
+import { markLessonAsComplete } from "@/utils/progress/lesson/util";
 
 
 type LessonSlidesClientProps = {
   pages: LessonPageDetail[];
   topicId: number | null;
+  lessonId: number;
+  userId: string;
+  initiallyCompleted: boolean;
 };
 
 export default function LessonSlidesClient({
   pages,
   topicId,
+  lessonId,
+  userId,
+  initiallyCompleted,
 }: LessonSlidesClientProps) {
   const router = useRouter();
   const [pageIndex, setPageIndex] = useState(0);
   const [signedMediaUrl, setSignedMediaUrl] = useState<string | null>(null);
   const [mediaLoading, setMediaLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(initiallyCompleted);
+  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
 
   const hasPages = pages.length > 0;
   const current = hasPages ? pages[pageIndex] : null;
@@ -52,12 +61,24 @@ export default function LessonSlidesClient({
     setPageIndex((i) => i - 1);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!hasPages) {
       goToTopicOrDashboard();
       return;
     }
     if (isLast) {
+      if (!isCompleted && !isMarkingComplete && topicId != null && Number.isFinite(topicId)) {
+        setIsMarkingComplete(true);
+        const result = await markLessonAsComplete({
+          user_id: userId,
+          topic_id: topicId,
+          lesson_id: lessonId,
+        });
+        if (result.success) {
+          setIsCompleted(true);
+        }
+        setIsMarkingComplete(false);
+      }
       goToTopicOrDashboard();
       return;
     }
@@ -69,8 +90,8 @@ export default function LessonSlidesClient({
   const pageForMedia = hasPages ? pages[pageIndex] : null;
   const mediaFetchKey =
     pageForMedia &&
-    (pageForMedia.type === "Image" || pageForMedia.type === "Video") &&
-    pageForMedia.path
+      (pageForMedia.type === "Image" || pageForMedia.type === "Video") &&
+      pageForMedia.path
       ? `${pageForMedia.id}\u001f${pageForMedia.path}`
       : null;
 
@@ -207,18 +228,19 @@ export default function LessonSlidesClient({
           className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1E5] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M15 18l-6-6 6-6"/>
+            <path d="M15 18l-6-6 6-6" />
           </svg>
           {isFirst ? "Back To Topic" : "Back"}
         </button>
         <button
           type="button"
           onClick={handleNext}
+          disabled={isLast && isMarkingComplete}
           className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
         >
           {nextLabel}
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 18l6-6-6-6" />
+            <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
       </div>

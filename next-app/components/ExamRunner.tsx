@@ -4,20 +4,36 @@ import { useMemo, useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import ExamQuestionCard from "@/components/ExamQuestionCard";
 import { ExamQuestionDetail } from "@/utils/exam/util";
+import { handleExamSubmission } from "@/utils/progress/exam/util";
 
 type ExamRunnerProps = {
   examTitle: string;
   questions: ExamQuestionDetail[];
+  userId: string;
+  topicId: number | null;
+  examId: number | null;
+  hasPreviousSubmission: boolean;
+  previousStatus: string | null;
+  previousScore: number | null;
 };
 
 export default function ExamRunner({
   examTitle,
   questions,
+  userId,
+  topicId,
+  examId,
+  hasPreviousSubmission,
+  previousStatus,
+  previousScore,
 }: ExamRunnerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [reviewMode, setReviewMode] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const currentQuestion = questions[currentIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? "" : "";
@@ -68,7 +84,38 @@ export default function ExamRunner({
     setReviewMode(true);
   }
 
-  function submitExam() {
+  async function submitExam() {
+    if (!allAnswered || submitted || isSubmitting) {
+      return;
+    }
+
+    if (topicId == null || examId == null) {
+      setSubmitError("Could not save exam submission right now.");
+      setSubmitted(true);
+      setReviewMode(false);
+      return;
+    }
+
+    const submittedAnswers = questions.map((question) => ({
+      exam_question_id: question.id,
+      answer: answers[question.id]?.trim() ?? "",
+    }));
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const result = await handleExamSubmission({
+      user_id: userId,
+      topic_id: topicId,
+      exam_id: examId,
+      submitted_answers: submittedAnswers,
+    });
+
+    if (!result.success) {
+      setSubmitError(result.error ?? "Failed to submit exam.");
+    }
+
+    setIsSubmitting(false);
     setSubmitted(true);
     setReviewMode(false);
   }
@@ -144,6 +191,58 @@ export default function ExamRunner({
     );
   }
 
+  if (!started) {
+    return (
+      <SectionCard>
+        <div className="space-y-6 text-center py-6">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
+              Exam Mode
+            </p>
+            <h2 className="mt-3 text-3xl font-bold text-[#592803]">
+              {examTitle}
+            </h2>
+          </div>
+
+          <div className="flex justify-center gap-8 rounded-2xl bg-[#FFF1B8] py-6">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-[#592803]">{questions.length}</p>
+              <p className="text-xs font-semibold text-[#4B3A46]">Questions</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-[#592803]">Written</p>
+              <p className="text-xs font-semibold text-[#4B3A46]">Responses</p>
+            </div>
+          </div>
+
+          {hasPreviousSubmission ? (
+            <div className="rounded-2xl border border-[#4B3A46]/15 bg-white/70 px-4 py-3">
+              <p className="text-sm font-semibold text-[#592803]">
+                Previous status: {previousStatus ?? "submitted"}
+              </p>
+              <p className="mt-1 text-xs text-[#4B3A46]">
+                {previousScore != null
+                  ? `Previous score: ${previousScore}`
+                  : "No score yet (awaiting grading)."}
+              </p>
+              <p className="mt-1 text-xs text-[#4B3A46]">
+                You have submitted this exam before. Do you want to try again?
+              </p>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={() => setStarted(true)}
+            className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
+          >
+            {hasPreviousSubmission ? "Try Again" : "Start Exam"}
+          </button>
+        </div>
+      </SectionCard>
+    );
+  }
+
   if (!currentQuestion) return null;
 
   if (submitted) {
@@ -160,6 +259,11 @@ export default function ExamRunner({
             <p className="text-sm text-[#4B3A46]">
               This exam includes written responses and may require teacher review.
             </p>
+            {submitError ? (
+              <p className="text-sm font-semibold text-red-600">
+                {submitError}
+              </p>
+            ) : null}
           </div>
         </SectionCard>
 
@@ -271,10 +375,10 @@ export default function ExamRunner({
           <button
             type="button"
             onClick={submitExam}
-            disabled={!allAnswered}
+            disabled={!allAnswered || isSubmitting}
             className="rounded-xl cursor-pointer bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Submit Exam
+            {isSubmitting ? "Submitting..." : "Submit Exam"}
           </button>
         </SectionCard>
       </div>

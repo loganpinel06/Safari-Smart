@@ -4,16 +4,32 @@ import { useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
 import { QuizQuestionDetail } from "@/utils/quiz/util";
+import { handleQuizAttempt } from "@/utils/progress/quiz/util";
 
 type QuizRunnerProps = {
   topicName: string;
   questions: QuizQuestionDetail[];
+  userId: string;
+  topicId: number | null;
+  quizId: number | null;
+  hasPreviousAttempt: boolean;
+  lastScore: number | null;
 };
 
-export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
+export default function QuizRunner({
+  topicName,
+  questions,
+  userId,
+  topicId,
+  quizId,
+  hasPreviousAttempt,
+  lastScore,
+}: QuizRunnerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmittingAttempt, setIsSubmittingAttempt] = useState(false);
+  const [submitAttemptError, setSubmitAttemptError] = useState<string | null>(null);
 
   const currentQuestion = questions[currentIndex];
   const selectedChoiceIndex = selectedAnswers[currentQuestion.id];
@@ -41,10 +57,56 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
     setCurrentIndex(0);
     setSelectedAnswers({});
     setSubmitted(false);
+    setSubmitAttemptError(null);
   }
 
   const allAnswered = Object.keys(selectedAnswers).length === questions.length;
   const [started, setStarted] = useState(false);
+
+  async function submitQuizAttempt() {
+    if (!allAnswered || submitted || isSubmittingAttempt) {
+      return;
+    }
+
+    const finalScore = questions.filter(
+      (q) => selectedAnswers[q.id] === q.choices.findIndex((c) => c.correct),
+    ).length;
+
+    if (topicId == null || quizId == null) {
+      setSubmitAttemptError("Could not save quiz progress right now.");
+      setSubmitted(true);
+      return;
+    }
+
+    const answers = questions.map((q) => {
+      const selectedIndex = selectedAnswers[q.id];
+      const correctIndex = q.choices.findIndex((c) => c.correct);
+      return {
+        question_id: q.id,
+        selected_choice_index: selectedIndex,
+        is_correct: selectedIndex === correctIndex,
+      };
+    });
+
+    setIsSubmittingAttempt(true);
+    setSubmitAttemptError(null);
+
+    const attemptResult = await handleQuizAttempt({
+      user_id: userId,
+      topic_id: topicId,
+      quiz_id: quizId,
+      score: finalScore,
+      max_score: questions.length,
+      answers,
+    });
+
+    if (!attemptResult.success) {
+      setSubmitAttemptError(attemptResult.error ?? "Failed to save quiz progress.");
+    }
+
+    setIsSubmittingAttempt(false);
+    setSubmitted(true);
+  }
 
   if (!started) {
     return (
@@ -70,12 +132,23 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
             Answer all questions and submit when you're ready. You can navigate freely between questions.
           </p>
 
+          {hasPreviousAttempt && lastScore != null ? (
+            <div className="rounded-2xl border border-[#4B3A46]/15 bg-white/70 px-4 py-3">
+              <p className="text-sm font-semibold text-[#592803]">
+                Last score: {lastScore}/{questions.length}
+              </p>
+              <p className="mt-1 text-xs text-[#4B3A46]">
+                You have already completed this quiz. Do you want to try again?
+              </p>
+            </div>
+          ) : null}
+
           <button
             type="button"
             onClick={() => setStarted(true)}
             className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
           >
-            Start Quiz 🚀
+            {hasPreviousAttempt ? "Try Again 🚀" : "Start Quiz 🚀"}
           </button>
         </div>
       </SectionCard>
@@ -102,6 +175,11 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
               </p>
             </div>
           </div>
+          {submitAttemptError ? (
+            <p className="mt-3 text-sm font-semibold text-red-600">
+              {submitAttemptError}
+            </p>
+          ) : null}
         </SectionCard>
 
         {/* Per-question review */}
@@ -241,11 +319,11 @@ export default function QuizRunner({ topicName, questions }: QuizRunnerProps) {
         ) : (
           <button
             type="button"
-            onClick={() => setSubmitted(true)}
-            disabled={!allAnswered}
+            onClick={submitQuizAttempt}
+            disabled={!allAnswered || isSubmittingAttempt}
             className="cursor-pointer rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Submit Quiz
+            {isSubmittingAttempt ? "Submitting..." : "Submit Quiz"}
           </button>
         )}
       </SectionCard>

@@ -6,6 +6,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import QuizRunner from "@/components/QuizRunner";
 import SectionCard from "@/components/SectionCard";
 import { getQuizQuestionsDetail } from "@/utils/quiz/util";
+import { hasCompletedQuiz } from "@/utils/progress/quiz/util";
 
 export default async function QuizPage({
   params,
@@ -35,6 +36,8 @@ export default async function QuizPage({
   const { data: quiz } = await supabase.from("quiz").select("name, topic_id").eq("id", quizID).single();
 
   const questions = await getQuizQuestionsDetail(quizID, supabase);
+  const quizIdNum = Number.parseInt(quizID, 10);
+  const quizCompletion = await hasCompletedQuiz(quizIdNum, user.id, supabase);
 
   async function logout() {
     "use server";
@@ -106,6 +109,11 @@ export default async function QuizPage({
               <QuizRunner
                 topicName={quiz?.name ?? "Quiz"}
                 questions={questions}
+                userId={user.id}
+                topicId={quiz?.topic_id ?? null}
+                quizId={Number.isFinite(quizIdNum) ? quizIdNum : null}
+                hasPreviousAttempt={quizCompletion.completed}
+                lastScore={quizCompletion.lastScore}
               />
             )}
           </div>

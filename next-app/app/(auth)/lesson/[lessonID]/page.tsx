@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getLessonPagesDetail, getTopicFromLessonID } from "@/utils/lesson/util";
+import { hasCompletedLesson } from "@/utils/progress/lesson/util";
 
 export default async function LessonPage({
   params,
@@ -30,6 +31,7 @@ export default async function LessonPage({
 
   const lessonPages = await getLessonPagesDetail(lessonID, supabase);
   const topic = await getTopicFromLessonID(lessonID, supabase);
+  const lessonCompletion = await hasCompletedLesson(lessonID, user.id, supabase);
 
   async function logout() {
     "use server";
@@ -80,6 +82,9 @@ export default async function LessonPage({
             <LessonSlidesClient
               pages={lessonPages}
               topicId={topic?.id ?? null}
+              lessonId={lessonID}
+              userId={user.id}
+              initiallyCompleted={lessonCompletion.completed}
             />
           </div>
         </div>
