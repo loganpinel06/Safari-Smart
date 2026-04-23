@@ -15,6 +15,8 @@ https://docs.google.com/document/d/1EXlkJIeXIrELdxWna2hBdaaCrQN9_tjdsSvQbh5BuHs/
 https://docs.google.com/document/d/1Ex5MORvk9A4yU0H4U9DfnUOkals8h7v1LiTkOAtiPBg/edit?usp=sharing
 ### Design Documents (Figma Board):
 https://www.figma.com/design/mptBapTqApMMeUiu4DELhh/Safari-Smart-Design-Documents?node-id=0-1&t=En04qX0f8fEKttJP-1
+### Vercel Deployment:
+https://safari-smart-indol.vercel.app
 
 ## Development Notes:
 ### WHAT TO DO ON FIRST PULL
