@@ -4,7 +4,7 @@ import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminQuizQuestionClient from "@/components/Admin/AdminQuizQuestionClient";
 import EditQuizQuestionClient from "@/components/Admin/EditQuizQuestionClient";
-import DeleteQuizClient from "@/components/Admin/DeleteQuizClient";
+import EditItemClient from "@/components/Admin/EditItemClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getQuizQuestionsDetail } from "@/utils/quiz/util";
@@ -34,7 +34,7 @@ export default async function AdminQuizPage({
 
   const { data: quiz } = await supabase
     .from("quiz")
-    .select("name, topic_id")
+    .select("name, topic_id, order")
     .eq("id", quizIdNum)
     .single();
 
@@ -110,9 +110,15 @@ export default async function AdminQuizPage({
                     quizId={quizIdNum}
                     defaultOrder={nextOrder}
                   />
-                  <DeleteQuizClient
-                    quizId={quizIdNum}
+                  <EditItemClient
+                    item={{
+                      id: quizIdNum,
+                      name: quiz.name,
+                      order: quiz.order ?? 0,
+                    }}
+                    itemType="quiz"
                     topicId={quiz.topic_id}
+                    compact={false}
                   />
                 </div>
               </div>

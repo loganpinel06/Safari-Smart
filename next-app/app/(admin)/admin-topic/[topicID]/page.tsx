@@ -3,6 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminItemClient from "@/components/Admin/AdminItemClient";
+import EditItemClient from "@/components/Admin/EditItemClient";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -367,42 +368,39 @@ export default async function AdminTopicPage({
                       </>
                     );
 
-                    if (item.type === "lesson") {
-                      return (
-                        <Link
-                          key={`lesson-${item.id}`}
-                          href={`/admin-lesson/${item.id}`}
-                          className={shell}
-                        >
-                          {inner}
-                        </Link>
-                      );
-                    }
-                    if (item.type === "quiz") {
-                      return (
-                        <Link
-                          key={`quiz-${item.id}`}
-                          href={`/admin-quiz/${item.id}`}
-                          className={shell}
-                        >
-                          {inner}
-                        </Link>
-                      );
-                    }
-                    if (item.type === "exam") {
-                      return (
-                        <Link
-                          key={`exam-${item.id}`}
-                          href={`/admin-exam/${item.id}`}
-                          className={shell}
-                        >
-                          {inner}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <div key={`exam-${item.id}`} className={shell}>
+                    const contentNode = isLink ? (
+                      <Link
+                        href={
+                          item.type === "lesson"
+                            ? `/admin-lesson/${item.id}`
+                            : `/admin-quiz/${item.id}`
+                        }
+                        className={shell}
+                      >
                         {inner}
+                      </Link>
+                    ) : (
+                      <div className={shell}>{inner}</div>
+                    );
+
+                    return (
+                      <div
+                        key={`${item.type}-${item.id}`}
+                        className="flex flex-col gap-3"
+                      >
+                        {contentNode}
+                        <div className="flex gap-2 px-1">
+                          <EditItemClient
+                            item={{
+                              id: item.id,
+                              name: item.name,
+                              order: item.order,
+                            }}
+                            itemType={item.type}
+                            topicId={topicIdNum}
+                            compact={true}
+                          />
+                        </div>
                       </div>
                     );
                   })}

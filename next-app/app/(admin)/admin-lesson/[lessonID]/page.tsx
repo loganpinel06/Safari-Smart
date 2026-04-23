@@ -4,7 +4,7 @@ import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminLessonPagesClient from "@/components/Admin/AdminLessonPagesClient";
 import EditLessonPageClient from "@/components/Admin/EditLessonPageClient";
-import DeleteLessonClient from "@/components/Admin/DeleteLessonClient";
+import EditItemClient from "@/components/Admin/EditItemClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getLessonPagesDetail } from "@/utils/lesson/util";
@@ -34,7 +34,7 @@ export default async function AdminLessonPage({
 
   const { data: lesson } = await supabase
     .from("lesson")
-    .select("name, topic_id")
+    .select("name, topic_id, order")
     .eq("id", lessonIdNum)
     .single();
 
@@ -110,9 +110,15 @@ export default async function AdminLessonPage({
                     lessonId={lessonIdNum}
                     defaultOrder={nextOrder}
                   />
-                  <DeleteLessonClient
-                    lessonId={lessonIdNum}
+                  <EditItemClient
+                    item={{
+                      id: lessonIdNum,
+                      name: lesson.name,
+                      order: lesson.order ?? 0,
+                    }}
+                    itemType="lesson"
                     topicId={lesson.topic_id}
+                    compact={false}
                   />
                 </div>
               </div>
