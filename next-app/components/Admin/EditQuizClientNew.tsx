@@ -3,7 +3,8 @@
 
 "use client";
 
-import EditItemClient, { type EditableItem } from "./EditItemClient";
+import EditItemClient from "./EditItemClient";
+import { type EditableItem } from "./EditItemModal";
 
 type EditQuizClientProps = {
   quiz: EditableItem;
