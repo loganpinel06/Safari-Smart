@@ -5,6 +5,7 @@ export type TopicContentRow = {
   name: string;
   order: number;
   type: TopicContentType;
+  completed: boolean;
 };
 
 type TopicContentDbRow = {
@@ -13,9 +14,87 @@ type TopicContentDbRow = {
   order: number;
 };
 
+async function getTopicCompletionSets(
+  topicIdNum: number,
+  userID: string,
+  supabase: any,
+): Promise<{
+  completedLessonIds: Set<number>;
+  completedQuizIds: Set<number>;
+  completedExamIds: Set<number>;
+}> {
+  const [lessonProgressRes, quizAttemptRes, examSubmissionRes] = await Promise.all([
+    supabase
+      .from("lesson_progress")
+      .select("lesson_id")
+      .eq("topic_id", topicIdNum)
+      .eq("user_id", userID),
+    supabase
+      .from("quiz_attempt")
+      .select("quiz_id")
+      .eq("topic_id", topicIdNum)
+      .eq("user_id", userID),
+    supabase
+      .from("exam_submission")
+      .select("exam_id")
+      .eq("topic_id", topicIdNum)
+      .eq("user_id", userID),
+  ]);
+
+  if (lessonProgressRes.error) {
+    console.error("Error fetching lesson progress:", lessonProgressRes.error);
+  }
+  if (quizAttemptRes.error) {
+    console.error("Error fetching quiz attempts:", quizAttemptRes.error);
+  }
+  if (examSubmissionRes.error) {
+    console.error("Error fetching exam submissions:", examSubmissionRes.error);
+  }
+
+  const completedLessonIds = new Set<number>(
+    ((lessonProgressRes.error ? [] : lessonProgressRes.data) ?? [])
+      .map((row: any) => Number(row.lesson_id))
+      .filter((id: number) => Number.isFinite(id)),
+  );
+  const completedQuizIds = new Set<number>(
+    ((quizAttemptRes.error ? [] : quizAttemptRes.data) ?? [])
+      .map((row: any) => Number(row.quiz_id))
+      .filter((id: number) => Number.isFinite(id)),
+  );
+  const completedExamIds = new Set<number>(
+    ((examSubmissionRes.error ? [] : examSubmissionRes.data) ?? [])
+      .map((row: any) => Number(row.exam_id))
+      .filter((id: number) => Number.isFinite(id)),
+  );
+
+  return { completedLessonIds, completedQuizIds, completedExamIds };
+}
+
+export async function getTopicCompletionPercent(
+  topicID: string | number,
+  userID: string,
+  supabase: any,
+): Promise<number> {
+  const topicIdNum =
+    typeof topicID === "string" ? Number.parseInt(topicID, 10) : topicID;
+
+  if (!Number.isFinite(topicIdNum) || !userID?.trim()) {
+    return 0;
+  }
+
+  const topicContent = await getTopicDetails(topicIdNum, supabase, userID);
+  if (topicContent.length === 0) {
+    return 0;
+  }
+
+  const completedCount = topicContent.filter((row) => row.completed).length;
+  return Math.round((completedCount / topicContent.length) * 100);
+}
+
 export async function getTopicDetails(
   topicID: string | number,
   supabase: any,
+  userID?: string,
 ): Promise<TopicContentRow[]> {
   const topicIdNum =
     typeof topicID === "string" ? Number.parseInt(topicID, 10) : topicID;
@@ -52,15 +131,38 @@ export async function getTopicDetails(
     console.error("Error fetching exams:", examsRes.error);
   }
 
+  let completedLessonIds = new Set<number>();
+  let completedQuizIds = new Set<number>();
+  let completedExamIds = new Set<number>();
+
+  if (userID?.trim()) {
+    const completionSets = await getTopicCompletionSets(topicIdNum, userID.trim(), supabase);
+    completedLessonIds = completionSets.completedLessonIds;
+    completedQuizIds = completionSets.completedQuizIds;
+    completedExamIds = completionSets.completedExamIds;
+  }
+
   const lessonRows: TopicContentRow[] = (
     lessonsRes.error ? [] : (lessonsRes.data as TopicContentDbRow[] | null) ?? []
-  ).map((row) => ({ ...row, type: "lesson" as const }));
+  ).map((row) => ({
+    ...row,
+    type: "lesson" as const,
+    completed: completedLessonIds.has(row.id),
+  }));
   const quizRows: TopicContentRow[] = (
     quizzesRes.error ? [] : (quizzesRes.data as TopicContentDbRow[] | null) ?? []
-  ).map((row) => ({ ...row, type: "quiz" as const }));
+  ).map((row) => ({
+    ...row,
+    type: "quiz" as const,
+    completed: completedQuizIds.has(row.id),
+  }));
   const examRows: TopicContentRow[] = (
     examsRes.error ? [] : (examsRes.data as TopicContentDbRow[] | null) ?? []
-  ).map((row) => ({ ...row, type: "exam" as const }));
+  ).map((row) => ({
+    ...row,
+    type: "exam" as const,
+    completed: completedExamIds.has(row.id),
+  }));
 
   const combined = [...lessonRows, ...quizRows, ...examRows];
   combined.sort((a, b) => a.order - b.order);

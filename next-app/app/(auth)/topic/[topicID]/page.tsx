@@ -40,6 +40,7 @@ export default async function TopicPage({
     .eq("id", topicID)
     .single();
 
+<<<<<<< HEAD
   const topicContent = await getTopicDetails(topicID, supabase);
 
   const levels = topicContent.map((c) => ({
@@ -47,16 +48,42 @@ export default async function TopicPage({
     label: c.name,
     type: c.type,
     status: "not_started" as const,
+=======
+  const topicContent = await getTopicDetails(topicID, supabase, user.id);
+  const totalItems = topicContent.length;
+  const completedItems = topicContent.filter((item) => item.completed).length;
+  const completionPercent =
+    totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+  const firstIncompleteIndex = topicContent.findIndex((item) => !item.completed);
+  const levels: Level[] = topicContent.map((c, index) => ({
+    id: String(c.id),
+    label: c.name,
+    type: c.type,
+    status: c.completed
+      ? "completed"
+      : firstIncompleteIndex === index
+        ? "current"
+        : "available",
+>>>>>>> a6edb56ffe24ed4953874c3aaffb3fd20442317a
     href:
       c.type === "lesson"
         ? `/lesson/${c.id}`
         : c.type === "quiz"
+<<<<<<< HEAD
         ? `/quiz/${c.id}`
         : c.type === "exam"
         ? `/exam/${c.id}`
         : undefined,
   }));
 
+=======
+          ? `/quiz/${c.id}`
+          : c.type === "exam"
+            ? `/exam/${c.id}`
+            : undefined,
+  }));
+>>>>>>> a6edb56ffe24ed4953874c3aaffb3fd20442317a
   const lessons = levels.filter((c) => c.type === "lesson");
   const quizzes = levels.filter((c) => c.type === "quiz");
   const exams = levels.filter((c) => c.type === "exam");
@@ -111,11 +138,16 @@ export default async function TopicPage({
                     ? "Parent view of student activity for this topic."
                     : "View topic structure and student progress in this topic."}
                 </p>
+                {!isTeacher && !isParent ? (
+                  <p className="mt-2 text-sm font-semibold text-[#592803]">
+                    Completion: {completionPercent}% ({completedItems}/{totalItems})
+                  </p>
+                ) : null}
               </div>
             </SectionCard>
 
             <LevelMap
-              levels={levels as unknown as Level[]}
+              levels={levels}
               subjectTitle={currentTopicCategory?.name ?? "Topic"}
             />
 
@@ -136,10 +168,15 @@ export default async function TopicPage({
                   <LearningItemCard
                     key={lesson.id}
                     title={lesson.label}
+<<<<<<< HEAD
                     description="View lesson content and monitor student completion."
                     href={`/lesson/${lesson.id}`}
+=======
+                    description={"View lesson content and monitor student completion."}
+                    href={lesson.href ?? `/lesson/${lesson.id}`}
+>>>>>>> a6edb56ffe24ed4953874c3aaffb3fd20442317a
                     kind="Lesson"
-                    status="Not Started"
+                    status={lesson.status === "completed" ? "Complete" : "Not Started"}
                   />
                 ))}
               </div>
@@ -163,9 +200,9 @@ export default async function TopicPage({
                     key={quiz.id}
                     title={quiz.label}
                     description="View quiz content and monitor student completion."
-                    href={`/quiz/${quiz.id}`}
+                    href={quiz.href ?? `/quiz/${quiz.id}`}
                     kind="Quiz"
-                    status="Not Started"
+                    status={quiz.status === "completed" ? "Complete" : "Not Started"}
                   />
                 ))}
               </div>
@@ -190,10 +227,15 @@ export default async function TopicPage({
                   <LearningItemCard
                     key={exam.id}
                     title={exam.label}
+<<<<<<< HEAD
                     description="View exam content and monitor student completion."
                     href={`/exam/${exam.id}`}
+=======
+                    description={"View exam content and monitor student completion."}
+                    href={exam.href ?? `/exam/${exam.id}`}
+>>>>>>> a6edb56ffe24ed4953874c3aaffb3fd20442317a
                     kind="Exam"
-                    status="Not Started"
+                    status={exam.status === "completed" ? "Complete" : "Not Started"}
                   />
                 ))}
               </div>

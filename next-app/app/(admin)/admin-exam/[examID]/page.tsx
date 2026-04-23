@@ -4,7 +4,7 @@ import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminExamQuestionClient from "@/components/Admin/AdminExamQuestionClient";
 import EditExamQuestionClient from "@/components/Admin/EditExamQuestionClient";
-import DeleteExamClient from "@/components/Admin/DeleteExamClient";
+import EditItemClient from "@/components/Admin/EditItemClient";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getExamQuestionsDetail } from "@/utils/exam/util";
@@ -34,7 +34,7 @@ export default async function AdminExamPage({
 
   const { data: exam } = await supabase
     .from("exam")
-    .select("name, topic_id")
+    .select("name, topic_id, order")
     .eq("id", examIdNum)
     .single();
 
@@ -110,9 +110,15 @@ export default async function AdminExamPage({
                     examId={examIdNum}
                     defaultOrder={nextOrder}
                   />
-                  <DeleteExamClient
-                    examId={examIdNum}
+                  <EditItemClient
+                    item={{
+                      id: examIdNum,
+                      name: exam.name,
+                      order: exam.order ?? 0,
+                    }}
+                    itemType="exam"
                     topicId={exam.topic_id}
+                    compact={false}
                   />
                 </div>
               </div>
