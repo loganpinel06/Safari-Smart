@@ -3,7 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AdminItemClient from "@/components/Admin/AdminItemClient";
-import EditItemClient from "@/components/Admin/EditItemClient";
+import ItemActionsMenu from "@/components/Admin/ItemActionsMenu";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -119,29 +119,6 @@ function contentIconWrapClass(type: TopicContentType): string {
     return "bg-white shadow-inner ring-1 ring-[#4B3A46]/12";
   }
   return "bg-[#EDE0D4] shadow-inner ring-1 ring-[#8B5E3C]/22";
-}
-
-function ContentRowChevron() {
-  return (
-    <span
-      className="ml-auto flex shrink-0 text-[#592803]/35 transition group-hover:translate-x-0.5 group-hover:text-[#592803]/55"
-      aria-hidden="true"
-    >
-      <svg
-        className="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M8.25 4.5l7.5 7.5-7.5 7.5"
-        />
-      </svg>
-    </span>
-  );
 }
 
 export default async function AdminTopicPage({
@@ -339,6 +316,7 @@ export default async function AdminTopicPage({
                     const isLink =
                       item.type === "lesson" || item.type === "quiz";
                     const shell = contentRowShell(item.type, isLink);
+                    const shellWithActions = `${shell} pr-16 sm:pr-18`;
                     const inner = (
                       <>
                         <div
@@ -350,7 +328,7 @@ export default async function AdminTopicPage({
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="min-w-0">
                               <p className="text-xs font-semibold uppercase tracking-wider text-[#4B3A46]/90">
                                 {typeLabel(item.type)}
@@ -364,7 +342,6 @@ export default async function AdminTopicPage({
                             </span>
                           </div>
                         </div>
-                        {isLink ? <ContentRowChevron /> : null}
                       </>
                     );
 
@@ -375,22 +352,22 @@ export default async function AdminTopicPage({
                             ? `/admin-lesson/${item.id}`
                             : `/admin-quiz/${item.id}`
                         }
-                        className={shell}
+                        className={shellWithActions}
                       >
                         {inner}
                       </Link>
                     ) : (
-                      <div className={shell}>{inner}</div>
+                      <div className={shellWithActions}>{inner}</div>
                     );
 
                     return (
                       <div
                         key={`${item.type}-${item.id}`}
-                        className="flex flex-col gap-3"
+                        className="group relative z-0 hover:z-20 focus-within:z-30"
                       >
                         {contentNode}
-                        <div className="flex gap-2 px-1">
-                          <EditItemClient
+                        <div className="absolute inset-y-0 right-4 flex items-center">
+                          <ItemActionsMenu
                             item={{
                               id: item.id,
                               name: item.name,
@@ -398,7 +375,6 @@ export default async function AdminTopicPage({
                             }}
                             itemType={item.type}
                             topicId={topicIdNum}
-                            compact={true}
                           />
                         </div>
                       </div>
