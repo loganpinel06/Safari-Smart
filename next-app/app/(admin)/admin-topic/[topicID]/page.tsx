@@ -314,7 +314,9 @@ export default async function AdminTopicPage({
                 <div className="flex flex-col gap-4">
                   {topicContent.map((item) => {
                     const isLink =
-                      item.type === "lesson" || item.type === "quiz";
+                      item.type === "lesson" ||
+                      item.type === "quiz" ||
+                      item.type === "exam";
                     const shell = contentRowShell(item.type, isLink);
                     const shellWithActions = `${shell} pr-16 sm:pr-18`;
                     const inner = (
@@ -350,7 +352,9 @@ export default async function AdminTopicPage({
                         href={
                           item.type === "lesson"
                             ? `/admin-lesson/${item.id}`
-                            : `/admin-quiz/${item.id}`
+                            : item.type === "quiz"
+                              ? `/admin-quiz/${item.id}`
+                              : `/admin-exam/${item.id}`
                         }
                         className={shellWithActions}
                       >
