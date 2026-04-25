@@ -13,8 +13,7 @@ type ExamRunnerProps = {
   topicId: number | null;
   examId: number | null;
   hasPreviousSubmission: boolean;
-  previousStatus: string | null;
-  previousScore: number | null;
+  onStartExam?: () => void;
 };
 
 export default function ExamRunner({
@@ -24,8 +23,7 @@ export default function ExamRunner({
   topicId,
   examId,
   hasPreviousSubmission,
-  previousStatus,
-  previousScore,
+  onStartExam,
 }: ExamRunnerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -217,15 +215,7 @@ export default function ExamRunner({
 
           {hasPreviousSubmission ? (
             <div className="rounded-2xl border border-[#4B3A46]/15 bg-white/70 px-4 py-3">
-              <p className="text-sm font-semibold text-[#592803]">
-                Previous status: {previousStatus ?? "submitted"}
-              </p>
-              <p className="mt-1 text-xs text-[#4B3A46]">
-                {previousScore != null
-                  ? `Previous score: ${previousScore}`
-                  : "No score yet (awaiting grading)."}
-              </p>
-              <p className="mt-1 text-xs text-[#4B3A46]">
+              <p className="text-sm text-[#4B3A46]">
                 You have submitted this exam before. Do you want to try again?
               </p>
             </div>
@@ -233,7 +223,10 @@ export default function ExamRunner({
 
           <button
             type="button"
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              setStarted(true);
+              onStartExam?.();
+            }}
             className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
           >
             {hasPreviousSubmission ? "Try Again" : "Start Exam"}
