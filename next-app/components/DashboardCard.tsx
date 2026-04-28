@@ -4,12 +4,14 @@ type DashboardCardProps = {
   title: string;
   subtitle?: string;
   href?: string;
+  //locked?: boolean;
 };
 
 export default function DashboardCard({
   title,
   subtitle,
   href,
+  //locked,
 }: DashboardCardProps) {
   const card = (
     <div className="group min-h-[140px] rounded-2xl bg-[#592803] p-5 flex flex-col justify-end border border-[#4B3A46]/10 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
@@ -26,6 +28,6 @@ export default function DashboardCard({
       </p>
     </div>
   );
-
+  //if (locked) return <Link href="/locked">{card}</Link>;
   return href ? <Link href={href}>{card}</Link> : card;
 }
