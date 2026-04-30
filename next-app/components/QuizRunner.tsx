@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
 import { QuizQuestionDetail } from "@/utils/quiz/util";
 import { handleQuizAttempt } from "@/utils/progress/quiz/util";
+import { getSignedUrlFromStoredPath } from "@/utils/files/getFile";
+import { supabase } from "@/utils/supabase/client";
 
 type QuizRunnerProps = {
   topicName: string;
@@ -30,6 +32,8 @@ export default function QuizRunner({
   const [submitted, setSubmitted] = useState(false);
   const [isSubmittingAttempt, setIsSubmittingAttempt] = useState(false);
   const [submitAttemptError, setSubmitAttemptError] = useState<string | null>(null);
+  const [signedMediaUrl, setSignedMediaUrl] = useState<string | null>(null);
+  const [mediaLoading, setMediaLoading] = useState(false);
 
   const currentQuestion = questions[currentIndex];
   const selectedChoiceIndex = selectedAnswers[currentQuestion.id];
@@ -62,6 +66,36 @@ export default function QuizRunner({
 
   const allAnswered = Object.keys(selectedAnswers).length === questions.length;
   const [started, setStarted] = useState(false);
+  const mediaPath =
+    currentQuestion &&
+    (currentQuestion.type === "Image" || currentQuestion.type === "Video") &&
+    currentQuestion.path
+      ? currentQuestion.path.trim()
+      : null;
+
+  useEffect(() => {
+    if (!mediaPath) {
+      setSignedMediaUrl(null);
+      setMediaLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setSignedMediaUrl(null);
+    setMediaLoading(true);
+
+    void (async () => {
+      const url = await getSignedUrlFromStoredPath(supabase(), mediaPath);
+      if (!cancelled) {
+        setSignedMediaUrl(url);
+        setMediaLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mediaPath]);
 
   async function submitQuizAttempt() {
     if (!allAnswered || submitted || isSubmittingAttempt) {
@@ -275,6 +309,44 @@ export default function QuizRunner({
               {currentQuestion.question}
             </h2>
           </div>
+
+          {currentQuestion.main_text ? (
+            <p className="text-sm leading-7 text-[#4B3A46] whitespace-pre-wrap">
+              {currentQuestion.main_text}
+            </p>
+          ) : null}
+
+          {currentQuestion.type === "Image" ? (
+            <div className="flex min-h-[220px] items-center justify-center rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-4">
+              {mediaLoading ? (
+                <p className="text-center text-sm text-[#4B3A46]">Loading image...</p>
+              ) : signedMediaUrl ? (
+                <img
+                  src={signedMediaUrl}
+                  alt="Quiz question media"
+                  className="max-h-[420px] w-full rounded-2xl object-contain"
+                />
+              ) : (
+                <p className="text-center text-sm text-[#4B3A46]">
+                  Image is not available for this question.
+                </p>
+              )}
+            </div>
+          ) : null}
+
+          {currentQuestion.type === "Video" ? (
+            <div className="rounded-2xl border border-[#4B3A46]/10 bg-black p-2">
+              {mediaLoading ? (
+                <p className="py-8 text-center text-sm text-white/80">Loading video...</p>
+              ) : signedMediaUrl ? (
+                <video src={signedMediaUrl} controls className="max-h-[460px] w-full rounded-xl" />
+              ) : (
+                <p className="py-8 text-center text-sm text-white/80">
+                  Video is not available for this question.
+                </p>
+              )}
+            </div>
+          ) : null}
 
           <div className="grid gap-4">
             {currentQuestion.choices.map((choice, index) => (

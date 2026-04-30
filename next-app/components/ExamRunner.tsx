@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import ExamQuestionCard from "@/components/ExamQuestionCard";
 import { ExamQuestionDetail } from "@/utils/exam/util";
 import { handleExamSubmission } from "@/utils/progress/exam/util";
+import { getSignedUrlFromStoredPath } from "@/utils/files/getFile";
+import { supabase } from "@/utils/supabase/client";
 
 type ExamRunnerProps = {
   examTitle: string;
@@ -32,6 +34,8 @@ export default function ExamRunner({
   const [started, setStarted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [signedMediaUrl, setSignedMediaUrl] = useState<string | null>(null);
+  const [mediaLoading, setMediaLoading] = useState(false);
 
   const currentQuestion = questions[currentIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? "" : "";
@@ -49,6 +53,36 @@ export default function ExamRunner({
       : 0;
 
   const allAnswered = questions.length > 0 && answeredCount === questions.length;
+  const mediaPath =
+    currentQuestion &&
+    (currentQuestion.type === "Image" || currentQuestion.type === "Video") &&
+    currentQuestion.path
+      ? currentQuestion.path.trim()
+      : null;
+
+  useEffect(() => {
+    if (!mediaPath) {
+      setSignedMediaUrl(null);
+      setMediaLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setSignedMediaUrl(null);
+    setMediaLoading(true);
+
+    void (async () => {
+      const url = await getSignedUrlFromStoredPath(supabase(), mediaPath);
+      if (!cancelled) {
+        setSignedMediaUrl(url);
+        setMediaLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mediaPath]);
 
   function handleTextChange(value: string) {
     if (!currentQuestion || submitted) return;
@@ -137,11 +171,19 @@ export default function ExamRunner({
             <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
               Image Prompt
             </p>
-            <img
-              src={question.path}
-              alt="Exam question media"
-              className="max-h-[420px] w-full rounded-2xl object-contain border border-[#4B3A46]/10 bg-white"
-            />
+            {mediaLoading ? (
+              <p className="text-center text-sm text-[#4B3A46]">Loading image...</p>
+            ) : signedMediaUrl ? (
+              <img
+                src={signedMediaUrl}
+                alt="Exam question media"
+                className="max-h-[420px] w-full rounded-2xl object-contain border border-[#4B3A46]/10 bg-white"
+              />
+            ) : (
+              <p className="text-center text-sm text-[#4B3A46]">
+                Image is not available for this question.
+              </p>
+            )}
           </div>
         </SectionCard>
       );
@@ -154,13 +196,21 @@ export default function ExamRunner({
             <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
               Video Prompt
             </p>
-            <video
-              controls
-              className="w-full rounded-2xl border border-[#4B3A46]/10 bg-black"
-            >
-              <source src={question.path} />
-              Your browser does not support the video tag.
-            </video>
+            {mediaLoading ? (
+              <p className="text-center text-sm text-[#4B3A46]">Loading video...</p>
+            ) : signedMediaUrl ? (
+              <video
+                controls
+                className="w-full rounded-2xl border border-[#4B3A46]/10 bg-black"
+              >
+                <source src={signedMediaUrl} />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <p className="text-center text-sm text-[#4B3A46]">
+                Video is not available for this question.
+              </p>
+            )}
           </div>
         </SectionCard>
       );
