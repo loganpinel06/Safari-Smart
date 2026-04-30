@@ -87,25 +87,15 @@ export default function LessonSlidesClient({
 
   const nextLabel = !hasPages ? "Back" : isLast ? "Finish Lesson" : "Next";
 
-  const pageForMedia = hasPages ? pages[pageIndex] : null;
-  const mediaFetchKey =
-    pageForMedia &&
-      (pageForMedia.type === "Image" || pageForMedia.type === "Video") &&
-      pageForMedia.path
-      ? `${pageForMedia.id}\u001f${pageForMedia.path}`
+  const mediaPath =
+    current &&
+    (current.type === "Image" || current.type === "Video") &&
+    current.path
+      ? current.path.trim()
       : null;
 
   useEffect(() => {
-    if (!mediaFetchKey) {
-      setSignedMediaUrl(null);
-      setMediaLoading(false);
-      return;
-    }
-
-    const sep = mediaFetchKey.indexOf("\u001f");
-    const pathInLesson =
-      sep === -1 ? null : mediaFetchKey.slice(sep + 1);
-    if (!pathInLesson) {
+    if (!mediaPath) {
       setSignedMediaUrl(null);
       setMediaLoading(false);
       return;
@@ -116,7 +106,7 @@ export default function LessonSlidesClient({
     setMediaLoading(true);
 
     void (async () => {
-      const url = await getSignedUrlFromStoredPath(supabase(), pathInLesson);
+      const url = await getSignedUrlFromStoredPath(supabase(), mediaPath);
       if (!cancelled) {
         setSignedMediaUrl(url);
         setMediaLoading(false);
@@ -126,7 +116,7 @@ export default function LessonSlidesClient({
     return () => {
       cancelled = true;
     };
-  }, [mediaFetchKey]);
+  }, [mediaPath]);
 
   if (!hasPages || !current) {
     return (

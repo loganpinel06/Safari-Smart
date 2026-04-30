@@ -2,11 +2,11 @@ import Sidebar from "@/components/Sidebar";
 import PageHeader from "@/components/PageHeader";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import ExamRunner from "@/components/ExamRunner";
+import StudentExamPanel from "@/components/StudentExamPanel";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import SectionCard from "@/components/SectionCard";
 import { ExamQuestionDetail, getExamQuestionsDetail } from "@/utils/exam/util";
-import { hasCompletedExam } from "@/utils/progress/exam/util";
+import { getStudentExamSubmissions } from "@/utils/progress/exam/util";
 
 export default async function ExamPage({
   params,
@@ -45,12 +45,9 @@ export default async function ExamPage({
     .eq("id", exam?.topic_id)
     .maybeSingle();
 
-const questions: ExamQuestionDetail[] = await getExamQuestionsDetail(
-  exam?.id,
-  supabase,
-);
-const examIdNum = Number.parseInt(examID, 10);
-const examCompletion = await hasCompletedExam(examIdNum, user.id, supabase);
+  let questions: ExamQuestionDetail[] = await getExamQuestionsDetail(exam?.id, supabase);
+  const examIdNum = Number.parseInt(examID, 10);
+  const submissions = await getStudentExamSubmissions(examIdNum, user.id, supabase);
 
   async function logout() {
     "use server";
@@ -117,15 +114,13 @@ const examCompletion = await hasCompletedExam(examIdNum, user.id, supabase);
                 </p>
               </SectionCard>
             ) : (
-              <ExamRunner
+              <StudentExamPanel
                 examTitle={exam?.name ?? "Exam"}
                 questions={questions}
                 userId={user.id}
                 topicId={exam?.topic_id ?? null}
                 examId={Number.isFinite(examIdNum) ? examIdNum : null}
-                hasPreviousSubmission={examCompletion.completed}
-                previousStatus={examCompletion.status}
-                previousScore={examCompletion.score}
+                submissions={submissions}
               />
             )}
           </div>

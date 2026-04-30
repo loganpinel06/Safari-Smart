@@ -5,6 +5,7 @@ import SectionCard from "@/components/SectionCard";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { getSubjects } from "@/utils/categories/util";
+import TopicAccess from "@/components/TopicAccess";
 
 export default async function DashboardCategoryPage({
   params,
@@ -109,16 +110,9 @@ export default async function DashboardCategoryPage({
                     : "These topics lead into lesson content, quizzes, and exam practice."}
                 </p>
               </div>
+              <TopicAccess topics={subjects} paymentHref="/payment" />
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {subjects.map((topic) => (
-                  <DashboardCard
-                    key={topic.title}
-                    title={topic.title}
-                    href={topic.href}
-                  />
-                ))}
-              </div>
+              
             </SectionCard>
           </div>
         </div>

@@ -2,6 +2,8 @@ import PageHeader from "@/components/PageHeader";
 import SectionCard from "@/components/SectionCard";
 import Sidebar from "@/components/Sidebar";
 import ClassDetailActions from "@/components/ClassDetailActions";
+import CreateAssignmentModal from "@/components/CreateAssignmentModal";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { getClassFullInfo } from "@/utils/classes/util";
 import { redirect } from "next/navigation";
@@ -54,6 +56,27 @@ export default async function ClassDetailPage({ params }: PageProps) {
   const assignmentList = Array.isArray(classInfo.assignments)
     ? classInfo.assignments
     : [];
+  const now = Date.now();
+  const upcomingAssignments = assignmentList
+    .filter((assignment: any) => {
+      const dueTime = new Date(assignment?.due_date ?? "").getTime();
+      return Number.isFinite(dueTime) && dueTime >= now;
+    })
+    .sort(
+      (a: any, b: any) =>
+        new Date(a?.due_date ?? "").getTime() -
+        new Date(b?.due_date ?? "").getTime(),
+    );
+  const passedAssignments = assignmentList
+    .filter((assignment: any) => {
+      const dueTime = new Date(assignment?.due_date ?? "").getTime();
+      return Number.isFinite(dueTime) && dueTime < now;
+    })
+    .sort(
+      (a: any, b: any) =>
+        new Date(b?.due_date ?? "").getTime() -
+        new Date(a?.due_date ?? "").getTime(),
+    );
 
   async function logout() {
     "use server";
@@ -107,24 +130,69 @@ export default async function ClassDetailPage({ params }: PageProps) {
                     </p>
                   </div>
                   {isTeacherRole && isClassOwner && (
-                    <button className="rounded-xl bg-[#FFF1B8] px-4 py-2 text-sm font-semibold text-[#592803] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFE78A] hover:shadow-md">
-                      Create Assignment
-                    </button>
+                    <CreateAssignmentModal classId={classID} />
                   )}
                 </div>
 
                 {assignmentList.length > 0 ? (
-                  <div className="space-y-3">
-                    {assignmentList.map((assignment: any, index: number) => (
-                      <div
-                        key={assignment?.id ?? `${assignment?.name ?? "assignment"}-${index}`}
-                        className="rounded-xl border border-[#4B3A46]/10 bg-white px-4 py-3 shadow-sm"
-                      >
-                        <p className="font-semibold text-[#592803]">
-                          {assignment?.name ?? `Assignment ${index + 1}`}
-                        </p>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-[#592803]">Upcoming</h3>
+                      <div className="mt-3 space-y-3">
+                        {upcomingAssignments.length > 0 ? (
+                          upcomingAssignments.map((assignment: any, index: number) => (
+                            <Link
+                              key={assignment?.id ?? `upcoming-assignment-${index}`}
+                              href={`/class/${classID}/assignments/${assignment?.id}`}
+                              className="block rounded-xl border border-[#4B3A46]/10 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFF7D3]"
+                            >
+                              <p className="font-semibold text-[#592803]">
+                                {assignment?.topic_name ?? `Topic ${assignment?.topic_id ?? ""}`}
+                              </p>
+                              <p className="mt-1 text-sm text-[#4B3A46]">
+                                Due:{" "}
+                                {assignment?.due_date
+                                  ? new Date(assignment.due_date).toLocaleDateString()
+                                  : "No due date"}
+                              </p>
+                            </Link>
+                          ))
+                        ) : (
+                          <div className="rounded-xl border border-dashed border-[#4B3A46]/20 bg-white/60 px-4 py-4">
+                            <p className="text-sm text-[#4B3A46]">No upcoming assignments.</p>
+                          </div>
+                        )}
                       </div>
-                    ))}
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-bold text-[#592803]">Passed</h3>
+                      <div className="mt-3 space-y-3">
+                        {passedAssignments.length > 0 ? (
+                          passedAssignments.map((assignment: any, index: number) => (
+                            <Link
+                              key={assignment?.id ?? `passed-assignment-${index}`}
+                              href={`/class/${classID}/assignments/${assignment?.id}`}
+                              className="block rounded-xl border border-[#4B3A46]/10 bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFF7D3]"
+                            >
+                              <p className="font-semibold text-[#592803]">
+                                {assignment?.topic_name ?? `Topic ${assignment?.topic_id ?? ""}`}
+                              </p>
+                              <p className="mt-1 text-sm text-[#4B3A46]">
+                                Due:{" "}
+                                {assignment?.due_date
+                                  ? new Date(assignment.due_date).toLocaleDateString()
+                                  : "No due date"}
+                              </p>
+                            </Link>
+                          ))
+                        ) : (
+                          <div className="rounded-xl border border-dashed border-[#4B3A46]/20 bg-white/60 px-4 py-4">
+                            <p className="text-sm text-[#4B3A46]">No passed assignments.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="rounded-xl border border-dashed border-[#4B3A46]/20 bg-white/60 px-4 py-8 text-center">

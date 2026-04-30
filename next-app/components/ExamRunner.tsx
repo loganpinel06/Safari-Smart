@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SectionCard from "@/components/SectionCard";
 import ExamQuestionCard from "@/components/ExamQuestionCard";
 import { ExamQuestionDetail } from "@/utils/exam/util";
 import { handleExamSubmission } from "@/utils/progress/exam/util";
+import { getSignedUrlFromStoredPath } from "@/utils/files/getFile";
+import { supabase } from "@/utils/supabase/client";
 
 type ExamRunnerProps = {
   examTitle: string;
@@ -13,8 +15,7 @@ type ExamRunnerProps = {
   topicId: number | null;
   examId: number | null;
   hasPreviousSubmission: boolean;
-  previousStatus: string | null;
-  previousScore: number | null;
+  onStartExam?: () => void;
 };
 
 export default function ExamRunner({
@@ -24,8 +25,7 @@ export default function ExamRunner({
   topicId,
   examId,
   hasPreviousSubmission,
-  previousStatus,
-  previousScore,
+  onStartExam,
 }: ExamRunnerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -34,6 +34,8 @@ export default function ExamRunner({
   const [started, setStarted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [signedMediaUrl, setSignedMediaUrl] = useState<string | null>(null);
+  const [mediaLoading, setMediaLoading] = useState(false);
 
   const currentQuestion = questions[currentIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? "" : "";
@@ -51,6 +53,36 @@ export default function ExamRunner({
       : 0;
 
   const allAnswered = questions.length > 0 && answeredCount === questions.length;
+  const mediaPath =
+    currentQuestion &&
+    (currentQuestion.type === "Image" || currentQuestion.type === "Video") &&
+    currentQuestion.path
+      ? currentQuestion.path.trim()
+      : null;
+
+  useEffect(() => {
+    if (!mediaPath) {
+      setSignedMediaUrl(null);
+      setMediaLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setSignedMediaUrl(null);
+    setMediaLoading(true);
+
+    void (async () => {
+      const url = await getSignedUrlFromStoredPath(supabase(), mediaPath);
+      if (!cancelled) {
+        setSignedMediaUrl(url);
+        setMediaLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mediaPath]);
 
   function handleTextChange(value: string) {
     if (!currentQuestion || submitted) return;
@@ -139,11 +171,19 @@ export default function ExamRunner({
             <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
               Image Prompt
             </p>
-            <img
-              src={question.path}
-              alt="Exam question media"
-              className="max-h-[420px] w-full rounded-2xl object-contain border border-[#4B3A46]/10 bg-white"
-            />
+            {mediaLoading ? (
+              <p className="text-center text-sm text-[#4B3A46]">Loading image...</p>
+            ) : signedMediaUrl ? (
+              <img
+                src={signedMediaUrl}
+                alt="Exam question media"
+                className="max-h-[420px] w-full rounded-2xl object-contain border border-[#4B3A46]/10 bg-white"
+              />
+            ) : (
+              <p className="text-center text-sm text-[#4B3A46]">
+                Image is not available for this question.
+              </p>
+            )}
           </div>
         </SectionCard>
       );
@@ -156,13 +196,21 @@ export default function ExamRunner({
             <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
               Video Prompt
             </p>
-            <video
-              controls
-              className="w-full rounded-2xl border border-[#4B3A46]/10 bg-black"
-            >
-              <source src={question.path} />
-              Your browser does not support the video tag.
-            </video>
+            {mediaLoading ? (
+              <p className="text-center text-sm text-[#4B3A46]">Loading video...</p>
+            ) : signedMediaUrl ? (
+              <video
+                controls
+                className="w-full rounded-2xl border border-[#4B3A46]/10 bg-black"
+              >
+                <source src={signedMediaUrl} />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <p className="text-center text-sm text-[#4B3A46]">
+                Video is not available for this question.
+              </p>
+            )}
           </div>
         </SectionCard>
       );
@@ -217,15 +265,7 @@ export default function ExamRunner({
 
           {hasPreviousSubmission ? (
             <div className="rounded-2xl border border-[#4B3A46]/15 bg-white/70 px-4 py-3">
-              <p className="text-sm font-semibold text-[#592803]">
-                Previous status: {previousStatus ?? "submitted"}
-              </p>
-              <p className="mt-1 text-xs text-[#4B3A46]">
-                {previousScore != null
-                  ? `Previous score: ${previousScore}`
-                  : "No score yet (awaiting grading)."}
-              </p>
-              <p className="mt-1 text-xs text-[#4B3A46]">
+              <p className="text-sm text-[#4B3A46]">
                 You have submitted this exam before. Do you want to try again?
               </p>
             </div>
@@ -233,7 +273,10 @@ export default function ExamRunner({
 
           <button
             type="button"
-            onClick={() => setStarted(true)}
+            onClick={() => {
+              setStarted(true);
+              onStartExam?.();
+            }}
             className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
           >
             {hasPreviousSubmission ? "Try Again" : "Start Exam"}

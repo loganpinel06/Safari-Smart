@@ -138,6 +138,11 @@ export default async function DashboardPage() {
                         key={classItem.id}
                         id={classItem.id}
                         name={classItem.name}
+                        assignments={
+                          Array.isArray(classItem.assignments)
+                            ? classItem.assignments
+                            : []
+                        }
                       />
                     ))}
                   </div>

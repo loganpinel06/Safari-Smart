@@ -1,3 +1,5 @@
+import { getAssignmentsDisplay } from "@/utils/assignments/util";
+
 export type StudentClassWithAssignments = {
   id: string;
   name: string;
@@ -144,7 +146,7 @@ export async function getStudentClassesWithAssignments(
 
   const classesRes = await supabase
     .from("classes")
-    .select("id, name, assignments")
+    .select("id, name")
     .in("id", classIds);
 
   if (classesRes.error) {
@@ -152,11 +154,16 @@ export async function getStudentClassesWithAssignments(
     return [];
   }
 
-  return (classesRes.data ?? []).map((row: any) => ({
-    id: row.id,
-    name: row.name,
-    assignments: row.assignments ?? [],
-  }));
+  const classRows = classesRes.data ?? [];
+  const rowsWithAssignments = await Promise.all(
+    classRows.map(async (row: any) => ({
+      id: row.id,
+      name: row.name,
+      assignments: await getAssignmentsDisplay(row.id, supabase),
+    })),
+  );
+
+  return rowsWithAssignments;
 }
 
 // gets all classes a teacher owns, with class name + assignments
@@ -170,7 +177,7 @@ export async function getTeacherClassesWithAssignments(
 
   const classesRes = await supabase
     .from("classes")
-    .select("id, name, assignments")
+    .select("id, name")
     .eq("teacher_id", teacherID);
 
   if (classesRes.error) {
@@ -178,11 +185,16 @@ export async function getTeacherClassesWithAssignments(
     return [];
   }
 
-  return (classesRes.data ?? []).map((row: any) => ({
-    id: row.id,
-    name: row.name,
-    assignments: row.assignments ?? [],
-  }));
+  const classRows = classesRes.data ?? [];
+  const rowsWithAssignments = await Promise.all(
+    classRows.map(async (row: any) => ({
+      id: row.id,
+      name: row.name,
+      assignments: await getAssignmentsDisplay(row.id, supabase),
+    })),
+  );
+
+  return rowsWithAssignments;
 }
 
 // gets complete class info + teacher name + all student names + assignments
@@ -246,6 +258,6 @@ export async function getClassFullInfo(
     ...classRes.data,
     teacher_name: teacherRes.data?.name ?? null,
     student_names: studentNames,
-    assignments: classRes.data.assignments ?? [],
+    assignments: await getAssignmentsDisplay(classID, supabase),
   };
 }
