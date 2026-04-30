@@ -20,4 +20,4 @@ export default async function PaymentPage() {
     redirect("/signin");
   }
 
-  return <PaymentPage profile={profile} logoutAction={logout} />;}
+  return <PaymentManager profile={profile} logoutAction={logout} />;}
