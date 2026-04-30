@@ -9,7 +9,6 @@ import { getSignedUrlFromStoredPath } from "@/utils/files/getFile";
 import { supabase } from "@/utils/supabase/client";
 import { markLessonAsComplete } from "@/utils/progress/lesson/util";
 
-
 type LessonSlidesClientProps = {
   pages: LessonPageDetail[];
   topicId: number | null;
@@ -37,9 +36,7 @@ export default function LessonSlidesClient({
   const isLast = hasPages && pageIndex >= pages.length - 1;
   const isFirst = pageIndex <= 0;
 
-  const progressPercent = hasPages
-    ? ((pageIndex + 1) / pages.length) * 100
-    : 0;
+  const progressPercent = hasPages ? ((pageIndex + 1) / pages.length) * 100 : 0;
 
   const goToTopicOrDashboard = () => {
     if (topicId != null && Number.isFinite(topicId)) {
@@ -67,7 +64,12 @@ export default function LessonSlidesClient({
       return;
     }
     if (isLast) {
-      if (!isCompleted && !isMarkingComplete && topicId != null && Number.isFinite(topicId)) {
+      if (
+        !isCompleted &&
+        !isMarkingComplete &&
+        topicId != null &&
+        Number.isFinite(topicId)
+      ) {
         setIsMarkingComplete(true);
         const result = await markLessonAsComplete({
           user_id: userId,
@@ -158,7 +160,8 @@ export default function LessonSlidesClient({
       <div className="flex min-h-[260px] w-full flex-col justify-center md:min-h-[400px]">
         {current.type === "Text" && (
           <div className="flex flex-2 rounded-2xl font-semibold bg-[#F3EFEA] border-4 border-[#E0C9B3] px-6 py-8 md:px-10 md:py-12">
-            <p className="text-base sm:text-lg leading-7 sm:leading-8 text-[#3a3b4b] whitespace-pre-wrap">              {current.main_text ?? "No text content for this page."}
+            <p className="text-base sm:text-lg leading-7 sm:leading-8 text-[#3a3b4b] whitespace-pre-wrap">
+              {current.main_text ?? "No text content for this page."}
             </p>
           </div>
         )}
@@ -216,7 +219,17 @@ export default function LessonSlidesClient({
           onClick={handleBack}
           className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1E5] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M15 18l-6-6 6-6" />
           </svg>
           {isFirst ? "Back To Topic" : "Back"}
@@ -228,7 +241,17 @@ export default function LessonSlidesClient({
           className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
         >
           {nextLabel}
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
