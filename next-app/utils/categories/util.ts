@@ -21,6 +21,7 @@ export async function getSubjects(
         subjects.push({
           title: category.name,
           href: "/dashboard/" + category.id,
+          isfree: true,
         });
       }
     } else {
@@ -37,6 +38,7 @@ export async function getSubjects(
         subjects.push({
           title: category.name,
           href: "/dashboard/" + category.id,
+          isfree: true,
         });
       }
     }
@@ -56,6 +58,7 @@ export async function getSubjects(
         subjects.push({
           title: category.name,
           href: "/dashboard/" + category.id,
+          isfree: true,
         });
       }
     } else {
@@ -73,6 +76,7 @@ export async function getSubjects(
         subjects.push({
           title: category.name,
           href: "/dashboard/" + category.id,
+          isfree: true,
         });
       }
     }
@@ -93,6 +97,7 @@ export async function getSubjects(
       subjects.push({
         title: topic.name,
         href: "/topic/" + topic.id,
+        isfree: topic.isfree,
       });
     }
 
