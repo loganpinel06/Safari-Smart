@@ -50,20 +50,18 @@ export default async function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
-      <div className="flex min-h-screen">
-        <div className="w-[320px] shrink-0">
-          <Sidebar
-            userName={profile?.name ?? "John Doe"}
-            examTrack={profile?.exam_type ?? "BECE"}
-            role={profile?.account_type ?? "Student"}
-            activeItem="Dashboard"
-            logoutAction={logout}
-            profile={profile}
-          />
-        </div>
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        <Sidebar
+          userName={profile?.name ?? "John Doe"}
+          examTrack={profile?.exam_type ?? "BECE"}
+          role={profile?.account_type ?? "Student"}
+          activeItem="Dashboard"
+          logoutAction={logout}
+          profile={profile}
+        />
 
-        <div className="flex-1 px-10 py-10">
-          <div className="max-w-6xl space-y-8">
+        <div className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto max-w-6xl space-y-6 lg:space-y-8">
             <PageHeader
               title="Dashboard"
               subtitle={`Account Type: ${profile?.account_type ?? "Student"}`}
@@ -77,7 +75,7 @@ export default async function DashboardPage() {
               <ParentDashboardContent parentName={profile?.name ?? "Parent"} />
             ) : (
               <>
-                <SectionCard className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <SectionCard className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
                       Welcome back
@@ -94,8 +92,8 @@ export default async function DashboardPage() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 md:w-[320px]">
-                    <div className="rounded-xl bg-[#FFF1B8] p-4 border border-[#4B3A46]/10">
+                  <div className="grid grid-cols-2 gap-4 lg:w-[320px]">
+                    <div className="rounded-xl border border-[#4B3A46]/10 bg-[#FFF1B8] p-4">
                       <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
                         Subjects
                       </p>
@@ -104,7 +102,7 @@ export default async function DashboardPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-xl bg-white/80 p-4 border border-[#4B3A46]/10">
+                    <div className="rounded-xl border border-[#4B3A46]/10 bg-white/80 p-4">
                       <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
                         Role
                       </p>
@@ -116,19 +114,19 @@ export default async function DashboardPage() {
                 </SectionCard>
 
                 <SectionCard>
-                  <div className="mb-6 flex items-start justify-between gap-4">
+                  <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h2 className="text-2xl font-bold text-[#592803]">
                         Your Classes
                       </h2>
-                      <p className="text-sm text-[#4B3A46] mt-1">
+                      <p className="mt-1 text-sm text-[#4B3A46]">
                         Classes you have joined using a teacher’s class code.
                       </p>
                     </div>
 
                     <Link
                       href="/class"
-                      className="rounded-lg border border-[#4B3A46]/15 bg-white/70 px-4 py-2 text-sm font-semibold text-[#592803] transition hover:bg-white"
+                      className="inline-flex items-center justify-center rounded-lg border border-[#4B3A46]/15 bg-white/70 px-4 py-2 text-sm font-semibold text-[#592803] transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#592803]/30"
                     >
                       Manage Classes
                     </Link>
@@ -148,24 +146,23 @@ export default async function DashboardPage() {
                       />
                     ))}
                   </div>
+
                   {classes.length === 0 && (
                     <p className="text-sm text-[#4B3A46]">No classes yet.</p>
                   )}
                 </SectionCard>
 
                 <SectionCard>
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-[#592803]">
-                        Your Subjects
-                      </h2>
-                      <p className="text-sm text-[#4B3A46] mt-1">
-                        Choose a subject to continue learning.
-                      </p>
-                    </div>
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-[#592803]">
+                      Your Subjects
+                    </h2>
+                    <p className="mt-1 text-sm text-[#4B3A46]">
+                      Choose a subject to continue learning.
+                    </p>
                   </div>
 
-                  <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     {subjectList.map((s) => (
                       <DashboardCard
                         key={s.title}

@@ -344,7 +344,7 @@ export default function ExamRunner({
     return (
       <div className="space-y-8">
         <SectionCard>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-bold text-[#592803]">
                 Review Before Submit
@@ -406,7 +406,7 @@ export default function ExamRunner({
           </div>
         </SectionCard>
 
-        <SectionCard className="flex items-center justify-between">
+        <SectionCard className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => setReviewMode(false)}
@@ -432,7 +432,7 @@ export default function ExamRunner({
     <div className="space-y-8">
       <SectionCard>
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
               {examTitle}
             </p>
@@ -442,7 +442,7 @@ export default function ExamRunner({
           </div>
 
           <div>
-            <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
+            <div className="mb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
               <span>Progress</span>
               <span>{progressPercent}%</span>
             </div>
@@ -457,7 +457,7 @@ export default function ExamRunner({
       </SectionCard>
 
       <SectionCard>
-        <div className="flex justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-2">
           {questions.map((question, index) => {
             const answered = getQuestionStatus(question);
             const isCurrent = index === currentIndex;
@@ -504,7 +504,7 @@ export default function ExamRunner({
 
       <SectionCard>
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
               Your Response
             </p>
@@ -523,7 +523,7 @@ export default function ExamRunner({
         </div>
       </SectionCard>
 
-      <SectionCard className="flex items-center justify-between">
+      <SectionCard className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <button
           type="button"
           onClick={handlePrevious}

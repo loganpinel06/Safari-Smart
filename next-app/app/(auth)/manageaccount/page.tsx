@@ -30,31 +30,37 @@ export default async function ManageAccountPage() {
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
-      <div className="flex min-h-screen">
-        <div className="w-[320px] border-r border-[#4B3A46]/10">
-          <Sidebar
-            userName={profile?.name ?? "John Doe"}
-            examTrack={profile?.exam_type ?? "BECE"}
-            role={profile?.account_type ?? "Student"}
-            activeItem="Manage Account"
-            logoutAction={logout}
-            profile={profile ?? undefined}
-          />
-        </div>
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        <Sidebar
+          userName={profile?.name ?? "John Doe"}
+          examTrack={profile?.exam_type ?? "BECE"}
+          role={profile?.account_type ?? "Student"}
+          activeItem="Manage Account"
+          logoutAction={logout}
+          profile={profile}
+        />
 
-        <div className="flex-1 px-10 py-10">
-          <div className="max-w-5xl space-y-8">
+        <div className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto max-w-5xl space-y-6 lg:space-y-8">
             <PageHeader
               title="Manage Account"
               subtitle="View and update your account information."
             />
 
-            {/* PROFILE */}
             <SectionCard>
               <div className="space-y-4">
-                <p><span className="font-semibold">Name:</span> {profile?.name ?? "N/A"}</p>
-                <p><span className="font-semibold">Exam Track:</span> {profile?.exam_type ?? "N/A"}</p>
-                <p><span className="font-semibold">Account Type:</span> {profile?.account_type ?? "N/A"}</p>
+                <p className="break-words">
+                  <span className="font-semibold">Name:</span>{" "}
+                  {profile?.name ?? "N/A"}
+                </p>
+                <p className="break-words">
+                  <span className="font-semibold">Exam Track:</span>{" "}
+                  {profile?.exam_type ?? "N/A"}
+                </p>
+                <p className="break-words">
+                  <span className="font-semibold">Account Type:</span>{" "}
+                  {profile?.account_type ?? "N/A"}
+                </p>
               </div>
             </SectionCard>
           </div>

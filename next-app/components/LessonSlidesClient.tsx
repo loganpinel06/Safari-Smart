@@ -128,7 +128,7 @@ export default function LessonSlidesClient({
           There are no lesson pages for this lesson yet. When your teacher adds
           slides, they will appear here.
         </p>
-        <div className="flex flex-wrap items-center justify-end gap-4 border-t border-[#592803]/10 pt-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#592803]/10 pt-6">
           <button
             type="button"
             onClick={goToTopicOrDashboard}
@@ -155,11 +155,10 @@ export default function LessonSlidesClient({
         </p>
       </div>
 
-      <div className="flex min-h-[320px] w-full flex-col justify-center md:min-h-[400px]">
+      <div className="flex min-h-[260px] w-full flex-col justify-center md:min-h-[400px]">
         {current.type === "Text" && (
           <div className="flex flex-2 rounded-2xl font-semibold bg-[#F3EFEA] border-4 border-[#E0C9B3] px-6 py-8 md:px-10 md:py-12">
-            <p className="text-lg leading-8 text-[#3a3b4b] whitespace-pre-wrap md:text-xl md:leading-9">
-              {current.main_text ?? "No text content for this page."}
+            <p className="text-base sm:text-lg leading-7 sm:leading-8 text-[#3a3b4b] whitespace-pre-wrap">              {current.main_text ?? "No text content for this page."}
             </p>
           </div>
         )}
@@ -211,7 +210,7 @@ export default function LessonSlidesClient({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#592803]/10 pt-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#592803]/10 pt-6">
         <button
           type="button"
           onClick={handleBack}

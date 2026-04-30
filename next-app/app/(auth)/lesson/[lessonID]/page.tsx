@@ -42,41 +42,37 @@ export default async function LessonPage({
 
   return (
     <main className="min-h-screen bg-[#FFF1E5] text-[#592803]">
-      <div className="flex min-h-screen">
-        <div className="w-[320px]">
-          <Sidebar
-            userName={profile?.name ?? "John Doe"}
-            examTrack={profile?.exam_type ?? "BECE"}
-            activeItem="Dashboard"
-            logoutAction={logout}
-            profile={profile ?? undefined}
-          />
-        </div>
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        <Sidebar
+          userName={profile?.name ?? "John Doe"}
+          examTrack={profile?.exam_type ?? "BECE"}
+          role={profile?.account_type ?? "Student"}
+          activeItem="Dashboard"
+          logoutAction={logout}
+          profile={profile}
+        />
 
-        <div className="flex-1 px-10 py-10">
-          <div className="flex max-w-5xl flex-col gap-8">
+        <div className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto flex max-w-5xl flex-col gap-6 lg:gap-8">
             <Breadcrumbs
               items={[
                 ...(topic
                   ? [
-                    {
-                      label: topic.name,
-                      href: `/topic/${topic.id}`,
-                    },
-                  ]
+                      {
+                        label: topic.name,
+                        href: `/topic/${topic.id}`,
+                      },
+                    ]
                   : []),
                 {
                   label: "Lesson",
                 },
               ]}
             />
+
             <PageHeader
               title="Lesson"
-              subtitle={
-                topic
-                  ? `${topic.name} · Lesson content`
-                  : "Lesson content"
-              }
+              subtitle={topic ? `${topic.name} · Lesson content` : "Lesson content"}
             />
 
             <LessonSlidesClient

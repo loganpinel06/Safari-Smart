@@ -149,12 +149,12 @@ export default function LevelMap({
       </div>
 
       {/* ── SVG map */}
-      <div className="overflow-x-auto pb-4">
+      <div className="overflow-x-auto pb-4 px-2 sm:px-0">
         <svg
           width={svgW}
           height={svgH}
           viewBox={`0 0 ${svgW} ${svgH}`}
-          className="block mx-auto"
+          className="block mx-auto max-w-full"
         >
           {/* Connector lines */}
           {levels.map((lv, i) => {
