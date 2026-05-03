@@ -7,6 +7,7 @@ import QuizRunner from "@/components/QuizRunner";
 import SectionCard from "@/components/SectionCard";
 import { getQuizQuestionsDetail } from "@/utils/quiz/util";
 import { hasCompletedQuiz } from "@/utils/progress/quiz/util";
+import { canAccessTopicItem } from "@/utils/topic/util";
 
 export default async function QuizPage({
   params,
@@ -42,6 +43,21 @@ export default async function QuizPage({
   const questions = await getQuizQuestionsDetail(quizID, supabase);
   const quizIdNum = Number.parseInt(quizID, 10);
   const quizCompletion = await hasCompletedQuiz(quizIdNum, user.id, supabase);
+
+  if (
+    !isTeacher &&
+    !isParent &&
+    quiz?.topic_id != null &&
+    Number.isFinite(quizIdNum)
+  ) {
+    const allowed = await canAccessTopicItem(quiz.topic_id, supabase, user.id, {
+      type: "quiz",
+      id: quizIdNum,
+    });
+    if (!allowed) {
+      redirect(`/topic/${quiz.topic_id}`);
+    }
+  }
 
   async function logout() {
     "use server";

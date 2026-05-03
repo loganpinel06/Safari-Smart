@@ -6,6 +6,8 @@ export type TopicContentRow = {
   order: number;
   type: TopicContentType;
   completed: boolean;
+  /** Sequential unlock: completed items plus the next item in topic order only. */
+  accessible: boolean;
 };
 
 type TopicContentDbRow = {
@@ -142,21 +144,21 @@ export async function getTopicDetails(
     completedExamIds = completionSets.completedExamIds;
   }
 
-  const lessonRows: TopicContentRow[] = (
+  const lessonRows = (
     lessonsRes.error ? [] : (lessonsRes.data as TopicContentDbRow[] | null) ?? []
   ).map((row) => ({
     ...row,
     type: "lesson" as const,
     completed: completedLessonIds.has(row.id),
   }));
-  const quizRows: TopicContentRow[] = (
+  const quizRows = (
     quizzesRes.error ? [] : (quizzesRes.data as TopicContentDbRow[] | null) ?? []
   ).map((row) => ({
     ...row,
     type: "quiz" as const,
     completed: completedQuizIds.has(row.id),
   }));
-  const examRows: TopicContentRow[] = (
+  const examRows = (
     examsRes.error ? [] : (examsRes.data as TopicContentDbRow[] | null) ?? []
   ).map((row) => ({
     ...row,
@@ -166,5 +168,29 @@ export async function getTopicDetails(
 
   const combined = [...lessonRows, ...quizRows, ...examRows];
   combined.sort((a, b) => a.order - b.order);
-  return combined;
+
+  let prefix = 0;
+  while (prefix < combined.length && combined[prefix].completed) {
+    prefix++;
+  }
+
+  return combined.map((row, index) => ({
+    ...row,
+    accessible: row.completed || index === prefix,
+  }));
+}
+
+export async function canAccessTopicItem(
+  topicID: string | number,
+  supabase: any,
+  userID: string,
+  item: { type: TopicContentType; id: number },
+): Promise<boolean> {
+  if (!userID?.trim()) {
+    return false;
+  }
+
+  const rows = await getTopicDetails(topicID, supabase, userID.trim());
+  const row = rows.find((r) => r.type === item.type && r.id === item.id);
+  return row?.accessible ?? false;
 }

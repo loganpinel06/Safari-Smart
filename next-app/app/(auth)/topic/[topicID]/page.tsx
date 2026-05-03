@@ -33,6 +33,7 @@ export default async function TopicPage({
 
   const isTeacher = profile?.account_type === "Teacher";
   const isParent = profile?.account_type === "Parent";
+  const isStudent = !isTeacher && !isParent;
 
   const { data: currentTopicCategory } = await supabase
     .from("topic")
@@ -46,27 +47,25 @@ export default async function TopicPage({
   const completionPercent =
     totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-  const firstIncompleteIndex = topicContent.findIndex(
-    (item) => !item.completed,
-  );
-  const levels: Level[] = topicContent.map((c, index) => ({
-    id: String(c.id),
-    label: c.name,
-    type: c.type,
-    status: c.completed
-      ? "completed"
-      : firstIncompleteIndex === index
-        ? "current"
-        : "available",
-    href:
+  const levels: Level[] = topicContent.map((c) => {
+    const path =
       c.type === "lesson"
         ? `/lesson/${c.id}`
         : c.type === "quiz"
           ? `/quiz/${c.id}`
           : c.type === "exam"
             ? `/exam/${c.id}`
-            : undefined,
-  }));
+            : undefined;
+    const accessible = !isStudent || c.accessible;
+    return {
+      id: String(c.id),
+      label: c.name,
+      type: c.type,
+      completed: c.completed,
+      accessible,
+      href: accessible ? path : undefined,
+    };
+  });
   const lessons = levels.filter((c) => c.type === "lesson");
   const quizzes = levels.filter((c) => c.type === "quiz");
   const exams = levels.filter((c) => c.type === "exam");
@@ -158,8 +157,9 @@ export default async function TopicPage({
                     href={lesson.href ?? `/lesson/${lesson.id}`}
                     kind="Lesson"
                     status={
-                      lesson.status === "completed" ? "Complete" : "Not Started"
+                      lesson.completed ? "Complete" : "Not Started"
                     }
+                    locked={isStudent && !lesson.accessible}
                   />
                 ))}
               </div>
@@ -186,8 +186,9 @@ export default async function TopicPage({
                     href={quiz.href ?? `/quiz/${quiz.id}`}
                     kind="Quiz"
                     status={
-                      quiz.status === "completed" ? "Complete" : "Not Started"
+                      quiz.completed ? "Complete" : "Not Started"
                     }
+                    locked={isStudent && !quiz.accessible}
                   />
                 ))}
               </div>
@@ -218,8 +219,9 @@ export default async function TopicPage({
                     href={exam.href ?? `/exam/${exam.id}`}
                     kind="Exam"
                     status={
-                      exam.status === "completed" ? "Complete" : "Not Started"
+                      exam.completed ? "Complete" : "Not Started"
                     }
+                    locked={isStudent && !exam.accessible}
                   />
                 ))}
               </div>

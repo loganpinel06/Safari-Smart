@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { getLessonPagesDetail, getTopicFromLessonID } from "@/utils/lesson/util";
 import { hasCompletedLesson } from "@/utils/progress/lesson/util";
+import { canAccessTopicItem } from "@/utils/topic/util";
 
 export default async function LessonPage({
   params,
@@ -32,6 +33,19 @@ export default async function LessonPage({
   const lessonPages = await getLessonPagesDetail(lessonID, supabase);
   const topic = await getTopicFromLessonID(lessonID, supabase);
   const lessonCompletion = await hasCompletedLesson(lessonID, user.id, supabase);
+
+  if (profile?.account_type === "Student" && Number.isFinite(lessonID)) {
+    if (topic == null) {
+      redirect("/dashboard");
+    }
+    const allowed = await canAccessTopicItem(topic.id, supabase, user.id, {
+      type: "lesson",
+      id: lessonID,
+    });
+    if (!allowed) {
+      redirect(`/topic/${topic.id}`);
+    }
+  }
 
   async function logout() {
     "use server";

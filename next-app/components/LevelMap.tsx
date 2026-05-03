@@ -1,15 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type LevelType = "lesson" | "quiz" | "exam";
-type LevelStatus = "completed" | "current" | "available";
 
 export interface Level {
   id: string;
   label: string;
   type: LevelType;
-  status: LevelStatus;
+  completed: boolean;
+  accessible: boolean;
   href?: string;
 }
 
@@ -103,8 +103,14 @@ export default function LevelMap({
   const svgW = LEFT_MARGIN * 2 + (COLS - 1) * COL_GAP;
   const svgH = TOP_MARGIN + (rows - 1) * ROW_GAP + NODE_R * 2 + LABEL_H + 24;
 
-  const completed = levels.filter(l => l.status === "completed").length;
+  const completed = levels.filter((l) => l.completed).length;
   const pct = n ? Math.round((completed / n) * 100) : 0;
+
+  /** Pulse only when exactly one incomplete step is reachable (typical student path). */
+  const pulseEligible = useMemo(() => {
+    const openIncomplete = levels.filter((l) => l.accessible && !l.completed);
+    return openIncomplete.length === 1 ? openIncomplete[0].id : null;
+  }, [levels]);
 
   return (
     <div className="w-full rounded-3xl overflow-hidden border-2 border-[#F0DCC8] bg-[#FFF8F0]">
@@ -126,6 +132,7 @@ export default function LevelMap({
             { color: "bg-[#6AC700]", label: "Lesson" },
             { color: "bg-[#E57E25]", label: "Quiz" },
             { color: "bg-[#D4A017]", label: "Exam" },
+            { color: "bg-[#C4BCB3]", label: "Locked" },
           ] as { color: string; label: string }[]).map(({ color, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <span className={`inline-block w-3 h-3 rounded-full ${color}`} />
@@ -148,7 +155,7 @@ export default function LevelMap({
         </span>
       </div>
 
-      {/* ── SVG map */}
+      {/* ── SVG map ── */}
       <div className="overflow-x-auto pb-4 px-2 sm:px-0">
         <svg
           width={svgW}
@@ -161,12 +168,12 @@ export default function LevelMap({
             if (i === 0) return null;
             const a = getPos(i - 1);
             const b = getPos(i);
-            const done = levels[i - 1]?.status === "completed";
+            const prevDone = levels[i - 1]?.completed;
             return (
               <line
                 key={`ln-${i}`}
                 x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                stroke={done ? "#6AC700" : "#D4C4BA"}
+                stroke={prevDone ? "#6AC700" : "#D4C4BA"}
                 strokeWidth={6} strokeDasharray="10 6" strokeLinecap="round"
               />
             );
@@ -175,14 +182,22 @@ export default function LevelMap({
           {/* Nodes */}
           {levels.map((lv, i) => {
             const { x, y } = getPos(i);
-            const current = lv.status === "current";
-            const done = lv.status === "completed";
+            const locked = !lv.accessible;
+            const done = lv.completed;
+            const emphasize =
+              lv.accessible && !lv.completed && lv.id === pulseEligible;
             const colors = TYPE_COLOR[lv.type] ?? TYPE_COLOR.lesson;
-            const fill = colors.fill;
-            const ring = done ? colors.ring : "rgba(255,255,255,0.5)";
+            const fill = locked ? "#ADA59C" : colors.fill;
+            const ring = locked
+              ? "#8A847C"
+              : done
+                ? colors.ring
+                : "rgba(255,255,255,0.5)";
             const isHov = hovered === lv.id;
-            const sc = visible ? (isHov ? 1.12 : 1) : 0.3;
-            const op = visible ? 1 : 0;
+            const interactive = !locked && !!lv.href;
+            const sc =
+              visible ? (interactive && isHov ? 1.12 : 1) : 0.3;
+            const op = visible ? (locked ? 0.55 : 1) : 0;
             const typeLabel = lv.type.charAt(0).toUpperCase() + lv.type.slice(1);
             const nameLabel = lv.label.length > 13 ? lv.label.slice(0, 12) + "…" : lv.label;
 
@@ -190,15 +205,16 @@ export default function LevelMap({
               <g
                 key={lv.type + '-' + lv.id}
                 transform={`translate(${x},${y})`}
-                className="cursor-pointer"
+                className={interactive ? "cursor-pointer" : "cursor-not-allowed"}
                 style={{ opacity: op, transition: `opacity 0.4s ${i * 55}ms` }}
-                onClick={() => { if (lv.href) router.push(lv.href); }}
-                onMouseEnter={() => setHovered(lv.id)}
+                onClick={() => {
+                  if (lv.href) router.push(lv.href);
+                }}
+                onMouseEnter={() => interactive && setHovered(lv.id)}
                 onMouseLeave={() => setHovered(null)}
               >
-                {/* Pulse ring for current node */}
-                {current && (
-                  <circle cx={0} cy={0} r={NODE_R + 8} fill={`${fill}30`}>
+                {emphasize && (
+                  <circle cx={0} cy={0} r={NODE_R + 8} fill={`${colors.fill}30`}>
                     <animate attributeName="r" values={`${NODE_R + 8};${NODE_R + 22}`} dur="1.8s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values=".5;0" dur="1.8s" repeatCount="indefinite" />
                   </circle>
@@ -215,7 +231,8 @@ export default function LevelMap({
                 />
 
                 {/* Icon */}
-                <g style={{ transform: `scale(${sc})`, transformOrigin: "0 0", transition: "transform 0.18s" }}>
+                <g style={{ transform: `scale(${sc})`, transformOrigin: "0 0", transition: "transform 0.18s" }}
+                  opacity={locked ? 0.65 : 1}>
                   {done ? <CheckPath /> :
                     lv.type === "lesson" ? <BookPath /> :
                       lv.type === "quiz" ? <QuizPath /> :

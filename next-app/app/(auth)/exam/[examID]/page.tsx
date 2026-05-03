@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import SectionCard from "@/components/SectionCard";
 import { ExamQuestionDetail, getExamQuestionsDetail } from "@/utils/exam/util";
 import { getStudentExamSubmissions } from "@/utils/progress/exam/util";
+import { canAccessTopicItem } from "@/utils/topic/util";
 
 export default async function ExamPage({
   params,
@@ -48,6 +49,21 @@ export default async function ExamPage({
   let questions: ExamQuestionDetail[] = await getExamQuestionsDetail(exam?.id, supabase);
   const examIdNum = Number.parseInt(examID, 10);
   const submissions = await getStudentExamSubmissions(examIdNum, user.id, supabase);
+
+  if (
+    !isTeacher &&
+    !isParent &&
+    exam?.topic_id != null &&
+    Number.isFinite(examIdNum)
+  ) {
+    const allowed = await canAccessTopicItem(exam.topic_id, supabase, user.id, {
+      type: "exam",
+      id: examIdNum,
+    });
+    if (!allowed) {
+      redirect(`/topic/${exam.topic_id}`);
+    }
+  }
 
   async function logout() {
     "use server";
