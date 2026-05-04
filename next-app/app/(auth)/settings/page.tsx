@@ -44,35 +44,78 @@ export default async function SettingsPage() {
           <div className="mx-auto max-w-5xl space-y-6 lg:space-y-8">
             <PageHeader
               title="Settings"
-              subtitle="Control preferences and account options."
+              subtitle="Review your app preferences, account role, and accessibility options."
             />
 
             <SectionCard>
-              <h2 className="mb-4 text-2xl font-bold text-[#592803]">
-                Notifications
-              </h2>
-              <p className="text-[#4B3A46]">
-                Notification preferences coming soon.
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold uppercase tracking-wide text-[#4B3A46]">
+                  Account Preferences
+                </p>
+                <h2 className="text-2xl font-bold text-[#592803]">
+                  Learning Setup
+                </h2>
+                <p className="text-sm text-[#4B3A46]">
+                  Your current role is{" "}
+                  <span className="font-semibold text-[#592803]">
+                    {profile?.account_type ?? "Student"}
+                  </span>
+                  {profile?.account_type === "Student" && (
+                    <>
+                      {" "}
+                      and your exam track is{" "}
+                      <span className="font-semibold text-[#592803]">
+                        {profile?.exam_type ?? "BECE"}
+                      </span>
+                      .
+                    </>
+                  )}
+                </p>
+              </div>
             </SectionCard>
 
-            <SectionCard>
-              <h2 className="mb-4 text-2xl font-bold text-[#592803]">
-                Account Settings
-              </h2>
-              <p className="text-[#4B3A46]">
-                Password updates and account settings will be added here.
-              </p>
-            </SectionCard>
+            <div className="grid gap-5 md:grid-cols-2">
+              <SectionCard>
+                <h2 className="mb-3 text-xl font-bold text-[#592803]">
+                  Notifications
+                </h2>
+                <p className="text-sm leading-6 text-[#4B3A46]">
+                  Class updates, new assignments, quiz reminders, and teacher
+                  feedback will appear here once notifications are enabled.
+                </p>
+              </SectionCard>
 
-            <SectionCard>
-              <h2 className="mb-4 text-2xl font-bold text-[#592803]">
-                Accessibility Preferences
-              </h2>
-              <p className="text-[#4B3A46]">
-                Adjust font size, contrast, and accessibility options.
-              </p>
-            </SectionCard>
+              <SectionCard>
+                <h2 className="mb-3 text-xl font-bold text-[#592803]">
+                  Security
+                </h2>
+                <p className="text-sm leading-6 text-[#4B3A46]">
+                  Password and sign-in settings are managed through your account.
+                  Always sign out when using a shared device.
+                </p>
+              </SectionCard>
+
+              <SectionCard>
+                <h2 className="mb-3 text-xl font-bold text-[#592803]">
+                  Accessibility
+                </h2>
+                <p className="text-sm leading-6 text-[#4B3A46]">
+                  Safari Smart is designed with readable spacing, keyboard focus
+                  states, responsive layouts, and clear navigation to support
+                  different users and devices.
+                </p>
+              </SectionCard>
+
+              <SectionCard>
+                <h2 className="mb-3 text-xl font-bold text-[#592803]">
+                  Display
+                </h2>
+                <p className="text-sm leading-6 text-[#4B3A46]">
+                  Pages automatically adjust for mobile, tablet, and desktop
+                  screens so students can study from different devices.
+                </p>
+              </SectionCard>
+            </div>
           </div>
         </div>
       </div>
