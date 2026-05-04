@@ -14,6 +14,12 @@ export type TeacherClassWithAssignments = {
   assignments: any;
 };
 
+export type TeacherClassesWithMeta = {
+  classes: TeacherClassWithAssignments[];
+  /** Unique students across all of this teacher’s classes (same person in two classes counts once). */
+  distinctStudentCount: number;
+};
+
 export type ClassFullInfo = {
   id: string;
   name: string;
@@ -175,9 +181,9 @@ export async function getStudentClassesWithAssignments(
 export async function getTeacherClassesWithAssignments(
   teacherID: string,
   supabase: any,
-): Promise<TeacherClassWithAssignments[]> {
+): Promise<TeacherClassesWithMeta> {
   if (!teacherID) {
-    return [];
+    return { classes: [], distinctStudentCount: 0 };
   }
 
   const classesRes = await supabase
@@ -187,7 +193,7 @@ export async function getTeacherClassesWithAssignments(
 
   if (classesRes.error) {
     console.error("Error fetching classes for teacher:", classesRes.error);
-    return [];
+    return { classes: [], distinctStudentCount: 0 };
   }
 
   const classRows = classesRes.data ?? [];
@@ -197,7 +203,7 @@ export async function getTeacherClassesWithAssignments(
     classIds.length > 0
       ? await supabase
           .from("class_students")
-          .select("class_id")
+          .select("class_id, student_id")
           .in("class_id", classIds)
       : { data: [], error: null };
 
@@ -208,7 +214,9 @@ export async function getTeacherClassesWithAssignments(
     );
   }
 
-  const studentCounts = (membershipsRes.data ?? []).reduce(
+  const membershipRows = membershipsRes.data ?? [];
+
+  const studentCounts = membershipRows.reduce(
     (counts: Record<string, number>, row: any) => {
       const classId = row.class_id;
       if (classId) {
@@ -218,6 +226,14 @@ export async function getTeacherClassesWithAssignments(
     },
     {},
   );
+
+  const distinctStudentIds = new Set<string>();
+  for (const row of membershipRows) {
+    const sid = (row as { student_id?: string | null }).student_id;
+    if (typeof sid === "string" && sid.length > 0) {
+      distinctStudentIds.add(sid);
+    }
+  }
 
   const rowsWithAssignments = await Promise.all(
     classRows.map(async (row: any) => ({
@@ -229,7 +245,10 @@ export async function getTeacherClassesWithAssignments(
     })),
   );
 
-  return rowsWithAssignments;
+  return {
+    classes: rowsWithAssignments,
+    distinctStudentCount: distinctStudentIds.size,
+  };
 }
 
 // gets complete class info + teacher name + all student names + assignments

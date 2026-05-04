@@ -31,7 +31,7 @@ export default async function ClassPage() {
   const isTeacher = profile?.account_type === "Teacher";
 
   const classes = isTeacher
-    ? await getTeacherClassesWithAssignments(user.id, supabase)
+    ? (await getTeacherClassesWithAssignments(user.id, supabase)).classes
     : await getStudentClassesWithAssignments(user.id, supabase);
 
   async function logout() {

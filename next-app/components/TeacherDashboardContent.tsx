@@ -23,7 +23,8 @@ export default async function TeacherDashboardContent({
     redirect("/signin");
   }
 
-  const classes = await getTeacherClassesWithAssignments(user.id, supabase);
+  const { classes, distinctStudentCount } =
+    await getTeacherClassesWithAssignments(user.id, supabase);
 
   const totalAssignments = classes.reduce(
     (sum, c: any) =>
@@ -61,7 +62,9 @@ export default async function TeacherDashboardContent({
             <p className="text-xs font-semibold uppercase tracking-wide text-[#4B3A46]">
               Students
             </p>
-            <p className="mt-2 text-2xl font-extrabold text-[#592803]">—</p>
+            <p className="mt-2 text-2xl font-extrabold text-[#592803]">
+              {distinctStudentCount}
+            </p>
           </div>
 
           <div className="rounded-xl bg-white/80 p-4 border border-[#4B3A46]/10">
