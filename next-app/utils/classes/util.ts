@@ -9,6 +9,8 @@ export type StudentClassWithAssignments = {
 export type TeacherClassWithAssignments = {
   id: string;
   name: string;
+  join_code?: string | null;
+  student_count: number;
   assignments: any;
 };
 
@@ -132,7 +134,10 @@ export async function getStudentClassesWithAssignments(
     .eq("student_id", studentID);
 
   if (membershipsRes.error) {
-    console.error("Error fetching student class memberships:", membershipsRes.error);
+    console.error(
+      "Error fetching student class memberships:",
+      membershipsRes.error,
+    );
     return [];
   }
 
@@ -177,7 +182,7 @@ export async function getTeacherClassesWithAssignments(
 
   const classesRes = await supabase
     .from("classes")
-    .select("id, name")
+    .select("id, name, join_code")
     .eq("teacher_id", teacherID);
 
   if (classesRes.error) {
@@ -186,10 +191,40 @@ export async function getTeacherClassesWithAssignments(
   }
 
   const classRows = classesRes.data ?? [];
+  const classIds = classRows.map((row: any) => row.id).filter(Boolean);
+
+  const membershipsRes =
+    classIds.length > 0
+      ? await supabase
+          .from("class_students")
+          .select("class_id")
+          .in("class_id", classIds)
+      : { data: [], error: null };
+
+  if (membershipsRes.error) {
+    console.error(
+      "Error fetching teacher class memberships:",
+      membershipsRes.error,
+    );
+  }
+
+  const studentCounts = (membershipsRes.data ?? []).reduce(
+    (counts: Record<string, number>, row: any) => {
+      const classId = row.class_id;
+      if (classId) {
+        counts[classId] = (counts[classId] || 0) + 1;
+      }
+      return counts;
+    },
+    {},
+  );
+
   const rowsWithAssignments = await Promise.all(
     classRows.map(async (row: any) => ({
       id: row.id,
       name: row.name,
+      join_code: row.join_code ?? null,
+      student_count: studentCounts[row.id] ?? 0,
       assignments: await getAssignmentsDisplay(row.id, supabase),
     })),
   );
@@ -225,7 +260,10 @@ export async function getClassFullInfo(
 
   const [teacherRes, membershipsRes] = await Promise.all([
     supabase.from("users").select("name").eq("id", teacherId).maybeSingle(),
-    supabase.from("class_students").select("student_id").eq("class_id", classID),
+    supabase
+      .from("class_students")
+      .select("student_id")
+      .eq("class_id", classID),
   ]);
 
   if (teacherRes.error) {
@@ -250,7 +288,9 @@ export async function getClassFullInfo(
     if (studentsRes.error) {
       console.error("Error fetching student names:", studentsRes.error);
     } else {
-      studentNames = (studentsRes.data ?? []).map((student: any) => student.name);
+      studentNames = (studentsRes.data ?? []).map(
+        (student: any) => student.name,
+      );
     }
   }
 
