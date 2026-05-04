@@ -38,7 +38,7 @@ export default function Sidebar({
   const isStudent = role === "Student";
 
   return (
-    <aside className="bg-[#6B3300] text-white w-full lg:sticky lg:top-0 lg:h-screen lg:w-[320px] lg:shrink-0">
+    <aside className="bg-[#592803] text-white w-full lg:sticky lg:top-0 lg:h-screen lg:w-[320px] lg:shrink-0">
       <div className="flex flex-col px-4 py-4 sm:px-5 lg:h-full lg:px-4 lg:py-4">
         <div className="flex flex-col items-center gap-3">
           <Image
