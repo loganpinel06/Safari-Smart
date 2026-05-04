@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import SectionCard from "@/components/SectionCard";
 import ExamQuestionCard from "@/components/ExamQuestionCard";
 import { ExamQuestionDetail } from "@/utils/exam/util";
@@ -36,6 +37,15 @@ export default function ExamRunner({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [signedMediaUrl, setSignedMediaUrl] = useState<string | null>(null);
   const [mediaLoading, setMediaLoading] = useState(false);
+
+  const router = useRouter();
+  const goToTopicOrDashboard = () => {
+   if (topicId != null && Number.isFinite(topicId)) {
+     router.push(`/topic/${topicId}`);
+   } else {
+     router.push("/dashboard");
+   }
+ };
 
   const currentQuestion = questions[currentIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] ?? "" : "";
@@ -336,6 +346,22 @@ export default function ExamRunner({
             </div>
           </div>
         </SectionCard>
+        <div className="flex gap-3">
+         <button
+           type="button"
+           onClick={() => { setSubmitted(false); setStarted(false); }}
+           className="flex-1 rounded-xl border border-[#592803]/18 bg-transparent px-5 py-3 font-semibold text-[#7A4A20] transition hover:border-[#592803]/30 hover:bg-[#FFF1E5]"
+         >
+           Try Again
+         </button>
+         <button
+           type="button"
+           onClick={goToTopicOrDashboard}
+           className="flex-1 rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90"
+         >
+           Finish Exam
+         </button>
++       </div>
       </div>
     );
   }
@@ -408,21 +434,27 @@ export default function ExamRunner({
 
         <SectionCard className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <button
-            type="button"
-            onClick={() => setReviewMode(false)}
-            className="rounded-xl cursor-pointer border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40"
-          >
-            Back to Exam
-          </button>
+          type="button"
+          onClick={() => setReviewMode(false)}
+          className="flex items-center gap-2 rounded-xl cursor-pointer border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Back to Exam
+        </button>
 
-          <button
-            type="button"
-            onClick={submitExam}
-            disabled={!allAnswered || isSubmitting}
-            className="rounded-xl cursor-pointer bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isSubmitting ? "Submitting..." : "Submit Exam"}
-          </button>
+        <button
+          type="button"
+          onClick={submitExam}
+          disabled={!allAnswered || isSubmitting}
+          className="flex items-center gap-2 rounded-xl cursor-pointer bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSubmitting ? "Submitting..." : "Submit Exam"}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
         </SectionCard>
       </div>
     );
@@ -525,13 +557,16 @@ export default function ExamRunner({
 
       <SectionCard className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <button
-          type="button"
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-          className="rounded-xl cursor-pointer border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Previous
-        </button>
+        type="button"
+        onClick={handlePrevious}
+        disabled={currentIndex === 0}
+        className="flex items-center gap-2 rounded-xl cursor-pointer border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+        Previous
+      </button>
 
         <div className="flex gap-3">
           {currentIndex < questions.length - 1 ? (
@@ -539,19 +574,25 @@ export default function ExamRunner({
               type="button"
               onClick={handleNext}
               disabled={!currentAnswer.trim()}
-              className="rounded-xl cursor-pointer bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl cursor-pointer bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next Question
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
             </button>
           ) : (
             <button
-              type="button"
-              onClick={openReview}
-              disabled={!allAnswered}
-              className="rounded-xl cursor-pointer bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+            onClick={openReview}
+            disabled={!allAnswered}
+            className="flex items-center gap-2 rounded-xl cursor-pointer bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Review Exam
-            </button>
+            Review Exam
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
           )}
         </div>
       </SectionCard>

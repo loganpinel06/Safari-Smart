@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import SectionCard from "@/components/SectionCard";
 import QuizChoiceButton from "@/components/QuizChoiceButton";
 import { QuizQuestionDetail } from "@/utils/quiz/util";
@@ -63,6 +64,15 @@ export default function QuizRunner({
     setSubmitted(false);
     setSubmitAttemptError(null);
   }
+  const router = useRouter();
+
+  const goToTopicOrDashboard = () => {
+    if (topicId != null && Number.isFinite(topicId)) {
+      router.push(`/topic/${topicId}`);
+    } else {
+      router.push("/dashboard");
+    }
+  };
 
   const allAnswered = Object.keys(selectedAnswers).length === questions.length;
   const [started, setStarted] = useState(false);
@@ -182,7 +192,7 @@ export default function QuizRunner({
             onClick={() => setStarted(true)}
             className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
           >
-            {hasPreviousAttempt ? "Try Again 🚀" : "Start Quiz 🚀"}
+            {hasPreviousAttempt ? "Try Again" : "Start Quiz"}
           </button>
         </div>
       </SectionCard>
@@ -194,7 +204,7 @@ export default function QuizRunner({
     return (
       <div className="space-y-6">
         <SectionCard>
-          <h2 className="text-2xl font-bold text-[#592803]">Quiz Complete! 🎉</h2>
+          <h2 className="text-2xl font-bold text-[#592803]">Quiz Complete!</h2>
           <p className="mt-1 text-sm text-[#4B3A46]">{topicName}</p>
 
           <div className="mt-6 flex items-center justify-center rounded-2xl bg-[#FFF1B8] py-8">
@@ -202,10 +212,10 @@ export default function QuizRunner({
               <p className="text-6xl font-bold text-[#592803]">{score}/{questions.length}</p>
               <p className="mt-2 text-sm font-semibold text-[#4B3A46]">
                 {score === questions.length
-                  ? "Perfect score! Excellent work! 🌟"
+                  ? "Perfect score! Excellent work!"
                   : score >= questions.length / 2
-                    ? "Good effort! Keep practising! 💪"
-                    : "Keep going — you'll get there! 📚"}
+                    ? "Good effort! Keep practising!"
+                    : "Keep going — you'll get there!"}
               </p>
             </div>
           </div>
@@ -246,13 +256,22 @@ export default function QuizRunner({
           })}
         </div>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="w-full rounded-xl bg-[#592803] px-5 py-4 font-semibold text-[#FFF1E5] transition hover:opacity-90"
-        >
-          Try Again
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="flex-1 rounded-xl border border-[#592803]/18 bg-transparent px-5 py-3 font-semibold text-[#7A4A20] transition hover:border-[#592803]/30 hover:bg-[#FFF1E5]"
+          >
+            Try Again
+          </button>
+          <button
+            type="button"
+            onClick={goToTopicOrDashboard}
+            className="flex-1 rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90"
+          >
+            Finish Quiz
+          </button>
+ </div>
       </div>
     );
   }
@@ -365,7 +384,7 @@ export default function QuizRunner({
       {/* Unanswered warning */}
       {currentIndex === questions.length - 1 && !allAnswered && (
         <p className="text-center text-sm font-semibold text-red-500">
-          ⚠️ You have {questions.length - Object.keys(selectedAnswers).length} unanswered question(s) — use the circles above to go back!
+          You have {questions.length - Object.keys(selectedAnswers).length} unanswered question(s) — use the circles above to go back!
         </p>
       )}
 
@@ -374,8 +393,11 @@ export default function QuizRunner({
           type="button"
           onClick={handlePrevious}
           disabled={currentIndex === 0}
-          className="cursor-pointer rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-2 cursor-pointer rounded-xl border border-[#4B3A46]/20 px-5 py-3 font-semibold text-[#592803] transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
           Previous
         </button>
 
@@ -384,18 +406,24 @@ export default function QuizRunner({
             type="button"
             onClick={handleNext}
             disabled={selectedChoiceIndex === undefined}
-            className="cursor-pointer rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 cursor-pointer rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Next Question →
+            Next Question
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
           </button>
         ) : (
           <button
             type="button"
             onClick={submitQuizAttempt}
             disabled={!allAnswered || isSubmittingAttempt}
-            className="cursor-pointer rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 cursor-pointer rounded-xl bg-[#592803] px-5 py-3 font-semibold text-[#FFF1E5] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmittingAttempt ? "Submitting..." : "Submit Quiz"}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
           </button>
         )}
       </SectionCard>

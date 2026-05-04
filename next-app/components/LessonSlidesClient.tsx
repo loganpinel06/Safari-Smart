@@ -144,7 +144,7 @@ export default function LessonSlidesClient({
   }
 
   return (
-    <SectionCard className="flex flex-col gap-6">
+    <SectionCard className="flex flex-col gap-0 overflow-hidden">
       <div className="flex flex-col gap-2">
         <div className="h-2 w-full overflow-hidden rounded-full bg-[#F3EFEA]">
           <div
@@ -153,21 +153,21 @@ export default function LessonSlidesClient({
           />
         </div>
         <p className="text-right text-xs font-medium text-[#592803]">
-          {pageIndex + 1} / {pages.length}
+          Slide {pageIndex + 1} of {pages.length}
         </p>
       </div>
 
       <div className="flex min-h-[260px] w-full flex-col justify-center md:min-h-[400px]">
         {current.type === "Text" && (
-          <div className="flex flex-2 rounded-2xl font-semibold bg-[#F3EFEA] border-4 border-[#E0C9B3] px-6 py-8 md:px-10 md:py-12">
-            <p className="text-base sm:text-lg leading-7 sm:leading-8 text-[#3a3b4b] whitespace-pre-wrap">
+          <div className="flex flex-2 rounded-2xl bg-white border-4 border-[#EAD9C8] px-6 py-8 md:px-10 md:py-12">
+            <p className="text-base sm:text-lg leading-relaxed text-[#2d2d3a] whitespace-pre-wrap text-justify hyphens-auto font-normal">
               {current.main_text ?? "No text content for this page."}
             </p>
           </div>
         )}
 
         {current.type === "Image" && (
-          <div className="flex min-h-[280px] flex-1 items-center justify-center rounded-2xl border-4 border-[#E0C9B3] bg-[#F3EFEA] p-4 md:min-h-[360px]">
+          <div className="flex flex-2 rounded-2xl font-semibold bg-white border-2 border-[#EAD9C8] px-6 py-8 md:px-10 md:py-12">
             {mediaLoading ? (
               <p className="text-center text-sm text-[#592803]">
                 Loading image…
@@ -187,7 +187,7 @@ export default function LessonSlidesClient({
         )}
 
         {current.type === "Video" && (
-          <div className="flex w-full flex-1 items-center justify-center rounded-2xl border-4 border-[#E0C9B3] bg-[#F3EFEA] p-4">
+          <div className="flex flex-2 rounded-2xl font-semibold bg-white border-2 border-[#EAD9C8] px-6 py-8 md:px-10 md:py-12">
             {mediaLoading ? (
               <p className="text-center text-sm text-[#592803]">
                 Loading video…
@@ -208,7 +208,7 @@ export default function LessonSlidesClient({
       </div>
 
       {current.sub_text ? (
-        <p className="border-t border-[#592803]/10 pt-4 text-sm leading-7 font-semibold text-[#4B3A46]">
+        <p className="border-l-2 border-[#E0C9B3] pl-4 ml-1 text-base leading-relaxed font-stretch-semi-expanded text-[#8B6040] italic">
           {current.sub_text}
         </p>
       ) : null}
@@ -217,7 +217,7 @@ export default function LessonSlidesClient({
         <button
           type="button"
           onClick={handleBack}
-          className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1E5] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
+          className="flex items-center gap-2 rounded-xl border border-[#4B3A46]/15 bg-white/70 px-5 py-3 font-semibold text-[#4B3A46] transition hover:opacity-90"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +238,7 @@ export default function LessonSlidesClient({
           type="button"
           onClick={handleNext}
           disabled={isLast && isMarkingComplete}
-          className="flex items-center gap-2 rounded-xl border-2 border-[#4B3A46]/25 bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:border-[#592803]/40"
+          className="flex items-center gap-2 rounded-xl bg-[#FFF1B8] px-5 py-3 font-semibold text-[#592803] transition hover:opacity-90"
         >
           {nextLabel}
           <svg
