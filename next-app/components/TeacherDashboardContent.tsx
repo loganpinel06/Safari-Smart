@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTeacherClassesWithAssignments } from "@/utils/classes/util";
+import CreateClassModal from "@/components/CreateClassModal";
 
 type TeacherDashboardContentProps = {
   teacherName: string;
@@ -94,15 +95,9 @@ export default async function TeacherDashboardContent({
               Set up a class and generate a code for students to join.
             </p>
 
-            <input
-              type="text"
-              placeholder="Class name"
-              className="mt-4 w-full rounded-xl border border-[#4B3A46]/15 bg-white px-4 py-3 text-sm text-[#592803] outline-none focus:border-[#592803]"
-            />
-
-            <button className="mt-3 w-full rounded-xl bg-[#FFF1B8] py-3 font-semibold text-[#592803] transition hover:opacity-90">
-              Generate Class Code
-            </button>
+            <div className="mt-4">
+              <CreateClassModal />
+            </div>
           </div>
 
           <div className="rounded-2xl border border-[#4B3A46]/10 bg-white/70 p-5 shadow-sm">
